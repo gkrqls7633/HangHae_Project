@@ -34,6 +34,10 @@ public class Booking {
         return concertSeat;
     }
 
+    public void setConcertSeat(ConcertSeat concertSeat) {
+        this.concertSeat = concertSeat;
+    }
+
 
     //좌석 예약 가능 여부 체크
     public boolean isAvailableBooking() {

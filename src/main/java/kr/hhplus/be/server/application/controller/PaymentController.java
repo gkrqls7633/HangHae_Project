@@ -18,6 +18,11 @@ public class PaymentController {
     public ResponseMessage<PaymentResponse> payment(@RequestBody Payment payment) {
 
         PaymentResponse paymentResponse = new PaymentResponse();
+
+        if(payment.getBookingId() == null || payment.getBookingId().isEmpty()) {
+            return ResponseMessage.error(400, "결제에 실패했습니다.");
+        }
+
         paymentResponse.setPaymentStatus(PaymentStatus.COMPLETED);
         paymentResponse.setBookingId(payment.getBookingId());
 

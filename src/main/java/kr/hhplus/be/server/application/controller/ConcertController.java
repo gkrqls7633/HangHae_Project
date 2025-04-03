@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import kr.hhplus.be.server.application.common.ResponseMessage;
 import kr.hhplus.be.server.application.domain.Concert;
 import kr.hhplus.be.server.application.domain.ConcertSeat;
+import kr.hhplus.be.server.application.domain.SeatStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -17,6 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @Tag(name = "콘서트", description = "콘서트 API")
@@ -60,7 +63,11 @@ public class ConcertController {
     public ResponseMessage<ConcertSeat> getAvailableSeat(@RequestParam Long concertId) {
         List<String> seatList = Arrays.asList("1", "2", "3", "4");
 
-        ConcertSeat concertSeat = new ConcertSeat(concertId, seatList);
+        // 모든 좌석을 기본적으로 'AVAILABLE' 상태로 설정
+        Map<String, SeatStatus> seatStatusMap = seatList.stream()
+                .collect(Collectors.toMap(seat -> seat, seat -> SeatStatus.AVAILABLE));
+
+        ConcertSeat concertSeat = new ConcertSeat(concertId, seatStatusMap);
 
         return ResponseMessage.success(concertSeat);
     }

@@ -18,7 +18,7 @@ public class BookingController {
     public ResponseMessage<BookingResponse> bookingSeat(@RequestBody Booking booking) {
         //todo : 좌석 점유 여부 체크 후 예약 가능하면 예약 요청 가능.
         if (!booking.isAvailableBooking()) {
-            return ResponseMessage.success("선택 좌석은 예약 불가능한 좌석입니다.");
+            return ResponseMessage.error(500, "선택 좌석은 예약 불가능한 좌석입니다.");
         }
 
         return ResponseMessage.success("좌석 예약이 완료됐습니다.");
