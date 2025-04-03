@@ -8,7 +8,7 @@ public class ResponseMessage<T> {
     @Schema(description = "응답 코드", example = "200")
     private int status;
 
-    @Schema(description = "응답 메시지", example = "성공")
+    @Schema(description = "응답 메시지")
     private String message;
 
     @Schema(description = "응답 데이터")
@@ -44,8 +44,16 @@ public class ResponseMessage<T> {
         this.data = data;
     }
 
+    public static <T> ResponseMessage<T> success(String message) {
+        return new ResponseMessage<>(200, message, null);
+    }
+
     public static <T> ResponseMessage<T> success(T data) {
         return new ResponseMessage<>(200, "성공", data);
+    }
+
+    public static <T> ResponseMessage<T> success(String message, T data) {
+        return new ResponseMessage<>(200, message, data);
     }
 
     public static <T> ResponseMessage<T> error(int status, String message) {
