@@ -26,9 +26,6 @@ public class ConcertController {
 
     @Operation(summary = "콘서트 목록 조회", description = "콘서트 목록을 조회합니다.")
     @GetMapping("/list")
-    @Parameters({
-            @Parameter(name = "testParam", required = true, description = "파라미터 테스트"),
-    })
     public ResponseMessage<List<Concert>> getConcertList() {
         List<Concert> concertList = Arrays.asList(
                 new Concert(1L, "BTS World Tour", 150000, "2024-05-01", "19:00", "서울 올림픽 경기장"),
