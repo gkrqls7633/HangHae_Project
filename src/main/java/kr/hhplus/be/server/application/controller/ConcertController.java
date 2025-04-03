@@ -37,9 +37,6 @@ public class ConcertController {
     }
 
     @Operation(summary = "콘서트 예약 가능한 날짜 조회", description = "콘서트 예약 가능한 날짜를 조회합니다.")
-    @Parameters({
-            @Parameter(name = "concertId", required = true, description = "concertId"),
-    })
     @ApiResponse(
             responseCode = "200",
             description = "예약 가능한 날짜를 반환합니다.",
@@ -49,10 +46,10 @@ public class ConcertController {
             )
     )
     @GetMapping("/available-date")
-    public ResponseMessage<String> getAvailableDate(@RequestParam Long concertId) {
+    public ResponseMessage<String> getAvailableDate() {
         Concert concert = new Concert(1L, "BTS World Tour", 150000, "2024-05-01", "19:00", "서울 올림픽 경기장");
 
-        return ResponseMessage.success(concert.getDate());
+        return ResponseMessage.success("예약 가능한 날짜가 정상적으로 조회됐습ㅂ니다.", concert.getDate());
     }
 
     @Operation(summary = "콘서트 예약 가능한 좌석 조회", description = "콘서트 예약 가능한 좌석을 조회합니다.")
