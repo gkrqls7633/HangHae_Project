@@ -1,8 +1,7 @@
-package kr.hhplus.be.server.application.controller.test;
+package kr.hhplus.be.server.application.controller;
 
-import kr.hhplus.be.server.application.service.test.TestService;
+import kr.hhplus.be.server.application.service.TestService;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController

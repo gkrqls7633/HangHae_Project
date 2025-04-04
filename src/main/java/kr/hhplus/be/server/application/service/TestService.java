@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.application.service.test;
+package kr.hhplus.be.server.application.service;
 
 import kr.hhplus.be.server.application.repository.test.TestRepository;
 import org.springframework.stereotype.Service;
