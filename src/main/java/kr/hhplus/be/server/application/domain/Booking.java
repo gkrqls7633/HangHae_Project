@@ -1,9 +1,18 @@
 package kr.hhplus.be.server.application.domain;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.Objects;
 
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 @Schema(description = "예약")
 public class Booking {
 
@@ -14,34 +23,13 @@ public class Booking {
     @Schema(description = "좌석 번호", example = "5")
     private String seatNum;
 
-    @Schema(description = "좌석")
-    private ConcertSeat concertSeat;
-
-    public Booking(Concert concert, String seatNum) {
-        this.concert = concert;
-        this.seatNum = seatNum;
-    }
-
-    public Concert getConcert() {
-        return concert;
-    }
-
-    public String getSeatNum() {
-        return seatNum;
-    }
-
-    public ConcertSeat getConcertSeat() {
-        return concertSeat;
-    }
-
-    public void setConcertSeat(ConcertSeat concertSeat) {
-        this.concertSeat = concertSeat;
-    }
-
+//    @Schema(description = "좌석")
+//    private ConcertSeat concertSeat;
 
     //좌석 예약 가능 여부 체크
-    public boolean isAvailableBooking() {
-        if (Objects.equals(concertSeat.getSeatStatus().getCode(), "OCCUPIED")) {
+    public boolean isAvailableBooking(String seatNum) {
+
+        if ("OCCUPIED".equals(concert.getConcertSeat().getSeatStatus(seatNum).getCode())) {
             return false;
         }
         return true;

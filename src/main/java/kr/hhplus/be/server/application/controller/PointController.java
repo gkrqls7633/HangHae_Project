@@ -3,7 +3,7 @@ package kr.hhplus.be.server.application.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import kr.hhplus.be.server.application.common.ResponseMessage;
+import kr.hhplus.be.server.common.ResponseMessage;
 import kr.hhplus.be.server.application.domain.Point;
 import kr.hhplus.be.server.application.domain.PointChargeRequest;
 import kr.hhplus.be.server.application.domain.User;

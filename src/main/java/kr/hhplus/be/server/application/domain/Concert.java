@@ -1,7 +1,15 @@
 package kr.hhplus.be.server.application.domain;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 @Schema(description = "콘서트 정보")
 public class Concert {
 
@@ -23,36 +31,7 @@ public class Concert {
     @Schema(description = "콘서트 장소", example = "서울 올림픽 경기장")
     private String location;
 
-    public Concert(Long concertId, String name, int price, String date, String time, String location) {
-        this.concertId = concertId;
-        this.name = name;
-        this.price = price;
-        this.date = date;
-        this.time = time;
-        this.location = location;
-    }
+    @Schema(description = "콘터스 좌석 정보", example = "")
+    private ConcertSeat concertSeat;
 
-    public Long getConcertId() {
-        return concertId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public int getPrice() {
-        return price;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public String getTime() {
-        return time;
-    }
-
-    public String getLocation() {
-        return location;
-    }
 }

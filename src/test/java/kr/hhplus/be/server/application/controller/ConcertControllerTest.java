@@ -1,12 +1,10 @@
 package kr.hhplus.be.server.application.controller;
 
-import kr.hhplus.be.server.application.common.ResponseMessage;
+import kr.hhplus.be.server.common.ResponseMessage;
 import kr.hhplus.be.server.application.domain.Concert;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;

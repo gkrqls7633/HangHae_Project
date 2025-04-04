@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.application.common;
+package kr.hhplus.be.server.common;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 

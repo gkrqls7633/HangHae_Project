@@ -1,8 +1,8 @@
 package kr.hhplus.be.server.application.controller;
 
-import kr.hhplus.be.server.application.common.ResponseMessage;
+import kr.hhplus.be.server.common.ResponseMessage;
 import kr.hhplus.be.server.application.domain.Payment;
-import kr.hhplus.be.server.application.response.PaymentResponse;
+import kr.hhplus.be.server.application.domain.response.PaymentResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

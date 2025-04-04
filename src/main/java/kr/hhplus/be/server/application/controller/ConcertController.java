@@ -7,7 +7,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import kr.hhplus.be.server.application.common.ResponseMessage;
+import kr.hhplus.be.server.common.ResponseMessage;
 import kr.hhplus.be.server.application.domain.Concert;
 import kr.hhplus.be.server.application.domain.ConcertSeat;
 import kr.hhplus.be.server.application.domain.SeatStatus;
