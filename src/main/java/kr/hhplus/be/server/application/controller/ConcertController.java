@@ -31,9 +31,9 @@ public class ConcertController {
     @GetMapping("/list")
     public ResponseMessage<List<Concert>> getConcertList() {
         List<Concert> concertList = Arrays.asList(
-                new Concert(1L, "BTS World Tour", 150000, "2024-05-01", "19:00", "서울 올림픽 경기장"),
-                new Concert(2L, "IU Love Poem", 130000, "2024-06-10", "18:30", "부산 사직 경기장"),
-                new Concert(3L, "Coldplay Music of the Spheres", 180000, "2024-07-20", "20:00", "인천 아시아드 주경기장")
+                new Concert(1L, "BTS World Tour", 150000, "2024-05-01", "19:00", "서울 올림픽 경기장", null),
+                new Concert(2L, "IU Love Poem", 130000, "2024-06-10", "18:30", "부산 사직 경기장", null),
+                new Concert(3L, "Coldplay Music of the Spheres", 180000, "2024-07-20", "20:00", "인천 아시아드 주경기장", null)
         );
 
         return ResponseMessage.success(concertList);
@@ -50,7 +50,7 @@ public class ConcertController {
     )
     @GetMapping("/available-date")
     public ResponseMessage<String> getAvailableDate() {
-        Concert concert = new Concert(1L, "BTS World Tour", 150000, "2024-05-01", "19:00", "서울 올림픽 경기장");
+        Concert concert = new Concert(1L, "BTS World Tour", 150000, "2024-05-01", "19:00", "서울 올림픽 경기장", null);
 
         return ResponseMessage.success("예약 가능한 날짜가 정상적으로 조회됐습ㅂ니다.", concert.getDate());
     }
