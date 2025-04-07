@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 
 @Tag(name = "콘서트", description = "콘서트 API")
 @RestController
-@RequestMapping("/concert")
+@RequestMapping("/concerts")
 public class ConcertController {
 
     @Operation(summary = "콘서트 목록 조회", description = "콘서트 목록을 조회합니다.")

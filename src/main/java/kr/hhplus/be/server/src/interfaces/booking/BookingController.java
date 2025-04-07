@@ -10,13 +10,13 @@ import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "예약", description = "예약 관련 API")
 @RestController
-@RequestMapping("/booking")
+@RequestMapping("/bookings")
 public class BookingController {
 
     private BookingService bookingService;
 
     @Operation(summary = "좌석 예약 요청", description = "좌석 예약을 요청합니다.")
-    @PostMapping("")
+    @PostMapping("/seats")
     public ResponseMessage<BookingResponse> bookingSeat(@RequestBody Booking booking) {
         //todo : 좌석 점유 여부 체크 후 예약 가능하면 예약 요청 가능.
         if (!booking.isAvailableBooking(booking.getSeatNum())) {
@@ -27,7 +27,7 @@ public class BookingController {
     }
 
     @Operation(summary = "좌석 예약 취소", description = "좌석 예약 취소 요청합니다.")
-    @PutMapping("")
+    @PutMapping("/cancel/seats")
     public ResponseMessage<BookingResponse> cancelSeat(@RequestBody Booking booking) {
         return ResponseMessage.success("좌석 예약이 취소됐습니다.");
     }

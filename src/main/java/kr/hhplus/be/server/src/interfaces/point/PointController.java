@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "포인트", description = "포인트 관리 API")
 @RestController
-@RequestMapping("/point")
+@RequestMapping("/points")
 public class PointController {
 
     @Operation(summary = "포인트 조회", description = "포인트 잔액을 조회한다.")
@@ -28,7 +28,7 @@ public class PointController {
     }
 
     @Operation(summary = "포인트 충전", description = "포인트를 충전한다.")
-    @PostMapping("")
+    @PostMapping("/charge")
     public ResponseMessage<Point> chargePoint(@RequestBody PointChargeRequest pointChagrgeRequest) {
 
         // todo : userId 해당하는 point 객체에 charge 처리
