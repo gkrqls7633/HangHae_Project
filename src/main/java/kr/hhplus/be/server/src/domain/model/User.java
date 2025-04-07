@@ -1,11 +1,19 @@
 package kr.hhplus.be.server.src.domain.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import kr.hhplus.be.server.src.interfaces.point.PointChargeRequest;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
+@Entity
 @Schema(description = "유저 정보")
+@AllArgsConstructor
+@NoArgsConstructor
 public class User {
 
+    @Id
     @Schema(description = "유저Id", example = "1")
     private String userId;
 

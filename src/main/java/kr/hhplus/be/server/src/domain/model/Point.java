@@ -2,11 +2,18 @@ package kr.hhplus.be.server.src.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
+@Entity
 @Schema(description = "포인트 정보")
 public class Point {
 
 
+    @Id
     @Schema(description = "userId", example = "1")
     @JsonProperty("userId")
     private String userId;

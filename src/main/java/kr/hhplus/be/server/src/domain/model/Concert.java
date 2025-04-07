@@ -1,6 +1,10 @@
 package kr.hhplus.be.server.src.domain.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,9 +14,11 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
+@Entity
 @Schema(description = "콘서트 정보")
 public class Concert {
 
+    @Id
     @Schema(description = "콘서트 ID", example = "1")
     private Long concertId;
 
@@ -31,6 +37,8 @@ public class Concert {
     @Schema(description = "콘서트 장소", example = "서울 올림픽 경기장")
     private String location;
 
+    @ManyToOne
+    @JoinColumn(name = "seat_seat_id")
     @Schema(description = "콘터스 좌석 정보", example = "")
     private Seat seat;
 
