@@ -11,6 +11,10 @@ import kr.hhplus.be.server.src.common.ResponseMessage;
 import kr.hhplus.be.server.src.domain.model.Concert;
 import kr.hhplus.be.server.src.domain.model.Seat;
 import kr.hhplus.be.server.src.domain.model.enums.SeatStatus;
+import kr.hhplus.be.server.src.service.ConcertService;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,19 +28,20 @@ import java.util.stream.Collectors;
 
 @Tag(name = "콘서트", description = "콘서트 API")
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/concerts")
 public class ConcertController {
+
+    private final ConcertService concertService;
 
     @Operation(summary = "콘서트 목록 조회", description = "콘서트 목록을 조회합니다.")
     @GetMapping("/list")
     public ResponseMessage<List<Concert>> getConcertList() {
-        List<Concert> concertList = Arrays.asList(
-                new Concert(1L, "BTS World Tour", 150000, "2024-05-01", "19:00", "서울 올림픽 경기장", null),
-                new Concert(2L, "IU Love Poem", 130000, "2024-06-10", "18:30", "부산 사직 경기장", null),
-                new Concert(3L, "Coldplay Music of the Spheres", 180000, "2024-07-20", "20:00", "인천 아시아드 주경기장", null)
-        );
+
+        List<Concert> concertList = concertService.getConcertList();
 
         return ResponseMessage.success(concertList);
+
     }
 
     @Operation(summary = "콘서트 예약 가능한 날짜 조회", description = "콘서트 예약 가능한 날짜를 조회합니다.")
@@ -67,8 +72,10 @@ public class ConcertController {
         Map<String, SeatStatus> seatStatusMap = seatList.stream()
                 .collect(Collectors.toMap(seat -> seat, seat -> SeatStatus.AVAILABLE));
 
-        Seat seat = new Seat(concertId, seatStatusMap);
+//        Seat seat = new Seat(concertId, seatStatusMap);
 
-        return ResponseMessage.success(seat);
+//        return ResponseMessage.success(seat);
+        return ResponseMessage.success(null);
+
     }
 }

@@ -1,19 +1,22 @@
 package kr.hhplus.be.server.src.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import kr.hhplus.be.server.src.common.enums.CommonEnumInterface;
 import kr.hhplus.be.server.src.domain.model.enums.SeatStatus;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-@AllArgsConstructor
-@NoArgsConstructor
+import static java.util.stream.IntStream.range;
+
+@RequiredArgsConstructor
 @Setter
 @Getter
 @Entity
@@ -21,23 +24,30 @@ import java.util.Map;
 public class Seat {
 
     @Id
+    @Schema(description = "좌석 ID", example = "1")
     private Long seatId;
 
+    @ManyToOne
+    @JsonIgnore  // JSON 직렬화 시 'concert' 필드를 제외시킴
+    @JoinColumn(name = "concert_id")
     @Schema(description = "콘서트 ID", example = "1")
-    private Long concertId;
+    private Concert concert;
 
-    public Seat(Long concertId, Map<String, SeatStatus> seatStatusMap) {
+    @Schema(description = "좌석 번호", example = "A1")
+    private Long seatNum;
+
+    @Schema(description = "좌석 상태", example = "AVAILABLE")
+    private SeatStatus seatStatus;
+
+    public Seat(Long seatId, Long seatNum, SeatStatus seatStatus) {
+        this.seatId = seatId;
+        this.seatNum = seatNum;
+        this.seatStatus = seatStatus;
     }
 
-    public CommonEnumInterface getSeatStatus(String seatNum) {
-        return null;
+    public boolean getSeatStatus(Long seatNum) {
+        return true;
     }
 
-//    @Schema(description = "좌석 상태 목록", example = "{ \"1\": \"AVAILABLE\", \"2\": \"RESERVED\", \"3\": \"SOLD\" }")
-//    private Map<String, SeatStatus> seatStatusMap;
 
-
-//    public SeatStatus getSeatStatus(String seatNum) {
-//        return seatStatusMap.get(seatNum);
-//    }
 }

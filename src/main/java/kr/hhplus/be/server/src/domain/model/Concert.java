@@ -1,14 +1,17 @@
 package kr.hhplus.be.server.src.domain.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
+import kr.hhplus.be.server.src.domain.model.enums.SeatStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static java.util.stream.IntStream.range;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -37,9 +40,20 @@ public class Concert {
     @Schema(description = "콘서트 장소", example = "서울 올림픽 경기장")
     private String location;
 
-    @ManyToOne
-    @JoinColumn(name = "seat_seat_id")
+    @OneToMany(mappedBy = "concert", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Schema(description = "콘터스 좌석 정보", example = "")
-    private Seat seat;
+    private List<Seat> seat;
+
+    public List<Seat> createSeats(int count) {
+
+
+        return range(1, count + 1)
+                .mapToObj(i -> new Seat(
+                        (long) i,
+                        (long) i,
+                        SeatStatus.AVAILABLE
+                ))
+                .collect(Collectors.toList());
+    }
 
 }
