@@ -6,6 +6,4 @@ import java.util.List;
 
 public interface ConcertRepositoryCustom {
 
-    List<Concert> getConcertList();
-
 }

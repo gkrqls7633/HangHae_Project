@@ -34,7 +34,7 @@ public class ConcertController {
 
     private final ConcertService concertService;
 
-    @Operation(summary = "콘서트 목록 조회", description = "콘서트 목록을 조회합니다.")
+    @Operation(summary = "콘서트 목록 조회", description = "콘서트 목록 전체를 조회합니다.")
     @GetMapping("/list")
     public ResponseMessage<List<Concert>> getConcertList() {
 
@@ -44,38 +44,16 @@ public class ConcertController {
 
     }
 
-    @Operation(summary = "콘서트 예약 가능한 날짜 조회", description = "콘서트 예약 가능한 날짜를 조회합니다.")
-    @ApiResponse(
-            responseCode = "200",
-            description = "예약 가능한 날짜를 반환합니다.",
-            content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(example = "{ \"status\": 200, \"message\": \"성공\", \"data\": \"2024-05-01\" }")
-            )
-    )
-    @GetMapping("/available-date")
-    public ResponseMessage<String> getAvailableDate() {
-        Concert concert = new Concert(1L, "BTS World Tour", 150000, "2024-05-01", "19:00", "서울 올림픽 경기장", null);
-
-        return ResponseMessage.success("예약 가능한 날짜가 정상적으로 조회됐습ㅂ니다.", concert.getDate());
-    }
-
     @Operation(summary = "콘서트 예약 가능한 좌석 조회", description = "콘서트 예약 가능한 좌석을 조회합니다.")
     @Parameters({
             @Parameter(name = "concertId", required = true, description = "concertId"),
     })
-    @GetMapping("/available-seat")
-    public ResponseMessage<Seat> getAvailableSeat(@RequestParam Long concertId) {
-        List<String> seatList = Arrays.asList("1", "2", "3", "4");
+    @GetMapping("/seats")
+    public ResponseMessage<Concert> getAvailableSeats(@RequestParam Long concertId) {
 
-        // 모든 좌석을 기본적으로 'AVAILABLE' 상태로 설정
-        Map<String, SeatStatus> seatStatusMap = seatList.stream()
-                .collect(Collectors.toMap(seat -> seat, seat -> SeatStatus.AVAILABLE));
+        Concert concert  = concertService.getAvailableSeats(concertId);
 
-//        Seat seat = new Seat(concertId, seatStatusMap);
-
-//        return ResponseMessage.success(seat);
-        return ResponseMessage.success(null);
+        return ResponseMessage.success(concert);
 
     }
 }

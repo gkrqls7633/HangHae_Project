@@ -45,8 +45,16 @@ public class Seat {
         this.seatStatus = seatStatus;
     }
 
-    public boolean getSeatStatus(Long seatNum) {
-        return true;
+    // 좌석의 예약 가능 상태를 반환
+    public boolean isAvailable() {
+        return this.seatStatus == SeatStatus.AVAILABLE;
+    }
+
+    //콘서트 예약 가능한 좌석을 조회한다.(createSeats에서 만들어진 좌석 중 SeatStatus가 AVAILABLE인 것만 조회)
+    public List<Seat> getAvailableSeats(List<Seat> seatList) {
+        return seatList.stream()
+                .filter(Seat::isAvailable)
+                .collect(Collectors.toList());
     }
 
 
