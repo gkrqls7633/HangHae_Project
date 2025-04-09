@@ -28,10 +28,10 @@ public class Seat {
     private Long seatId;
 
     @ManyToOne
-    @JsonIgnore  // JSON 직렬화 시 'concert' 필드를 제외시킴
-    @JoinColumn(name = "concert_id")
-    @Schema(description = "콘서트 ID", example = "1")
-    private Concert concert;
+    @JsonIgnore
+    @JoinColumn(name = "concert_seat_id")
+    @Schema(description = "콘서트좌석", example = "1")
+    private ConcertSeat concertSeat;
 
     @Schema(description = "좌석 번호", example = "A1")
     private Long seatNum;
@@ -50,12 +50,8 @@ public class Seat {
         return this.seatStatus == SeatStatus.AVAILABLE;
     }
 
-    //콘서트 예약 가능한 좌석을 조회한다.(createSeats에서 만들어진 좌석 중 SeatStatus가 AVAILABLE인 것만 조회)
-    public List<Seat> getAvailableSeats(List<Seat> seatList) {
-        return seatList.stream()
-                .filter(Seat::isAvailable)
-                .collect(Collectors.toList());
+    public boolean getSeatStatus(Long seatNum) {
+        return true;
     }
-
 
 }

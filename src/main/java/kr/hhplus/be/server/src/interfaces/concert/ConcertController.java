@@ -36,9 +36,9 @@ public class ConcertController {
 
     @Operation(summary = "콘서트 목록 조회", description = "콘서트 목록 전체를 조회합니다.")
     @GetMapping("/list")
-    public ResponseMessage<List<Concert>> getConcertList() {
+    public ResponseMessage<List<ConcertResponse>> getConcertList() {
 
-        List<Concert> concertList = concertService.getConcertList();
+        List<ConcertResponse> concertList = concertService.getConcertList();
 
         return ResponseMessage.success(concertList);
 
@@ -49,11 +49,11 @@ public class ConcertController {
             @Parameter(name = "concertId", required = true, description = "concertId"),
     })
     @GetMapping("/seats")
-    public ResponseMessage<Concert> getAvailableSeats(@RequestParam Long concertId) {
+    public ResponseMessage<ConcertResponse> getAvailableSeats(@RequestParam Long concertId) {
 
-        Concert concert  = concertService.getAvailableSeats(concertId);
+        ConcertResponse concertResponse  = concertService.getAvailableSeats(concertId);
 
-        return ResponseMessage.success(concert);
+        return ResponseMessage.success(concertResponse);
 
     }
 }

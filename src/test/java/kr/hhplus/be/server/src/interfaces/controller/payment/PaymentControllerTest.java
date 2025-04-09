@@ -6,10 +6,12 @@ import kr.hhplus.be.server.src.domain.model.Payment;
 import kr.hhplus.be.server.src.interfaces.payment.PaymentResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 
+@WebMvcTest(PaymentControllerTest.class)
 class PaymentControllerTest {
 
     @DisplayName("결제 요청 테스트")

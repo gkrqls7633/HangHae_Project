@@ -38,9 +38,9 @@ public class Booking {
     //좌석 예약 가능 여부 체크
     public boolean isAvailableBooking(String seatNum) {
 
-        if ("OCCUPIED".equals(concert.getSeat().getSeatStatus(seatNum).getCode())) {
-            return false;
-        }
+//        if ("OCCUPIED".equals(concert.getSeat().getSeatStatus(seatNum).getCode())) {
+//            return false;
+//        }
         return true;
     }
 

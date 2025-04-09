@@ -41,9 +41,9 @@ public class Concert {
     @Schema(description = "콘서트 장소", example = "서울 올림픽 경기장")
     private String location;
 
-    @OneToMany(mappedBy = "concert", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @Schema(description = "콘서트 좌석 정보", example = "[{\"seatId\": 1, \"seatNum\": 1, \"seatStatus\": \"AVAILABLE\"}, {\"seatId\": 2, \"seatNum\": 2, \"seatStatus\": \"AVAILABLE\"}]")
-    private List<Seat> seat;
+    @OneToOne(mappedBy = "concert")
+    @Schema(description = "콘서트에 대한 좌석 목록")
+    private ConcertSeat concertSeat;
 
     // 새로운 Concert 객체 생성 시, 자동으로 좌석을 50개 생성하여 seat 리스트에 넣어줌
     public Concert(Long concertId, String name, int price, String date, String time, String location) {
@@ -53,12 +53,11 @@ public class Concert {
         this.date = date;
         this.time = time;
         this.location = location;
-        this.seat = createRandomSeats(50);
+//        this.concertSeat = concertSeat;
     }
 
     //콘서트 좌석을 AVAILABLE로 50개 최초 생성
     private List<Seat> createSeats(int count) {
-
         return range(1, count + 1)
                 .mapToObj(i -> new Seat(
                         (long) i,

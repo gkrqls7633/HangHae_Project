@@ -53,8 +53,8 @@ class BookingControllerTest {
 
         //좌석 정보
         Seat seat = new Seat();
-        seat.setConcertId(1L);
-        seat.setSeatStatusMap(seatStatusMap);
+//        seat.setConcertId(1L);
+//        seat.setSeatStatusMap(seatStatusMap);
 
         // 예약 정보
         Booking booking = new Booking();
@@ -65,7 +65,7 @@ class BookingControllerTest {
                 , "2025-05-01"
                 , "19:00"
                 , "서울 올림픽 경기장"
-                , new Seat(1L, Map.of("1", SeatStatus.OCCUPIED)
+//                , new Seat(1L, Map.of("1", SeatStatus.OCCUPIED)
         )));
 
         BookingResponse response = new BookingResponse(1L, "BTS World Tour", "4", "예약이 완료됐습니다.");
@@ -98,9 +98,10 @@ class BookingControllerTest {
                                     , "2025-05-01"
                                     , "19:00"
                                     , "서울 올림픽 경기장"
-                                    , new Seat(1L, Map.of("1", SeatStatus.OCCUPIED)
-        ));
-        Booking booking = new Booking(concert, "3");
+//                                    , new Seat(1L, Map.of("1", SeatStatus.OCCUPIED)
+        );
+
+        Booking booking = new Booking(1L, concert, "3");
 
         // When
         ResponseMessage<BookingResponse> response = controller.bookingSeat(booking);
