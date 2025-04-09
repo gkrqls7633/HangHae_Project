@@ -1,7 +1,13 @@
 package kr.hhplus.be.server.src.interfaces.booking;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.*;
 
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+@Builder
 @Schema(description = "좌석 예약 응답")
 public class BookingResponse {
 
@@ -12,32 +18,11 @@ public class BookingResponse {
     private String concertName;
 
     @Schema(description = "예약된 좌석 번호", example = "A12")
-    private String seatNum;
+    private Long seatNum;
 
-    @Schema(description = "예약 상태 메시지", example = "좌석 예약이 완료됐습니다.")
+    @Schema(description = "예약 상태 메시지", example = "좌석 예약이 완료되었습니다.")
     private String bookingMessage;
 
-    public BookingResponse(Long concertId, String concertName, String seatNum, String bookingMessage) {
-        this.concertId = concertId;
-        this.concertName = concertName;
-        this.seatNum = seatNum;
-        this.bookingMessage = bookingMessage;
-    }
 
-    public Long getConcertId() {
-        return concertId;
-    }
-
-    public String getConcertName() {
-        return concertName;
-    }
-
-    public String getSeatNum() {
-        return seatNum;
-    }
-
-    public String getBookingMessage() {
-        return bookingMessage;
-    }
 
 }

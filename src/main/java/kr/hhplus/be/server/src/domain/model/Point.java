@@ -5,10 +5,15 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
+@Getter
+@Setter
 @Schema(description = "포인트 정보")
 public class Point {
 
@@ -22,29 +27,17 @@ public class Point {
     @JsonProperty("pointBalance")
     private Long pointBalance;
 
-    public Point(String userId) {
-        this.userId = userId;
-        this.pointBalance = getPointBalanceFromUser(userId); // 포인트 잔액 설정
-    }
-
-    public Point(String userId, Long pointBalance) {
-        this.userId = userId;
-        this.pointBalance = pointBalance;
-    }
-
-    private Long getPointBalanceFromUser(String userId) {
-        User user = new User(userId);
-        return user.getPointBalance();
-    }
-
     public Long getPointBalance(String userId) {
 
         User user = new User(userId);
         return user.getPointBalance();
 
     }
-    public void setPointBalance(Long pointBalance) {
-        this.pointBalance = pointBalance;
-    }
 
+    public boolean isEnough() {
+
+        //todo : 콘서트 가격보다 포인트가 충분한지 체크
+
+        return true;
+    }
 }

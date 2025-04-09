@@ -1,10 +1,7 @@
 package kr.hhplus.be.server.src.domain.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import kr.hhplus.be.server.src.domain.model.enums.SeatStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,7 +9,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @NoArgsConstructor
@@ -27,6 +23,9 @@ public class Booking {
     @Schema(description = "얘약 번호", example = "1")
     private Long bookingId;
 
+    @OneToOne(mappedBy = "booking", cascade = CascadeType.ALL)  // 결제와 1:1 관계
+    private Payment payment;
+
     @ManyToOne
     @JoinColumn(name = "concert_concert_id")
     @Schema(description = "콘서트 정보",
@@ -38,6 +37,10 @@ public class Booking {
 
     @Schema(description = "좌석 번호", example = "1")
     private Long seatNum;
+
+    //todo : userId 추가
+    @Schema(description = "유저 Id", example = "1")
+    private Long userId;
 
     //좌석 예약 가능 여부 체크
     public boolean isAvailableBooking() {

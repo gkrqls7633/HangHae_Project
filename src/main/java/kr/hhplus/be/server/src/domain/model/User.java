@@ -5,12 +5,16 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import kr.hhplus.be.server.src.interfaces.point.PointChargeRequest;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Schema(description = "유저 정보")
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
 public class User {
 
     @Id
@@ -50,13 +54,7 @@ public class User {
         this.pointBalance = 10000L;
     }
 
-    public Long getPointBalance() {
-        return pointBalance;
-    }
 
-    public void setPointBalance(Long pointBalance) {
-        this.pointBalance = pointBalance;
-    }
 
     public Point chargePoint(PointChargeRequest pointChargeRequest) {
         User user = new User(userId);

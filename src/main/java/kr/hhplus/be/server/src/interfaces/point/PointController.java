@@ -18,7 +18,7 @@ public class PointController {
     @GetMapping("")
     public ResponseMessage<Point> getPoint(@RequestParam String userId) {
 
-        Point point = new Point(userId);
+        Point point = new Point();
 
         if (point.getPointBalance(userId) == null) {
             point.setPointBalance(0L);

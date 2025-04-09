@@ -1,29 +1,47 @@
 package kr.hhplus.be.server.src.domain.model;
 
+import io.micrometer.common.util.StringUtils;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.util.Objects;
 
 @Entity
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@Getter
+@Setter
 @Schema(description = "결제")
 public class Payment {
-
-    public Payment(String bookingId) {
-        this.bookingId = bookingId;
-    }
 
     @Id
     @Schema(description = "결제id", example = "1")
     private Long paymentId;
 
-    @Schema(description = "예약id", example = "1")
-    private String bookingId;
+    @OneToOne(fetch = FetchType.LAZY) // 결제와 예약은 1:1 관계
+    @JoinColumn(name = "bookingId", referencedColumnName = "bookingId", nullable = false)
+    @Schema(description = "예약", example = "1")
+    private Booking booking;
 
-    public String getBookingId() {
-        return bookingId;
+
+    @Schema(description = "유저id", example = "1")
+    private Long userId;
+
+    public boolean isBookingCheck() {
+
+        // booking 객체와 booking.getUserId()가 null인 경우를 체크
+        if (booking == null || booking.getUserId() == null) {
+            return false;  // booking이 없거나 userId가 없으면 false 반환
+        }
+
+        // 결제 요청 userId와 예약된 userId 비교
+        return Objects.equals(booking.getUserId(), this.userId);
+
     }
+
+
+
 
 }

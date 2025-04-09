@@ -13,6 +13,7 @@ import kr.hhplus.be.server.src.interfaces.booking.BookingResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.awt.print.Book;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -27,7 +28,9 @@ public class BookingService{
     private static final String mockYsno = "Y";
 
     public ResponseMessage<BookingResponse> bookingSeat(BookingRequest bookingRequest) {
-        
+
+        BookingResponse bookingResponse;
+
         Concert concert;
         // 1. concertId로 Concert 객체 조회
         if (mockYsno.equals("Y")) {
@@ -50,27 +53,38 @@ public class BookingService{
                     .orElseThrow(() -> new RuntimeException("해당 콘서트를 찾을 수 없습니다."));
         }
 
-
         // 2. Booking 도메인 객체 생성
         Booking booking = new Booking();
         booking.setConcert(concert);
         booking.setSeatNum(bookingRequest.getSeatNum());
+        booking.setUserId(bookingRequest.getUserId());
 
-        // 3. 예약 가능 여부 확인 (booking의 seatNum의 좌석 점유 여부 체크)
+        // 3. 예약 가능 여부 확인
+        //  booking의 seatNum의 좌석 점유 여부 체크
         if (!booking.isAvailableBooking()) {
             return ResponseMessage.error(500, "선택 좌석은 예약 불가능한 좌석입니다.");
+
+//        } else if () {
+//            //todo : queuing token 확인 후 대기 순번 체크. 해당 차례 됐을 때 예약 서비스 이용 가능
+//
+
         } else {
 
             if (mockYsno.equals("Y")) {
+                bookingResponse = BookingResponse.builder()
+                        .concertId(booking.getConcert().getConcertId())
+                        .concertName(booking.getConcert().getName())
+                        .seatNum(booking.getSeatNum())
+                        .bookingMessage("좌석 예약이 완료됐습니다.")
+                        .build();
 
-                return ResponseMessage.success("좌석 예약이 완료됐습니다.");
-
+                return ResponseMessage.success("좌석 예약이 완료됐습니다.", bookingResponse);
             } else{
-
                 bookingRepository.save(booking);
             }
 
         }
-        return ResponseMessage.success("좌석 예약이 완료됐습니다.");
+
+        return ResponseMessage.success("좌석 예약이 완료됐습니다.", new BookingResponse());
     }
 }

@@ -33,7 +33,7 @@ class BookingTest {
         when(mockConcert.getConcertSeat()).thenReturn(mockConcertSeat);
         when(mockConcertSeat.getSeats()).thenReturn(mockSeatList);
 
-        Booking booking = new Booking(1L, mockConcert, 1L, 1L);
+        Booking booking = new Booking(1L, null, mockConcert, 1L, 1L, 1L);
 
         // when
         boolean isAvailableBooking = booking.isAvailableBooking();
@@ -63,7 +63,7 @@ class BookingTest {
         when(mockConcert.getConcertSeat()).thenReturn(mockConcertSeat);
         when(mockConcertSeat.getSeats()).thenReturn(mockSeatList);
 
-        Booking booking = new Booking(1L, mockConcert, 2L, 2L);
+        Booking booking = new Booking(1L, null, mockConcert, 2L, 2L, 1L);
 
         // when
         boolean isAvailableBooking = booking.isAvailableBooking();
