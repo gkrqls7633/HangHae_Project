@@ -26,7 +26,7 @@ class ConcertSeatTest {
         Long concertId = 1L;
         ConcertSeat concertSeat = new ConcertSeat();
 
-        Concert concert = new Concert(concertId, "BTS World Tour", 150000, "2025-05-01", "19:00", "서울 올림픽 경기장");
+        Concert concert = new Concert(concertId, "BTS World Tour", 150000L, "2025-05-01", "19:00", "서울 올림픽 경기장");
         List<Seat> seatList = Arrays.asList(
                 new Seat(1L, 1L, SeatStatus.AVAILABLE),
                 new Seat(2L, 2L, SeatStatus.BOOKED),
@@ -52,7 +52,7 @@ class ConcertSeatTest {
         Long concertId = 1L;
 //        ConcertSeat concertSeat = new ConcertSeat();
 
-        Concert concert = new Concert(concertId, "BTS World Tour", 150000, "2025-05-01", "19:00", "서울 올림픽 경기장");
+        Concert concert = new Concert(concertId, "BTS World Tour", 150000L, "2025-05-01", "19:00", "서울 올림픽 경기장");
         List<Seat> seatList = Arrays.asList(
                 new Seat(1L, 1L, SeatStatus.AVAILABLE),
                 new Seat(2L, 2L, SeatStatus.BOOKED),

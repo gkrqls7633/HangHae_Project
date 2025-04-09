@@ -34,9 +34,12 @@ public class Point {
 
     }
 
-    public boolean isEnough() {
+    public boolean isEnough(Long concertPrice) {
 
-        //todo : 콘서트 가격보다 포인트가 충분한지 체크
+        //콘서트 가격보다 포인트가 충분한지 체크
+        if (pointBalance == null || pointBalance < concertPrice) {
+            return false;
+        }
 
         return true;
     }

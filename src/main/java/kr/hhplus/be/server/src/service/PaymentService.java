@@ -1,9 +1,11 @@
 package kr.hhplus.be.server.src.service;
 
 import kr.hhplus.be.server.src.common.ResponseMessage;
+import kr.hhplus.be.server.src.domain.model.Concert;
 import kr.hhplus.be.server.src.domain.model.Payment;
 import kr.hhplus.be.server.src.domain.model.Point;
 import kr.hhplus.be.server.src.domain.model.enums.PaymentStatus;
+import kr.hhplus.be.server.src.domain.repository.ConcertRepository;
 import kr.hhplus.be.server.src.domain.repository.PaymentRepository;
 import kr.hhplus.be.server.src.domain.repository.PointRepository;
 import kr.hhplus.be.server.src.interfaces.payment.PaymentRequest;
@@ -19,8 +21,10 @@ public class PaymentService {
 
     private static final String mockYsno = "Y";
 
-    public final PaymentRepository paymentRepository;
-    public final PointRepository pointRepository;
+    private final PaymentRepository paymentRepository;
+    private final PointRepository pointRepository;
+    private final ConcertRepository concertRepository;
+
 
     public ResponseMessage<PaymentResponse> processPayment(PaymentRequest paymentRequest) {
 
@@ -41,10 +45,12 @@ public class PaymentService {
         // 2. 포인트 잔액 조회
         // - 포인트 잔액이 결제할 가격보다 많아야 함.
 
-//        Optional<Point> point = pointRepository.findById(paymentRequest.getUserId());
-//        if (point.get().isEnough()) {
-//
-//        }
+        Optional<Point> point = pointRepository.findById(paymentRequest.getUserId());
+        Optional<Concert> concertInfo = concertRepository.findById(payment.getBooking().getBookingId());
+
+        if (!point.get().isEnough(concertInfo.get().getPrice())) {
+            return ResponseMessage.error(500, "잔액을 확인해주세요.");
+        }
 
 
         // 마지막으로 결제 요청

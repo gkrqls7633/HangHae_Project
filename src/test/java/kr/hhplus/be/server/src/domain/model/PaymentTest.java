@@ -79,9 +79,4 @@ class PaymentTest {
 
     }
 
-    @DisplayName("유저 포인트 잔액이 결제할 가격보다 커야한다.")
-    @Test
-    void pointIsBiggerThanPrice() {
-        Long mockUserId = 123L;
-    }
 }

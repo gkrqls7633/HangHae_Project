@@ -33,9 +33,9 @@ public class ConcertService {
         if (mockYsno.equals("Y")) {
 
             List<Concert> concertList = Arrays.asList(
-                    new Concert(1L, "BTS World Tour", 150000, "2025-05-01", "19:00", "서울 올림픽 경기장"),
-                    new Concert(2L, "IU Love Poem", 130000, "2025-06-10", "18:30", "부산 사직 경기장"),
-                    new Concert(3L, "Coldplay Music of the Spheres", 180000, "2025-07-20", "20:00", "인천 아시아드 주경기장")
+                    new Concert(1L, "BTS World Tour", 150000L, "2025-05-01", "19:00", "서울 올림픽 경기장"),
+                    new Concert(2L, "IU Love Poem", 130000L, "2025-06-10", "18:30", "부산 사직 경기장"),
+                    new Concert(3L, "Coldplay Music of the Spheres", 180000L, "2025-07-20", "20:00", "인천 아시아드 주경기장")
             );
 
             return concertList.stream()
@@ -88,7 +88,7 @@ public class ConcertService {
             return ConcertResponse.builder()
                     .concertId(concertId)
                     .name("BTS World Tour")
-                    .price(150000)
+                    .price(150000L)
                     .date("2025-05-01")
                     .time("19:00")
                     .location("서울 올림픽 경기장")
@@ -112,7 +112,7 @@ public class ConcertService {
         return ConcertResponse.builder()
                 .concertId(concertId)
                 .name("BTS World Tour")
-                .price(150000)
+                .price(150000L)
                 .date("2025-05-01")
                 .time("19:00")
                 .location("서울 올림픽 경기장")

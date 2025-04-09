@@ -41,7 +41,7 @@ public class BookingService{
                     new Seat(4L, 4L, SeatStatus.OCCUPIED)
             );
 
-            concert = new Concert(1L, "BTS World Tour", 150000, "2025-05-01", "19:00", "서울 올림픽 경기장");
+            concert = new Concert(1L, "BTS World Tour", 150000L, "2025-05-01", "19:00", "서울 올림픽 경기장");
 
             ConcertSeat concertSeat = new ConcertSeat(1L, concert, seatList);
             concertSeat.setSeats(concertSeat.getAvailableSeats());

@@ -12,7 +12,7 @@ public class ConcertResponse {
 
     private Long concertId;
     private String name;
-    private int price;
+    private Long price;
     private String date;
     private String time;
     private String location;

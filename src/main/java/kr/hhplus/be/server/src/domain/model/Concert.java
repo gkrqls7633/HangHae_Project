@@ -30,7 +30,7 @@ public class Concert {
     private String name;
 
     @Schema(description = "티켓 가격", example = "150000")
-    private int price;
+    private Long price;
 
     @Schema(description = "콘서트 날짜", example = "2025-05-01")
     private String date;
@@ -46,7 +46,7 @@ public class Concert {
     private ConcertSeat concertSeat;
 
     // 새로운 Concert 객체 생성 시, 자동으로 좌석을 50개 생성하여 seat 리스트에 넣어줌
-    public Concert(Long concertId, String name, int price, String date, String time, String location) {
+    public Concert(Long concertId, String name, Long price, String date, String time, String location) {
         this.concertId = concertId;
         this.name = name;
         this.price = price;
