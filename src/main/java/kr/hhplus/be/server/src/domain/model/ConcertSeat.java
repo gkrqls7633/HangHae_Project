@@ -24,7 +24,7 @@ public class ConcertSeat {
     @JsonIgnore
     private Concert concert;
 
-    @OneToMany(mappedBy = "concertSeats")
+    @OneToMany(mappedBy = "concertSeat")
     @Schema(description = "이 콘서트의 좌석 목록")
     private List<Seat> seats;
 
