@@ -29,8 +29,8 @@ public class ConcertSeat {
     private List<Seat> seats;
 
     //콘서트 예약 가능한 좌석을 조회한다.(createSeats에서 만들어진 좌석 중 SeatStatus가 AVAILABLE인 것만 조회)
-    public List<Seat> getAvailableSeats(List<Seat> seatList) {
-        return seatList.stream()
+    public List<Seat> getAvailableSeats() {
+        return this.seats.stream()
                 .filter(Seat::isAvailable)
                 .collect(Collectors.toList());
     }

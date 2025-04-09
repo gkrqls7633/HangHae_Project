@@ -82,7 +82,7 @@ public class ConcertService {
             );
 
             ConcertSeat concertSeat = new ConcertSeat();
-            List<Seat> availableSeat = concertSeat.getAvailableSeats(seatList);
+            List<Seat> availableSeat = concertSeat.getAvailableSeats();
             concertSeat.setSeats(availableSeat);
 
             return ConcertResponse.builder()
@@ -107,7 +107,7 @@ public class ConcertService {
         );
 
         ConcertSeat concertSeat = new ConcertSeat();
-        List<Seat> availableSeat = concertSeat.getAvailableSeats(seatList);
+        List<Seat> availableSeat = concertSeat.getAvailableSeats();
 
         return ConcertResponse.builder()
                 .concertId(concertId)

@@ -37,7 +37,8 @@ class ConcertSeatTest {
 
         //when
         //예약 가능한 좌석만 조회
-        List<Seat> availableSeatList = concertSeat.getAvailableSeats(seatList);
+        //concert -> concertSeat -> seat -> seatStatus
+        List<Seat> availableSeatList = concertSeat.getAvailableSeats();
 
         //then
         assertEquals(2, availableSeatList.size());
@@ -60,14 +61,14 @@ class ConcertSeatTest {
         );
         concertSeat.setSeats(seatList);
 
-        when(concertSeat.getAvailableSeats(seatList)).thenReturn(Arrays.asList(
+        when(concertSeat.getAvailableSeats()).thenReturn(Arrays.asList(
                 new Seat(1L, 1L, SeatStatus.AVAILABLE),
                 new Seat(2L, 2L, SeatStatus.BOOKED),
                 new Seat(3L, 3L, SeatStatus.AVAILABLE)
         ));
 
         //when
-        List<Seat> availableSeatList = concertSeat.getAvailableSeats(seatList);
+        List<Seat> availableSeatList = concertSeat.getAvailableSeats();
 
         //then
         assertNotEquals(2, availableSeatList.size());

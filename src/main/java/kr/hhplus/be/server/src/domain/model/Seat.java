@@ -50,8 +50,5 @@ public class Seat {
         return this.seatStatus == SeatStatus.AVAILABLE;
     }
 
-    public boolean getSeatStatus(Long seatNum) {
-        return true;
-    }
 
 }
