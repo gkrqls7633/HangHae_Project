@@ -44,7 +44,7 @@ public class ConcertController {
 
     }
 
-    @Operation(summary = "콘서트 예약 가능한 좌석 조회", description = "콘서트 예약 가능한 좌석을 조회합니다.")
+    @Operation(summary = "콘서트 예약 가능한 좌석 조회", description = "콘서트Id를 통해 해당 콘서트의 예약 가능한 좌석을 조회합니다.")
     @Parameters({
             @Parameter(name = "concertId", required = true, description = "concertId"),
     })
