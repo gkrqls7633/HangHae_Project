@@ -1,9 +1,7 @@
 package kr.hhplus.be.server.src.domain.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import kr.hhplus.be.server.src.interfaces.point.PointChargeRequest;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,6 +19,9 @@ public class User {
     @Schema(description = "유저Id", example = "1")
     private String userId;
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Point point;
+
     @Schema(description = "유저명", example = "김항해")
     private String userName;
 
@@ -36,9 +37,6 @@ public class User {
     @Schema(description = "주소", example = "서울특별시 강서구 염창동")
     private String address;
 
-    @Schema(description = "포인트 정보",
-            example = "{ \"pointBalance\": 10000 }")
-    private Long pointBalance;
 
     public User(String userId, String userName, String password, String phoneNumber, String email, String address) {
         this.userId = userId;
@@ -49,18 +47,7 @@ public class User {
         this.address = address;
     }
 
-    public User(String userId) {
-        this.userId = userId;
-        this.pointBalance = 10000L;
-    }
 
 
-
-    public Point chargePoint(PointChargeRequest pointChargeRequest) {
-        User user = new User(userId);
-        user.setPointBalance(user.getPointBalance() + pointChargeRequest.getChargePoint());
-
-        return new Point(pointChargeRequest.getUserId(), user.getPointBalance());
-    }
 
 }
