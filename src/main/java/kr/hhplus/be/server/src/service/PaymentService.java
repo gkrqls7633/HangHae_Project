@@ -52,10 +52,6 @@ public class PaymentService {
             return ResponseMessage.error(500, "잔액을 확인해주세요.");
         }
 
-
-        // 마지막으로 결제 요청
-        // todo : 유저 잔액 포인트 차감
-
         //결제 요청 -> 유저 잔액 포인트 차감
         Payment payment = paymentRepository.save(paymentDomain);
 
@@ -65,6 +61,7 @@ public class PaymentService {
 
         //유저 잔액 차감
         point.get().usePoint(concertInfo.get().getPrice());
+        pointRepository.save(point.get());
 
         return ResponseMessage.success("결제가 완료됐습니다.", paymentResponse);
     }
