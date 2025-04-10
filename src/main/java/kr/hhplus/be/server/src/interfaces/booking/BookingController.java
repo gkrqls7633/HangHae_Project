@@ -40,4 +40,5 @@ public class BookingController {
     public ResponseMessage<PaymentResponse> BookingPaymentFacade(@RequestBody BookingRequest bookingRequest) {
         return bookingPaymentFacade.processBookingPayment(bookingRequest);
     }
+
 }

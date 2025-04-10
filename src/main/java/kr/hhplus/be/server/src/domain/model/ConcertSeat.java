@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Schema(description = "콘서트좌석 도메인")
 public class ConcertSeat {
 
     @Id

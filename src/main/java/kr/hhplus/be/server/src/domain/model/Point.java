@@ -14,7 +14,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@Schema(description = "포인트 정보")
+@Schema(description = "포인트 도메인")
 public class Point {
 
     @Id

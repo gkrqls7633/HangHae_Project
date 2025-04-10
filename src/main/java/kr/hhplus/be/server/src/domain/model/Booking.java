@@ -16,12 +16,16 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-@Schema(description = "예약")
+@Schema(description = "예약 도메인")
 public class Booking {
 
     @Id
     @Schema(description = "얘약 번호", example = "1")
     private Long bookingId;
+
+    // Queue와 1:1 관계
+    @OneToOne(mappedBy = "booking")
+    private Queue queue;
 
     @OneToOne(mappedBy = "booking", cascade = CascadeType.ALL)  // 결제와 1:1 관계
     private Payment payment;
@@ -38,9 +42,10 @@ public class Booking {
     @Schema(description = "좌석 번호", example = "1")
     private Long seatNum;
 
-    //todo : userId 추가
-    @Schema(description = "유저 Id", example = "1")
-    private Long userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
 
     //좌석 예약 가능 여부 체크
     public boolean isAvailableBooking() {

@@ -16,10 +16,15 @@ class PaymentTest {
 
         // given
         Long mockUserId = 123L; // 결제 요청의 userId
+        User mockUser = new User();
+        mockUser.setUserId(mockUserId);
+
         Long mockBookingUserId = 123L; // 예약된 userId
+        User mockBookingUser = new User();
+        mockBookingUser.setUserId(mockBookingUserId);
 
         Booking booking = new Booking();
-        booking.setUserId(mockBookingUserId);
+        booking.setUser(mockBookingUser);
 
         Payment payment = new Payment();
         payment.setBooking(booking);
@@ -39,10 +44,16 @@ class PaymentTest {
 
         // given
         Long mockUserId = 123L; // 결제 요청의 userId
+        User mockUser = new User();
+        mockUser.setUserId(mockUserId);
+
         Long mockBookingUserId = 321L; // 예약된 userId
+        User mockBookingUser = new User();
+        mockBookingUser.setUserId(mockBookingUserId);
+
 
         Booking booking = new Booking();
-        booking.setUserId(mockBookingUserId);
+        booking.setUser(mockBookingUser);
 
         Payment payment = new Payment();
         payment.setBooking(booking);
@@ -62,10 +73,15 @@ class PaymentTest {
 
         // given
         Long mockUserId = 123L; // 결제 요청의 userId
-        Long mockBookingUserId = null; // 예약된 userId 없음(null로 바뀜; 점유 해제됨)
+        User mockUser = new User();
+        mockUser.setUserId(mockUserId);
+
+        Long mockBookingUserId = null; // 결제 요청의 userId
+        User MockBookingUser = new User();
+        MockBookingUser.setUserId(mockBookingUserId);
 
         Booking booking = new Booking();
-        booking.setUserId(mockBookingUserId);
+        booking.setUser(MockBookingUser);
 
         Payment payment = new Payment();
         payment.setBooking(booking);

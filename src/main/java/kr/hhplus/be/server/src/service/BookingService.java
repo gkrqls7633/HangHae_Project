@@ -1,13 +1,12 @@
 package kr.hhplus.be.server.src.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import kr.hhplus.be.server.src.common.ResponseMessage;
-import kr.hhplus.be.server.src.domain.model.Booking;
-import kr.hhplus.be.server.src.domain.model.Concert;
-import kr.hhplus.be.server.src.domain.model.ConcertSeat;
-import kr.hhplus.be.server.src.domain.model.Seat;
+import kr.hhplus.be.server.src.domain.model.*;
 import kr.hhplus.be.server.src.domain.model.enums.SeatStatus;
 import kr.hhplus.be.server.src.domain.repository.BookingRepository;
 import kr.hhplus.be.server.src.domain.repository.ConcertRepository;
+import kr.hhplus.be.server.src.domain.repository.UserRepository;
 import kr.hhplus.be.server.src.interfaces.booking.BookingRequest;
 import kr.hhplus.be.server.src.interfaces.booking.BookingResponse;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +23,7 @@ public class BookingService{
 
     private final BookingRepository bookingRepository;
     private final ConcertRepository concertRepository;
+    private final UserRepository userRepository;
 
     private static final String mockYsno = "Y";
 
@@ -54,11 +54,14 @@ public class BookingService{
                     .orElseThrow(() -> new RuntimeException("해당 콘서트를 찾을 수 없습니다."));
         }
 
+        User user = userRepository.findById(bookingRequest.getUserId())
+                .orElseThrow(() -> new EntityNotFoundException("유저 정보가 없습니다."));
+
         // 2. Booking 도메인 객체 생성
         Booking booking = new Booking();
         booking.setConcert(concert);
         booking.setSeatNum(bookingRequest.getSeatNum());
-        booking.setUserId(bookingRequest.getUserId());
+        booking.setUser(user);
 
         // 3. 예약 가능 여부 확인
         //  booking의 seatNum의 좌석 점유 여부 체크
