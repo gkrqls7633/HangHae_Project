@@ -6,25 +6,24 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import kr.hhplus.be.server.src.common.ResponseMessage;
 import kr.hhplus.be.server.src.domain.model.Point;
 import kr.hhplus.be.server.src.domain.model.User;
+import kr.hhplus.be.server.src.service.PointService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 
 @Tag(name = "포인트", description = "포인트 관리 API")
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/points")
 public class PointController {
 
+    private final PointService pointService;
+
     @Operation(summary = "포인트 조회", description = "포인트 잔액을 조회한다.")
     @GetMapping("")
-    public ResponseMessage<Point> getPoint(@RequestParam String userId) {
+    public ResponseMessage<PointResponse> getPoint(@RequestParam String userId) {
 
-        Point point = new Point();
-
-        if (point.getPointBalance(userId) == null) {
-            point.setPointBalance(0L);
-        }
-
-        return ResponseMessage.success("포인트 잔액이 정상적으로 조회됐습니다.", point);
+        return pointService.getPoint(userId);
     }
 
     @Operation(summary = "포인트 충전", description = "포인트를 충전한다.")
