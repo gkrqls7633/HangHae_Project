@@ -1,9 +1,8 @@
-package kr.hhplus.be.server.src.service.scehdular;
+package kr.hhplus.be.server.src.service.schedular;
 
 import kr.hhplus.be.server.src.domain.model.Queue;
 import kr.hhplus.be.server.src.domain.model.enums.TokenStatus;
 import kr.hhplus.be.server.src.domain.repository.QueueRepository;
-import kr.hhplus.be.server.src.interfaces.queue.QueueRequest;
 import kr.hhplus.be.server.src.service.QueueService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -14,7 +13,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Service
-public class QueueScehdular {
+public class QueueSchedular {
 
     private final QueueRepository queueRepository;
 
