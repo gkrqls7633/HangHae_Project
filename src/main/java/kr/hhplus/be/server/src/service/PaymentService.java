@@ -18,9 +18,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Service
 public class PaymentService {
-
-    private static final String mockYsno = "Y";
-
+    
     private final PaymentRepository paymentRepository;
     private final PointRepository pointRepository;
     private final ConcertRepository concertRepository;

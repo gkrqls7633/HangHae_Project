@@ -30,6 +30,7 @@ public class ConcertService {
      */
     public List<ConcertResponse> getConcertList() {
 
+        // mock 로직은 향후 제거 예정
         if (mockYsno.equals("Y")) {
 
             List<Concert> concertList = Arrays.asList(
@@ -72,6 +73,7 @@ public class ConcertService {
      */
     public ConcertResponse getAvailableSeats(Long concertId) {
 
+        // mock 로직은 향후 제거 예정
         if (mockYsno.equals("Y")) {
 
             List<Seat> seatList = Arrays.asList(

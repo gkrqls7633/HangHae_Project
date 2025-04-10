@@ -33,6 +33,7 @@ public class BookingService{
 
         Concert concert;
         // 1. concertId로 Concert 객체 조회
+        // mock 로직은 향후 제거 예정
         if (mockYsno.equals("Y")) {
             List<Seat> seatList = Arrays.asList(
                     new Seat(1L, 1L, SeatStatus.AVAILABLE),
@@ -70,6 +71,7 @@ public class BookingService{
 
         } else {
 
+            // mock 로직은 향후 제거 예정
             if (mockYsno.equals("Y")) {
                 bookingResponse = BookingResponse.builder()
                         .concertId(booking.getConcert().getConcertId())
