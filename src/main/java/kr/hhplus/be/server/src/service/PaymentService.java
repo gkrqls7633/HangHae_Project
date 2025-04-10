@@ -30,7 +30,7 @@ public class PaymentService {
 
         PaymentResponse paymentResponse = new PaymentResponse();
 
-        Payment payment = Payment.builder()
+        Payment paymentDomain = Payment.builder()
                 .userId(paymentRequest.getUserId())
                 .build();
 
@@ -38,7 +38,7 @@ public class PaymentService {
         // - 결제할 콘서트의 예약 여부 체크 (좌석 점유 되어있는지)
         // Payment -> Booking
 
-        if (!payment.isBookingCheck()) {
+        if (!paymentDomain.isBookingCheck()) {
             return ResponseMessage.error(500, "좌석 예약 내역을 재확인 해주세요.");
         }
 
@@ -46,7 +46,7 @@ public class PaymentService {
         // - 포인트 잔액이 결제할 가격보다 많아야 함.
 
         Optional<Point> point = pointRepository.findById(paymentRequest.getUserId());
-        Optional<Concert> concertInfo = concertRepository.findById(payment.getBooking().getBookingId());
+        Optional<Concert> concertInfo = concertRepository.findById(paymentDomain.getBooking().getBookingId());
 
         if (!point.get().isEnough(concertInfo.get().getPrice())) {
             return ResponseMessage.error(500, "잔액을 확인해주세요.");
@@ -54,11 +54,17 @@ public class PaymentService {
 
 
         // 마지막으로 결제 요청
-        Payment paymentRes = paymentRepository.save(payment);
+        // todo : 유저 잔액 포인트 차감
 
-        paymentResponse.setPaymentId(paymentRes.getPaymentId());
+        //결제 요청 -> 유저 잔액 포인트 차감
+        Payment payment = paymentRepository.save(paymentDomain);
+
+        paymentResponse.setPaymentId(payment.getPaymentId());
         paymentResponse.setBookingId(paymentRequest.getBookingId());
         paymentResponse.setPaymentStatus(PaymentStatus.COMPLETED);
+
+        //유저 잔액 차감
+        point.get().usePoint(concertInfo.get().getPrice());
 
         return ResponseMessage.success("결제가 완료됐습니다.", paymentResponse);
     }

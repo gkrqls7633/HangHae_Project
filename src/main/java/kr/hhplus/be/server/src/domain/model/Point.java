@@ -17,7 +17,6 @@ import lombok.Setter;
 @Schema(description = "포인트 정보")
 public class Point {
 
-
     @Id
     @Schema(description = "userId", example = "1")
     @JsonProperty("userId")
@@ -42,5 +41,21 @@ public class Point {
         }
 
         return true;
+    }
+
+    // 콘서트 예약 후 잔여 포인트 차감 처리
+    public Long usePoint(Long concertPrice) {
+
+        if (concertPrice < 0) {
+            throw new IllegalArgumentException("Concert price must be positive.");
+        }
+
+        //로직 상 이미 isEnough는 체크된 후에 usePoint를 호출하므로 굳이 필요 없을듯.
+        if (!this.isEnough(concertPrice)) {
+            throw new IllegalStateException("Not enough point balance.");
+        }
+
+        pointBalance -= concertPrice;
+        return pointBalance;
     }
 }
