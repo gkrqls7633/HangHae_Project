@@ -2,11 +2,17 @@
 
 
 ### 각 시나리오별 비즈니스 로직 개발 및 단위테스트 작성
+0. 2과제 보충
+- commit 
+  - 027c3b7 : 콘서트예약시스템_ERD다이어그램 설계 보강
+
 1. 클린&레이어드 아키텍처 비교 및 도메인 모델 분리 계획 수립
 - https://github.com/users/gkrqls7633/projects/2/views/5?pane=issue&itemId=105184147&issue=gkrqls7633%7CHangHae_Project%7C16
 
 2. 도메인&애플리케이션 계층 설계
 - https://github.com/users/gkrqls7633/projects/2/views/5?pane=issue&itemId=105184151&issue=gkrqls7633%7CHangHae_Project%7C17
+- commit 
+  - 25fde12 : 도메인&애플리케이션 계층 설계
 
 3. 데이터 계층 구현 및 외부 의존성 분리
 - https://github.com/users/gkrqls7633/projects/2/views/5?pane=issue&itemId=105184160&issue=gkrqls7633%7CHangHae_Project%7C18
