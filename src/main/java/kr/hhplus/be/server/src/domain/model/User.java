@@ -7,8 +7,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Entity
-@Schema(description = "유저 정보")
+@Schema(description = "유저 도메인")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -17,7 +19,7 @@ public class User {
 
     @Id
     @Schema(description = "유저Id", example = "1")
-    private String userId;
+    private Long userId;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Point point;
@@ -37,8 +39,14 @@ public class User {
     @Schema(description = "주소", example = "서울특별시 강서구 염창동")
     private String address;
 
+    @OneToMany(mappedBy = "user")
+    private List<Queue> queues;
 
-    public User(String userId, String userName, String password, String phoneNumber, String email, String address) {
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Booking> bookings;
+
+
+    public User(Long userId, String userName, String password, String phoneNumber, String email, String address) {
         this.userId = userId;
         this.userName = userName;
         this.password = password;
