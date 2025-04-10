@@ -25,9 +25,9 @@ public class QueueController {
     }
 
     //스케줄러로 구현하자.
-    @Operation(summary = "예약 대기열 토큰 만료 스케줄러", description = "유저의 예약 대기 토큰을 만료시킨다.")
+    @Operation(summary = "예약 대기열 토큰 만료", description = "유저의 예약 대기 토큰을 만료시킨다.")
     @PostMapping("/token/expire")
-    public ResponseMessage<String> expireQueueToken(@RequestBody QueueRequest queueRequest) {
+    public ResponseMessage<QueueResponse> expireQueueToken(@RequestBody QueueRequest queueRequest) {
 
         return queueService.expireQueueToken(queueRequest);
     }

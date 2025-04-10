@@ -14,6 +14,7 @@ import kr.hhplus.be.server.src.interfaces.queue.QueueResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -24,10 +25,15 @@ public class QueueService {
     private final BookingRepository bookingRepository;
     private final UserRepository userRepository;
 
+    /**
+     * @description 신규 토큰 발급
+     * @param queueRequest
+     * @return
+     */
     public ResponseMessage<QueueResponse> issueQueueToken(QueueRequest queueRequest) {
 
         // 1. 유저가 이미 발급받은 ACTIVE 상태의 토큰이 있는지 조회
-        Optional<Queue> existingQueue = queueRepository.findByBooking_UserIdAndTokenStatus(queueRequest.getUserId(), TokenStatus.ACTIVE);
+        Optional<Queue> existingQueue = queueRepository.findByBookingUserIdAndTokenStatus(queueRequest.getUserId(), TokenStatus.ACTIVE);
 
         if (existingQueue.isPresent()) {
             Queue existingQueueObj = existingQueue.get();
@@ -61,9 +67,61 @@ public class QueueService {
         return ResponseMessage.success("대기열 토큰을 발급 완료했습니다.", queueResponse);
     }
 
-    public ResponseMessage<String> expireQueueToken(QueueRequest queueRequest) {
+    /**
+     * @description controller에서 호출되는 단건으로 토큰 만료시키는 메서드
+     * @param queueRequest
+     * @return
+     */
+    public ResponseMessage<QueueResponse> expireQueueToken(QueueRequest queueRequest) {
 
-        return ResponseMessage.success("대기열 토큰이 만료됐습니다.");
+        // 1.userId, bookId로 발급된 유효한 상태의 토큰이 있는지 체크한다.
+        Queue queue = queueRepository.findByBookingIdAndUserIdAndTokenStatus(
+                        queueRequest.getUserId(),
+                        queueRequest.getBookingId(),
+                        TokenStatus.ACTIVE);
 
+        // 2. 해당 토큰의 상태 만료, 만료시간 변경
+        queue.setTokenStatus(TokenStatus.EXPIRED);
+        queue.setExpiredAt(LocalDateTime.now());
+
+        // 3. 토큰 만료 저장
+        queueRepository.save(queue);
+
+        QueueResponse queueResponse =  QueueResponse.builder()
+                .tokenValue(queue.getTokenValue())
+                .tokenStatus(queue.getTokenStatus())
+                .issuedAt(queue.getIssuedAt())
+                .expiredAt(queue.getExpiredAt())
+                .bookId(queueRequest.getBookingId())
+                .build();
+
+
+        return ResponseMessage.success("대기열 토큰이 만료되었습니다.", queueResponse);
+
+    }
+
+    /**
+     * @description 스케줄러에서 호출하는 토큰 만료 메서드
+     * @param queue
+     * @return
+     */
+    public ResponseMessage<QueueResponse> expireQueueToken(Queue queue) {
+        // 1. 해당 토큰의 상태를 만료로 변경하고, 만료 시간 수정
+        queue.setTokenStatus(TokenStatus.EXPIRED);
+        queue.setExpiredAt(LocalDateTime.now());  // 만료 시간 수정
+
+        // 3. 토큰 만료 저장
+        queueRepository.save(queue);
+
+        // 3. 성공 응답 반환
+        QueueResponse queueResponse =  QueueResponse.builder()
+                .tokenValue(queue.getTokenValue())
+                .tokenStatus(queue.getTokenStatus())
+                .issuedAt(queue.getIssuedAt())
+                .expiredAt(queue.getExpiredAt())
+                .bookId(queue.getBooking().getBookingId())
+                .build();
+
+        return ResponseMessage.success("대기열 토큰이 만료되었습니다.", queueResponse);
     }
 }
