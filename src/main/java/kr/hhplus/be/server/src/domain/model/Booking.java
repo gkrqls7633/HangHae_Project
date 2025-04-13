@@ -55,7 +55,7 @@ public class Booking {
         ConcertSeat concertSeat = concert.getConcertSeat();
         List<Seat> seatList = concertSeat.getSeats();
         Seat filteredSeat = seatList.stream()
-                .filter(seat -> this.seatNum.equals(seat.getSeatNum()))
+                .filter(seat -> this.seatId.equals(seat.getSeatId()))
                 .findFirst()
                 .orElse(null);
 

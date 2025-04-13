@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.src.service.schedular;
+package kr.hhplus.be.server.src.service.unit.schedular;
 
 import kr.hhplus.be.server.src.common.ResponseMessage;
 import kr.hhplus.be.server.src.domain.model.Booking;
@@ -8,6 +8,7 @@ import kr.hhplus.be.server.src.domain.model.enums.TokenStatus;
 import kr.hhplus.be.server.src.domain.repository.QueueRepository;
 import kr.hhplus.be.server.src.interfaces.queue.QueueRequest;
 import kr.hhplus.be.server.src.service.QueueService;
+import kr.hhplus.be.server.src.service.schedular.QueueSchedular;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

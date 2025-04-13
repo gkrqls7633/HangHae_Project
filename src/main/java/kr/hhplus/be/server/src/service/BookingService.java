@@ -6,11 +6,13 @@ import kr.hhplus.be.server.src.domain.model.*;
 import kr.hhplus.be.server.src.domain.model.enums.SeatStatus;
 import kr.hhplus.be.server.src.domain.repository.BookingRepository;
 import kr.hhplus.be.server.src.domain.repository.ConcertRepository;
+import kr.hhplus.be.server.src.domain.repository.SeatRepository;
 import kr.hhplus.be.server.src.domain.repository.UserRepository;
 import kr.hhplus.be.server.src.interfaces.booking.BookingRequest;
 import kr.hhplus.be.server.src.interfaces.booking.BookingResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.awt.print.Book;
 import java.util.Arrays;
@@ -22,45 +24,29 @@ import java.util.Optional;
 public class BookingService{
 
     private final BookingRepository bookingRepository;
+    private final SeatRepository seatRepository;
     private final ConcertRepository concertRepository;
     private final UserRepository userRepository;
 
-    private static final String mockYsno = "Y";
+//    private static final String mockYsno = "Y";
 
+    @Transactional
     public ResponseMessage<BookingResponse> bookingSeat(BookingRequest bookingRequest) {
 
-        BookingResponse bookingResponse;
-
-        Concert concert;
-        // 1. concertId로 Concert 객체 조회
-        // mock 로직은 향후 제거 예정
-        if (mockYsno.equals("Y")) {
-            List<Seat> seatList = Arrays.asList(
-                    new Seat(1L, 1L, SeatStatus.AVAILABLE),
-                    new Seat(2L, 2L, SeatStatus.BOOKED),
-                    new Seat(3L, 3L, SeatStatus.AVAILABLE),
-                    new Seat(4L, 4L, SeatStatus.OCCUPIED)
-            );
-
-            concert = new Concert(1L, "BTS World Tour", 150000L, "2025-05-01", "19:00", "서울 올림픽 경기장");
-
-            ConcertSeat concertSeat = new ConcertSeat(1L, concert, seatList);
-            concertSeat.setSeats(concertSeat.getAvailableSeats());
-
-            concert.setConcertSeat(concertSeat);
-
-        } else {
-            concert = concertRepository.findById(bookingRequest.getConcertId())
-                    .orElseThrow(() -> new RuntimeException("해당 콘서트를 찾을 수 없습니다."));
-        }
+        // 1. concertId로 Concert 객체 조회 / userId로 UserId 객체 조회 / seat 정보 조회
+        Concert concert = concertRepository.findById(bookingRequest.getConcertId())
+                .orElseThrow(() -> new RuntimeException("해당 콘서트를 찾을 수 없습니다."));
 
         User user = userRepository.findById(bookingRequest.getUserId())
                 .orElseThrow(() -> new EntityNotFoundException("유저 정보가 없습니다."));
 
+        Seat seat = seatRepository.findById(bookingRequest.getSeatId())
+                .orElseThrow(() -> new EntityNotFoundException("해당 좌석을 찾을 수 없습니다."));
+
         // 2. Booking 도메인 객체 생성
         Booking booking = new Booking();
-        booking.setConcert(concert);
         booking.setSeatNum(bookingRequest.getSeatNum());
+        booking.setConcert(concert);
         booking.setUser(user);
 
         // 3. 예약 가능 여부 확인
@@ -70,26 +56,21 @@ public class BookingService{
 
 //        } else if () {
 //            //todo : queuing token 확인 후 대기 순번 체크. 해당 차례 됐을 때 예약 서비스 이용 가능
-//
 
         } else {
+            //좌석 점유 처리
+            seat.setSeatStatus(SeatStatus.OCCUPIED);
+            seatRepository.save(seat);
 
-            // mock 로직은 향후 제거 예정
-            if (mockYsno.equals("Y")) {
-                bookingResponse = BookingResponse.builder()
-                        .concertId(booking.getConcert().getConcertId())
-                        .concertName(booking.getConcert().getName())
-                        .seatNum(booking.getSeatNum())
-                        .bookingMessage("좌석 예약이 완료됐습니다.")
-                        .build();
-
-                return ResponseMessage.success("좌석 예약이 완료됐습니다.", bookingResponse);
-            } else{
-                bookingRepository.save(booking);
-            }
-
+            // booking 예약 처리
+            bookingRepository.save(booking);
         }
 
-        return ResponseMessage.success("좌석 예약이 완료됐습니다.", new BookingResponse());
+        BookingResponse bookingResponse = new BookingResponse();
+        bookingResponse.setConcertId(concert.getConcertId());
+        bookingResponse.setConcertName(concert.getName());
+        bookingResponse.setSeatNum(seat.getSeatNum());
+
+        return ResponseMessage.success("좌석 예약이 완료됐습니다.", bookingResponse);
     }
 }

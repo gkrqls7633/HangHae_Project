@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.src.service;
+package kr.hhplus.be.server.src.service.integration;
 
 import jakarta.persistence.EntityNotFoundException;
 import kr.hhplus.be.server.src.common.ResponseMessage;
@@ -7,7 +7,9 @@ import kr.hhplus.be.server.src.domain.model.enums.SeatStatus;
 import kr.hhplus.be.server.src.domain.repository.*;
 import kr.hhplus.be.server.src.interfaces.payment.PaymentRequest;
 import kr.hhplus.be.server.src.interfaces.payment.PaymentResponse;
+import kr.hhplus.be.server.src.service.PaymentService;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -25,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ActiveProfiles("test")
 @Transactional
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class PaymentServiceTest {
+class PaymentServiceIntegrationTest {
 
     @Autowired
     private PaymentService paymentService;
@@ -62,7 +64,6 @@ class PaymentServiceTest {
         user.setEmail("test@naver.com");
         user.setAddress("서울특별시 강서구 염창동");
         User savedUser = userRepository.save(user);
-
         savedUserId = savedUser.getUserId();
 
 
@@ -80,32 +81,37 @@ class PaymentServiceTest {
         concert.setTime("19:00");
         concert.setLocation("서울 올림픽 경기장");
 
+        // 4. 콘서트-좌석 생성
         ConcertSeat concertSeat = new ConcertSeat();
         concertSeat.setConcert(concert);
         concertRepository.save(concert);
 
         List<Seat> seats = Arrays.asList(
                 new Seat(1L, SeatStatus.AVAILABLE, concertSeat),
-                new Seat(2L, SeatStatus.AVAILABLE, concertSeat)
+                new Seat(2L, SeatStatus.BOOKED, concertSeat),
+                new Seat(3L, SeatStatus.BOOKED, concertSeat),
+                new Seat(4L, SeatStatus.BOOKED, concertSeat),
+                new Seat(5L, SeatStatus.BOOKED, concertSeat)
         );
+        seatRepository.saveAll(seats);
 
         concertSeat.setSeats(seats);
         concertSeatRepository.save(concertSeat);
 
-        // 4. 예약 생성 (Booking)
+        // 5. 예약 생성 (Booking)
         Booking booking = new Booking();
         booking.setUser(user); // 유저와 연결
         booking.setConcert(concert); // 콘서트와 연결
         booking.setSeatId(1L); // 좌석 ID 설정
         booking.setSeatNum(1L); // 좌석 번호 설정
         Booking savedBooking =  bookingRepository.save(booking);
-
         savedBookingId = savedBooking.getBookingId();
     }
 
     @Test
+    @DisplayName("결제 처리 트랜잭션을 성공한다.")
     @Commit
-    void 결제_정상_처리_성공() {
+    void processPaymentTransactionTest() {
         // given
         PaymentRequest request = new PaymentRequest();
         request.setBookingId(savedBookingId);

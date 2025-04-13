@@ -26,7 +26,7 @@ public class ConcertSeat {
     private Long concertSeatId;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "concert_id", referencedColumnName = "concertId", insertable = false, updatable = false)
+    @JoinColumn(name = "concert_id", referencedColumnName = "concertId")
     @JsonIgnore
     private Concert concert;
 
