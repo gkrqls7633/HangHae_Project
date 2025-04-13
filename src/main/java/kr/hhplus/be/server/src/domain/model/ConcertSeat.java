@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 public class ConcertSeat {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Schema(description = "콘서트 좌석 ID", example = "1")
     private Long concertSeatId;
 

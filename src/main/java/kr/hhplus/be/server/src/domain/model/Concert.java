@@ -23,6 +23,7 @@ import static java.util.stream.IntStream.range;
 public class Concert {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Schema(description = "콘서트 ID", example = "1")
     private Long concertId;
 

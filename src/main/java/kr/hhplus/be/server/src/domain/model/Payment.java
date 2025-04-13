@@ -17,6 +17,7 @@ import java.util.Objects;
 public class Payment {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Schema(description = "결제id", example = "1")
     private Long paymentId;
 

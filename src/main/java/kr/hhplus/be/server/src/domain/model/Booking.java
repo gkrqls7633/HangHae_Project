@@ -20,17 +20,18 @@ import java.util.List;
 public class Booking {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Schema(description = "얘약 번호", example = "1")
     private Long bookingId;
 
     // Queue와 1:1 관계
-    @OneToOne(mappedBy = "booking")
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "booking")
     private Queue queue;
 
-    @OneToOne(mappedBy = "booking", cascade = CascadeType.ALL)  // 결제와 1:1 관계
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "booking", cascade = CascadeType.ALL)  // 결제와 1:1 관계
     private Payment payment;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "concert_concert_id")
     @Schema(description = "콘서트 정보",
         example = "{ \"concertId\": 1, \"name\": \"BTS World Tour\", \"price\": 150000, \"date\": \"2025-05-01\", \"time\": \"19:00\", \"location\": \"서울 올림픽 경기장\" }")

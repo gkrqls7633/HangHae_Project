@@ -3,8 +3,6 @@ package kr.hhplus.be.server.src.interfaces.payment;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kr.hhplus.be.server.src.common.ResponseMessage;
-import kr.hhplus.be.server.src.domain.model.Payment;
-import kr.hhplus.be.server.src.domain.model.enums.PaymentStatus;
 import kr.hhplus.be.server.src.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +19,6 @@ public class PaymentController {
     @PostMapping("")
     public ResponseMessage<PaymentResponse> processPayment(@RequestBody PaymentRequest paymentRequest) {
 
-        // todo : parameter 체크 PaymentRequest DTO로 옮기자
         if(paymentRequest.getBookingId() == null || paymentRequest.getBookingId().longValue() == 0L) {
             return ResponseMessage.error(400, "결제에 실패했습니다.");
         }

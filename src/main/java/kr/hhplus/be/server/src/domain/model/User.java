@@ -15,14 +15,13 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
+@Table(name = "`user`")
 public class User {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Schema(description = "유저Id", example = "1")
     private Long userId;
-
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Point point;
 
     @Schema(description = "유저명", example = "김항해")
     private String userName;
@@ -38,6 +37,9 @@ public class User {
 
     @Schema(description = "주소", example = "서울특별시 강서구 염창동")
     private String address;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Point point;
 
     @OneToMany(mappedBy = "user")
     private List<Queue> queues;

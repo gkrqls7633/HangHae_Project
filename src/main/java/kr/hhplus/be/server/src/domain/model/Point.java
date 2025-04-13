@@ -18,12 +18,11 @@ import lombok.Setter;
 public class Point {
 
     @Id
-    @Schema(description = "userId", example = "1")
-    @JsonProperty("userId")
-    private String userId;
+    private Long userId;
 
     @OneToOne
-    @JoinColumn(name = "userId")
+    @MapsId
+    @JoinColumn(name = "user_id")
     private User user;
 
 

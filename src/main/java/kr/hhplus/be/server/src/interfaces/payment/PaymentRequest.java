@@ -2,9 +2,11 @@ package kr.hhplus.be.server.src.interfaces.payment;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
+import lombok.Setter;
 
 @Schema(description = "결제 요청 Request DTO")
 @Getter
+@Setter
 public class PaymentRequest {
 
     @Schema(description = "예약 id", example = "1", required = true)

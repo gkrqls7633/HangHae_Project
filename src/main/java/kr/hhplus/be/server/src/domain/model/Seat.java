@@ -2,10 +2,7 @@ package kr.hhplus.be.server.src.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import kr.hhplus.be.server.src.common.enums.CommonEnumInterface;
 import kr.hhplus.be.server.src.domain.model.enums.SeatStatus;
 import lombok.*;
@@ -24,6 +21,7 @@ import static java.util.stream.IntStream.range;
 public class Seat {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Schema(description = "좌석 ID", example = "1")
     private Long seatId;
 
@@ -33,7 +31,7 @@ public class Seat {
     @Schema(description = "콘서트좌석", example = "1")
     private ConcertSeat concertSeat;
 
-    @Schema(description = "좌석 번호", example = "A1")
+    @Schema(description = "좌석 번호", example = "1")
     private Long seatNum;
 
     @Schema(description = "좌석 상태", example = "AVAILABLE")
@@ -43,6 +41,12 @@ public class Seat {
         this.seatId = seatId;
         this.seatNum = seatNum;
         this.seatStatus = seatStatus;
+    }
+
+    public Seat(Long seatNum, SeatStatus seatStatus, ConcertSeat concertSeat) {
+        this.seatNum = seatNum;
+        this.seatStatus = seatStatus;
+        this.concertSeat = concertSeat;
     }
 
     // 좌석의 예약 가능 상태를 반환
