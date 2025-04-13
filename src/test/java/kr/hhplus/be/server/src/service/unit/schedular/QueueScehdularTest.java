@@ -6,6 +6,7 @@ import kr.hhplus.be.server.src.domain.model.Queue;
 import kr.hhplus.be.server.src.domain.model.User;
 import kr.hhplus.be.server.src.domain.model.enums.TokenStatus;
 import kr.hhplus.be.server.src.domain.repository.QueueRepository;
+import kr.hhplus.be.server.src.interfaces.queue.QueueExpireRequest;
 import kr.hhplus.be.server.src.interfaces.queue.QueueRequest;
 import kr.hhplus.be.server.src.service.QueueService;
 import kr.hhplus.be.server.src.service.schedular.QueueSchedular;
@@ -66,14 +67,13 @@ class QueueScehdularTest {
         when(queueRepository.findByExpiredAtBeforeAndTokenStatus(any(), any()))
                 .thenReturn(List.of(queue));
 
-        when(queueService.expireQueueToken(any(QueueRequest.class)))
+        when(queueService.expireQueueToken(any(QueueExpireRequest.class)))
                 .thenReturn(new ResponseMessage<>(200, "대기열 토큰이 만료됐습니다.", null));
-
 
         // when
         queueScheduler.expireExpiredTokens();
         // then
-        verify(queueService, times(1)).expireQueueToken(any(QueueRequest.class));
+        verify(queueService, times(1)).expireQueueToken(any(QueueExpireRequest.class));
 
     }
 

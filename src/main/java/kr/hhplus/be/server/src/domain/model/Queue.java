@@ -3,10 +3,7 @@ package kr.hhplus.be.server.src.domain.model;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import kr.hhplus.be.server.src.domain.model.enums.TokenStatus;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -17,6 +14,7 @@ import java.util.UUID;
 @Entity
 @Getter
 @Setter
+@Builder
 @Schema(description = "대기열 도메인")
 @Table(name = "queue", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"user_id", "booking_id"})

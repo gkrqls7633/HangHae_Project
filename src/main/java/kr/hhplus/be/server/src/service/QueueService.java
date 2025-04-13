@@ -9,6 +9,7 @@ import kr.hhplus.be.server.src.domain.model.enums.TokenStatus;
 import kr.hhplus.be.server.src.domain.repository.BookingRepository;
 import kr.hhplus.be.server.src.domain.repository.QueueRepository;
 import kr.hhplus.be.server.src.domain.repository.UserRepository;
+import kr.hhplus.be.server.src.interfaces.queue.QueueExpireRequest;
 import kr.hhplus.be.server.src.interfaces.queue.QueueRequest;
 import kr.hhplus.be.server.src.interfaces.queue.QueueResponse;
 import lombok.RequiredArgsConstructor;
@@ -26,9 +27,9 @@ public class QueueService {
     private final UserRepository userRepository;
 
     /**
-     * @description 신규 토큰 발급
      * @param queueRequest
      * @return
+     * @description 신규 토큰 발급
      */
     public ResponseMessage<QueueResponse> issueQueueToken(QueueRequest queueRequest) {
 
@@ -56,7 +57,7 @@ public class QueueService {
 
         queueRepository.save(queue);
 
-        QueueResponse queueResponse =  QueueResponse.builder()
+        QueueResponse queueResponse = QueueResponse.builder()
                 .tokenValue(queue.getTokenValue())
                 .tokenStatus(queue.getTokenStatus())
                 .issuedAt(queue.getIssuedAt())
@@ -68,17 +69,22 @@ public class QueueService {
     }
 
     /**
-     * @description controller에서 호출되는 단건으로 토큰 만료시키는 메서드
-     * @param queueRequest
+     * @param queueExpireRequest
      * @return
+     * @description controller에서 호출되는 단건으로 토큰 만료시키는 메서드 / 스케줄러에서 토큰 만료 호출하는 메서드
      */
-    public ResponseMessage<QueueResponse> expireQueueToken(QueueRequest queueRequest) {
+    public ResponseMessage<QueueResponse> expireQueueToken(QueueExpireRequest queueExpireRequest) {
 
         // 1.userId, bookId로 발급된 유효한 상태의 토큰이 있는지 체크한다.
         Queue queue = queueRepository.findByBookingIdAndUserIdAndTokenStatus(
-                        queueRequest.getUserId(),
-                        queueRequest.getBookingId(),
-                        TokenStatus.ACTIVE);
+                queueExpireRequest.getUserId(),
+                queueExpireRequest.getBookingId(),
+                TokenStatus.ACTIVE);
+
+        // 토큰이 없으면 종료
+        if (queue == null) {
+            return ResponseMessage.success("유효한 토큰이 존재하지 않습니다.", null);
+        }
 
         // 2. 해당 토큰의 상태 만료, 만료시간 변경
         queue.setTokenStatus(TokenStatus.EXPIRED);
@@ -87,23 +93,22 @@ public class QueueService {
         // 3. 토큰 만료 저장
         queueRepository.save(queue);
 
-        QueueResponse queueResponse =  QueueResponse.builder()
+        QueueResponse queueResponse = QueueResponse.builder()
                 .tokenValue(queue.getTokenValue())
                 .tokenStatus(queue.getTokenStatus())
                 .issuedAt(queue.getIssuedAt())
                 .expiredAt(queue.getExpiredAt())
-                .bookId(queueRequest.getBookingId())
+                .bookId(queueExpireRequest.getBookingId())
                 .build();
-
 
         return ResponseMessage.success("대기열 토큰이 만료되었습니다.", queueResponse);
 
     }
 
     /**
-     * @description 스케줄러에서 호출하는 토큰 만료 메서드
      * @param queue
      * @return
+     * @description 스케줄러에서 호출하는 토큰 만료 메서드
      */
     public ResponseMessage<QueueResponse> expireQueueToken(Queue queue) {
         // 1. 해당 토큰의 상태를 만료로 변경하고, 만료 시간 수정
@@ -114,7 +119,7 @@ public class QueueService {
         queueRepository.save(queue);
 
         // 3. 성공 응답 반환
-        QueueResponse queueResponse =  QueueResponse.builder()
+        QueueResponse queueResponse = QueueResponse.builder()
                 .tokenValue(queue.getTokenValue())
                 .tokenStatus(queue.getTokenStatus())
                 .issuedAt(queue.getIssuedAt())
