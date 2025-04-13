@@ -8,6 +8,8 @@ import kr.hhplus.be.server.src.interfaces.point.PointChargeRequest;
 import kr.hhplus.be.server.src.interfaces.point.PointResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +22,7 @@ public class PointService {
      * @param userId
      * @return 포인트 잔액
      */
+    @Transactional(isolation = Isolation.READ_UNCOMMITTED)
     public ResponseMessage<PointResponse> getPoint(Long userId) {
 
         Point point = pointRepository.findById(userId)
