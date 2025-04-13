@@ -13,7 +13,7 @@ import java.util.Objects;
 @Builder
 @Getter
 @Setter
-@Schema(description = "결제")
+@Schema(description = "결제 도메인")
 public class Payment {
 
     @Id
@@ -32,12 +32,12 @@ public class Payment {
     public boolean isBookingCheck() {
 
         // booking 객체와 booking.getUserId()가 null인 경우를 체크
-        if (booking == null || booking.getUserId() == null) {
+        if (booking == null || booking.getUser().getUserId() == null) {
             return false;  // booking이 없거나 userId가 없으면 false 반환
         }
 
         // 결제 요청 userId와 예약된 userId 비교
-        return Objects.equals(booking.getUserId(), this.userId);
+        return Objects.equals(booking.getUser().getUserId(), this.userId);
 
     }
 

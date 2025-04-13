@@ -19,7 +19,7 @@ import static java.util.stream.IntStream.range;
 @Getter
 @Setter
 @Entity
-@Schema(description = "콘서트 정보")
+@Schema(description = "콘서트 도메안")
 public class Concert {
 
     @Id
