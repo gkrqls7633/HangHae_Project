@@ -107,4 +107,35 @@ public class PointServiceTransactionTest {
         transactionA.join();
         transactionB.join();
     }
+
+    @Test
+    @DisplayName("Repeatable Read : 동일 트랜잭션 내 동일 조회 결과 보장 여부 테스트")
+    @Commit
+    public void pointServiceRepeatableReadTest() throws InterruptedException {
+        CountDownLatch latch = new CountDownLatch(1);
+
+        Thread transactionA = new Thread(() -> {
+            try {
+                pointTransactionService.repeatableReadTransactionA(savedUserId, latch);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+
+        Thread transactionB = new Thread(() -> {
+            try {
+                latch.await(); // A가 첫 조회한 후 실행
+                pointTransactionService.repeatableReadTransactionB(savedUserId);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+
+        transactionA.start();
+        Thread.sleep(500); // B가 A의 첫 조회 이후 실행되도록 유도
+        transactionB.start();
+
+        transactionA.join();
+        transactionB.join();
+        }
 }
