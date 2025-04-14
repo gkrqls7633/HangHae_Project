@@ -1,12 +1,15 @@
 package kr.hhplus.be.server.src.service.unit.schedular.point;
 
 import kr.hhplus.be.server.src.domain.model.Point;
+import kr.hhplus.be.server.src.domain.model.User;
 import kr.hhplus.be.server.src.domain.repository.PointRepository;
+import kr.hhplus.be.server.src.domain.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 @Service
@@ -14,6 +17,9 @@ public class PointTransactionService {
 
     @Autowired
     private PointRepository pointRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Transactional(isolation = Isolation.READ_UNCOMMITTED)
     public void readUncommitteTtransactionA(Long userId) throws InterruptedException {
@@ -92,5 +98,40 @@ public class PointTransactionService {
         pointRepository.save(point);
         pointRepository.flush();
         System.out.println("###### [B] 포인트 수정 및 커밋 완료");
+    }
+
+    // 트랜잭션 A: 포인트 조회 후 대기
+    // READ_COMMITTED는 Phantom Read 발생할 수 있음.
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public List<Point> readPointsGreaterThanEqual(Long amount) throws InterruptedException {
+        // 조건에 맞는 포인트 조회
+        List<Point> points = pointRepository.findByPointBalanceGreaterThanEqual(amount);
+        System.out.println("🔒 [A] 첫 번째 조회 결과: " + points.size());
+
+        // 잠시 대기하여 트랜잭션 B가 삽입할 시간을 줌
+        Thread.sleep(2000);  // 2초 대기 후 다시 조회
+
+        points = pointRepository.findByPointBalanceGreaterThanEqual(amount);  // 두 번째 조회
+        System.out.println("🔒 [A] 두 번째 조회 결과: " + points.size());
+
+        return points;
+    }
+
+    // 트랜잭션 B: 새로운 row 삽입
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public void insertNewPoint(Long userId, Long pointBalance) {
+
+        User user = new User();
+        user.setUserName("김테스트");
+        user.setPhoneNumber("010-1234-1234");
+        user.setEmail("test2@naver.com");
+        user.setAddress("서울특별시 강서구 등촌동");
+        User savedUser = userRepository.save(user);
+
+        Point point = new Point();
+        point.setUser(savedUser);
+        point.setPointBalance(200000L);
+        pointRepository.save(point);
+        System.out.println("✏️ [B] 새로운 row 삽입 완료");
     }
 }

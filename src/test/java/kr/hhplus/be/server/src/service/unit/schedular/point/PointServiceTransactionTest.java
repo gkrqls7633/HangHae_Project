@@ -1,9 +1,7 @@
 package kr.hhplus.be.server.src.service.unit.schedular.point;
 
 import kr.hhplus.be.server.src.domain.model.Point;
-import kr.hhplus.be.server.src.domain.model.User;
 import kr.hhplus.be.server.src.domain.repository.PointRepository;
-import kr.hhplus.be.server.src.domain.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,6 +12,7 @@ import org.springframework.test.annotation.Commit;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 
@@ -21,7 +20,7 @@ import java.util.concurrent.CountDownLatch;
 @ActiveProfiles("test")
 @Transactional
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class PointServiceTransactionTest {
+class PointServiceTransactionTest {
 
     @Autowired
     private PointTransactionService pointTransactionService;
@@ -42,7 +41,7 @@ public class PointServiceTransactionTest {
     @Test
     @DisplayName("Read Uncommitted : Dirty Read 테스트")
     @Commit
-    public void pointServiceDirtyReadTest() throws InterruptedException {
+    void pointServiceDirtyReadTest() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
 
         Thread transactionA = new Thread(() -> {
@@ -74,7 +73,7 @@ public class PointServiceTransactionTest {
     @Test
     @DisplayName("Read Committed : Dirty Read 방지 테스트")
     @Commit
-    public void pointServiceReadCommittedTest() throws InterruptedException {
+    void pointServiceReadCommittedTest() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
 
         Point point = pointRepository.findById(savedUserId).get();
@@ -111,7 +110,7 @@ public class PointServiceTransactionTest {
     @Test
     @DisplayName("Repeatable Read : 동일 트랜잭션 내 동일 조회 결과 보장 여부 테스트")
     @Commit
-    public void pointServiceRepeatableReadTest() throws InterruptedException {
+    void pointServiceRepeatableReadTest() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
 
         Thread transactionA = new Thread(() -> {
@@ -138,4 +137,43 @@ public class PointServiceTransactionTest {
         transactionA.join();
         transactionB.join();
         }
+
+
+    @Test
+    @DisplayName("Serializable : Phantom Read 테스트")
+    @Commit
+    public void pointServicePhantomReadTest() throws InterruptedException {
+        CountDownLatch latch = new CountDownLatch(1);
+
+        // 트랜잭션 A: 포인트 조회 후 대기
+        Thread transactionA = new Thread(() -> {
+            try {
+                // 트랜잭션 A에서 포인트 조회
+                List<Point> points = pointTransactionService.readPointsGreaterThanEqual(100000L);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+
+        // 트랜잭션 B: 새로운 row 삽입
+        Thread transactionB = new Thread(() -> {
+            try {
+                // 트랜잭션 B가 삽입하기 전까지 기다림
+                latch.await();
+                // 트랜잭션 B에서 새로운 row 삽입
+                pointTransactionService.insertNewPoint(savedUserId, 150000L);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+
+        transactionA.start();
+        Thread.sleep(100);  // A가 조회할 시간을 주기 위해 잠시 대기
+        latch.countDown();  // 트랜잭션 B 시작
+        transactionB.start();
+
+        transactionA.join();
+        transactionB.join();
+    }
+
 }
