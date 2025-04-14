@@ -24,35 +24,19 @@ import java.util.concurrent.CountDownLatch;
 public class PointServiceTransactionTest {
 
     @Autowired
-    private PointTransactionDirtyReadService pointTransactionDirtyReadService;
+    private PointTransactionService pointTransactionService;
+
+    @Autowired
+    private PointTransactionHelper pointTransactionHelper;
 
     @Autowired
     private PointRepository pointRepository;
-
-    @Autowired
-    private UserRepository userRepository;
 
     private Long savedUserId;
 
     @BeforeEach
     void setup() {
-        // 1. 테스트용 유저 생성
-        User user = new User();
-        user.setUserName("김항해");
-        user.setPhoneNumber("010-1234-5678");
-        user.setEmail("test@naver.com");
-        user.setAddress("서울특별시 강서구 염창동");
-        User savedUser = userRepository.save(user);
-        savedUserId = savedUser.getUserId();
-
-        //2. 포인트 생성
-        Point point = new Point();
-        point.setUser(user);
-        point.setPointBalance(200000L);
-        pointRepository.save(point);
-
-        pointRepository.flush();
-
+        savedUserId = pointTransactionHelper.setupTestData();
     }
 
     @Test
@@ -63,7 +47,7 @@ public class PointServiceTransactionTest {
 
         Thread transactionA = new Thread(() -> {
             try {
-                pointTransactionDirtyReadService.transactionA(savedUserId);
+                pointTransactionService.readUncommitteTtransactionA(savedUserId);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -72,7 +56,7 @@ public class PointServiceTransactionTest {
         Thread transactionB = new Thread(() -> {
             try {
                 latch.await();
-                pointTransactionDirtyReadService.transactionB(savedUserId);
+                pointTransactionService .readUncommitteTtransactionB(savedUserId);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -81,6 +65,43 @@ public class PointServiceTransactionTest {
         transactionA.start();
         Thread.sleep(100);
         latch.countDown();
+        transactionB.start();
+
+        transactionA.join();
+        transactionB.join();
+    }
+
+    @Test
+    @DisplayName("Read Committed : Dirty Read 방지 테스트")
+    @Commit
+    public void pointServiceReadCommittedTest() throws InterruptedException {
+        CountDownLatch latch = new CountDownLatch(1);
+
+        Point point = pointRepository.findById(savedUserId).get();
+        System.out.println(point.getPointBalance());
+
+        // 트랜잭션 A: 포인트 수정 후 커밋되지 않은 상태로 대기
+        Thread transactionA = new Thread(() -> {
+            try {
+                pointTransactionService.readCommittedTransactionA(savedUserId);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+
+        // 트랜잭션 B: 트랜잭션 A가 커밋된 후 데이터를 읽을 수 있도록 대기
+        Thread transactionB = new Thread(() -> {
+            try {
+                latch.await();
+                pointTransactionService.readCommittedTransactionB(savedUserId);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+
+        transactionA.start();
+        Thread.sleep(100);
+        latch.countDown();  // 트랜잭션 B 시작
         transactionB.start();
 
         transactionA.join();
