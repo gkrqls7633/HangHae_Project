@@ -14,16 +14,16 @@ import org.hibernate.annotations.OptimisticLocking;
 @Getter
 @Setter
 @Builder
-@OptimisticLocking(type = OptimisticLockType.NONE)
 @Schema(description = "포인트 도메인")
 public class Point {
+
 
     @Id
     private Long userId;
 
     @OneToOne(fetch = FetchType.LAZY)
     @MapsId
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
 
 
