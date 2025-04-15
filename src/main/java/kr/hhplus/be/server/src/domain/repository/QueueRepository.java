@@ -13,7 +13,7 @@ import java.util.Optional;
 
 public interface QueueRepository extends JpaRepository<Queue, Long>, QueueRepositoryCustom {
 
-    /* 유저의 활성화 상태의 토큰이 존재하는지 조회 */
+    /* 특정 유저의 활성화 상태의 토큰이 존재하는지 조회 */
     @Query("SELECT q FROM Queue q WHERE q.booking.user.userId = :userId AND q.tokenStatus = :tokenStatus")
     Optional<Queue> findByBookingUserIdAndTokenStatus(@Param("userId") Long userId, @Param("tokenStatus") TokenStatus tokenStatus);
 

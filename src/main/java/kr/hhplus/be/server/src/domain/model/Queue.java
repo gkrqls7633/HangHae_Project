@@ -23,7 +23,6 @@ public class Queue {
 
     private static final long TOKEN_EXPIRE_MINUTES = 5;
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Schema(description = "대기열 ID", example = "1", required = true)
