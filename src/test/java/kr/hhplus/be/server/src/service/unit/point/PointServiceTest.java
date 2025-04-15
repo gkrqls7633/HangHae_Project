@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.src.service.unit.schedular.point;
+package kr.hhplus.be.server.src.service.unit.point;
 
 
 import jakarta.persistence.EntityNotFoundException;
@@ -6,6 +6,7 @@ import kr.hhplus.be.server.src.common.ResponseMessage;
 import kr.hhplus.be.server.src.domain.model.Point;
 import kr.hhplus.be.server.src.domain.model.User;
 import kr.hhplus.be.server.src.domain.repository.PointRepository;
+import kr.hhplus.be.server.src.interfaces.point.PointChargeRequest;
 import kr.hhplus.be.server.src.interfaces.point.PointResponse;
 import kr.hhplus.be.server.src.service.PointService;
 import org.junit.jupiter.api.BeforeEach;
@@ -68,7 +69,7 @@ class PointServiceTest {
     }
 
     @Test
-    @DisplayName("유저의 포인트가 없음 테스트")
+    @DisplayName("유저의 포인트가 조회되지 않으면 EntityNotFound에러 발생")
     void doNotGetPointTest() {
 
         //given
@@ -79,4 +80,28 @@ class PointServiceTest {
 
         verify(pointRepository, times(1)).findById(userId);
     }
+
+    @Test
+    @DisplayName("유저의 포인트 충전 테스트")
+    void chargePointtest() {
+
+        //given
+        PointChargeRequest mockPointChargeRequest = new PointChargeRequest();
+        mockPointChargeRequest.setUserId(1L);
+        mockPointChargeRequest.setChargePoint(100000L);
+
+        when(pointRepository.findById(userId)).thenReturn(Optional.of(mockPoint));
+
+        //when
+        ResponseMessage<PointResponse> response = pointService.chargePoint(mockPointChargeRequest);
+
+        //then
+        assertNotNull(response);
+        assertEquals("포인트가 정상적으로 충전됐습니다.", response.getMessage());
+        assertEquals(Optional.of(101000L).get(), response.getData().getPointBalance());
+
+        verify(pointRepository, times(1)).save(mockPoint);
+    }
+
+
 }

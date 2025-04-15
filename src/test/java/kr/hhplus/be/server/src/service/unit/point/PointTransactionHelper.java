@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.src.service.unit.schedular.point;
+package kr.hhplus.be.server.src.service.unit.point;
 
 import kr.hhplus.be.server.src.domain.model.Point;
 import kr.hhplus.be.server.src.domain.model.User;
