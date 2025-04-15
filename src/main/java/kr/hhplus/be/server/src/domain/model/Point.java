@@ -17,7 +17,6 @@ import org.hibernate.annotations.OptimisticLocking;
 @Schema(description = "포인트 도메인")
 public class Point {
 
-
     @Id
     private Long userId;
 

@@ -42,6 +42,7 @@ public class PointService {
      * @param pointChargeRequest
      * @return
      */
+    @Transactional
     public ResponseMessage<PointResponse> chargePoint(PointChargeRequest pointChargeRequest) {
 
         //현재 잔액 조회
@@ -59,6 +60,5 @@ public class PointService {
                 .build();
 
         return ResponseMessage.success("포인트가 정상적으로 충전됐습니다.", pointResponse);
-
     }
 }
