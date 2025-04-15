@@ -28,13 +28,14 @@ public class Booking {
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "booking")
     private Queue queue;
 
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "booking", cascade = CascadeType.ALL)  // 결제와 1:1 관계
+    // 결제와 1:1 관계
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "booking") // casecade.all은 부모가 자식을 자동으로 persist,remove함
     private Payment payment;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "concert_concert_id")
     @Schema(description = "콘서트 정보",
-        example = "{ \"concertId\": 1, \"name\": \"BTS World Tour\", \"price\": 150000, \"date\": \"2025-05-01\", \"time\": \"19:00\", \"location\": \"서울 올림픽 경기장\" }")
+            example = "{ \"concertId\": 1, \"name\": \"BTS World Tour\", \"price\": 150000, \"date\": \"2025-05-01\", \"time\": \"19:00\", \"location\": \"서울 올림픽 경기장\" }")
     private Concert concert;
 
     @Schema(description = "좌석 Id", example = "1")
@@ -55,7 +56,7 @@ public class Booking {
         ConcertSeat concertSeat = concert.getConcertSeat();
         List<Seat> seatList = concertSeat.getSeats();
         Seat filteredSeat = seatList.stream()
-                .filter(seat -> this.seatId.equals(seat.getSeatId()))
+                .filter(seat -> this.seatNum.equals(seat.getSeatNum()))
                 .findFirst()
                 .orElse(null);
 

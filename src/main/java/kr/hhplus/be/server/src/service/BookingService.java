@@ -28,8 +28,6 @@ public class BookingService{
     private final ConcertRepository concertRepository;
     private final UserRepository userRepository;
 
-//    private static final String mockYsno = "Y";
-
     @Transactional
     public ResponseMessage<BookingResponse> bookingSeat(BookingRequest bookingRequest) {
 
@@ -40,7 +38,11 @@ public class BookingService{
         User user = userRepository.findById(bookingRequest.getUserId())
                 .orElseThrow(() -> new EntityNotFoundException("유저 정보가 없습니다."));
 
-        Seat seat = seatRepository.findById(bookingRequest.getSeatId())
+        Seat seat = seatRepository
+                .findByConcertSeat_Concert_ConcertIdAndSeatNum(
+                        bookingRequest.getConcertId(),
+                        bookingRequest.getSeatNum()
+                )
                 .orElseThrow(() -> new EntityNotFoundException("해당 좌석을 찾을 수 없습니다."));
 
         // 2. Booking 도메인 객체 생성

@@ -28,10 +28,10 @@ class ConcertSeatTest {
 
         Concert concert = new Concert(concertId, "BTS World Tour", 150000L, "2025-05-01", "19:00", "서울 올림픽 경기장");
         List<Seat> seatList = Arrays.asList(
-                new Seat(1L, 1L, SeatStatus.AVAILABLE),
-                new Seat(2L, 2L, SeatStatus.BOOKED),
-                new Seat(3L, 3L, SeatStatus.AVAILABLE),
-                new Seat(4L, 4L, SeatStatus.OCCUPIED)
+                Seat.builder().concertSeat(concertSeat).seatNum(1L).seatStatus(SeatStatus.AVAILABLE).build(),
+                Seat.builder().concertSeat(concertSeat).seatNum(2L).seatStatus(SeatStatus.BOOKED).build(),
+                Seat.builder().concertSeat(concertSeat).seatNum(3L).seatStatus(SeatStatus.AVAILABLE).build(),
+                Seat.builder().concertSeat(concertSeat).seatNum(4L).seatStatus(SeatStatus.OCCUPIED).build()
         );
         concertSeat.setSeats(seatList);
 
@@ -54,17 +54,17 @@ class ConcertSeatTest {
 
         Concert concert = new Concert(concertId, "BTS World Tour", 150000L, "2025-05-01", "19:00", "서울 올림픽 경기장");
         List<Seat> seatList = Arrays.asList(
-                new Seat(1L, 1L, SeatStatus.AVAILABLE),
-                new Seat(2L, 2L, SeatStatus.BOOKED),
-                new Seat(3L, 3L, SeatStatus.AVAILABLE),
-                new Seat(4L, 4L, SeatStatus.OCCUPIED)
+                Seat.builder().concertSeat(concertSeat).seatNum(1L).seatStatus(SeatStatus.AVAILABLE).build(),
+                Seat.builder().concertSeat(concertSeat).seatNum(2L).seatStatus(SeatStatus.BOOKED).build(),
+                Seat.builder().concertSeat(concertSeat).seatNum(3L).seatStatus(SeatStatus.AVAILABLE).build(),
+                Seat.builder().concertSeat(concertSeat).seatNum(4L).seatStatus(SeatStatus.OCCUPIED).build()
         );
         concertSeat.setSeats(seatList);
 
         when(concertSeat.getAvailableSeats()).thenReturn(Arrays.asList(
-                new Seat(1L, 1L, SeatStatus.AVAILABLE),
-                new Seat(2L, 2L, SeatStatus.BOOKED),
-                new Seat(3L, 3L, SeatStatus.AVAILABLE)
+                Seat.builder().concertSeat(concertSeat).seatNum(1L).seatStatus(SeatStatus.AVAILABLE).build(),
+                Seat.builder().concertSeat(concertSeat).seatNum(2L).seatStatus(SeatStatus.BOOKED).build(),
+                Seat.builder().concertSeat(concertSeat).seatNum(3L).seatStatus(SeatStatus.AVAILABLE).build()
         ));
 
         //when

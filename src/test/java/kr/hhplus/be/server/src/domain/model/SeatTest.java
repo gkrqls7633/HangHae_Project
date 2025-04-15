@@ -12,9 +12,12 @@ class SeatTest {
     @DisplayName("해당 좌석은 예약 가능한 좌석이다.")
     void isAvailableSeatTest() {
         //given
-        Seat availableSeat  = new Seat(1L, 1L, SeatStatus.AVAILABLE);
-        Seat bookedSeat = new Seat(2L, 2L, SeatStatus.BOOKED);
-        Seat occupiedSeat = new Seat(3L, 3L, SeatStatus.OCCUPIED);
+
+        ConcertSeat mockConcertSeat = new ConcertSeat();
+
+        Seat availableSeat  = Seat.builder().concertSeat(mockConcertSeat).seatNum(1L).seatStatus(SeatStatus.AVAILABLE).build();
+        Seat bookedSeat = Seat.builder().concertSeat(mockConcertSeat).seatNum(2L).seatStatus(SeatStatus.BOOKED).build();
+        Seat occupiedSeat = Seat.builder().concertSeat(mockConcertSeat).seatNum(4L).seatStatus(SeatStatus.OCCUPIED).build();
 
         //when & then
         assertTrue(availableSeat.isAvailable(), "AVAILABLE 상태의 좌석은 예약 가능하다.");

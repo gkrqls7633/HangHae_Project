@@ -1,7 +1,8 @@
-package kr.hhplus.be.server.src.service.unit.point;
+package kr.hhplus.be.server.src.service.integration;
 
 import kr.hhplus.be.server.src.domain.model.Point;
 import kr.hhplus.be.server.src.domain.repository.PointRepository;
+import kr.hhplus.be.server.src.service.testTransactionHelper.PointTransactionHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

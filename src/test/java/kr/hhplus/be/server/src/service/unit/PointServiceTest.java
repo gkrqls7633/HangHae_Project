@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.src.service.unit.point;
+package kr.hhplus.be.server.src.service.unit;
 
 
 import jakarta.persistence.EntityNotFoundException;

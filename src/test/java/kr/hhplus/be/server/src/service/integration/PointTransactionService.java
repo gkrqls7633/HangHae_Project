@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.src.service.unit.point;
+package kr.hhplus.be.server.src.service.integration;
 
 import kr.hhplus.be.server.src.domain.model.Point;
 import kr.hhplus.be.server.src.domain.model.User;

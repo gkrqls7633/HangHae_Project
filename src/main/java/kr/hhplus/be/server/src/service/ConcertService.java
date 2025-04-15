@@ -71,45 +71,22 @@ public class ConcertService {
      * @param concertId 콘서트 ID
      * @return 예약 가능한 좌석 목록을 포함한 콘서트 객체
      */
+
+    //todo : 해당 콘서트의 좌석 return하게 수정
     public ConcertResponse getAvailableSeats(Long concertId) {
-
-        // mock 로직은 향후 제거 예정
-        if (mockYsno.equals("Y")) {
-
-            List<Seat> seatList = Arrays.asList(
-                    new Seat(1L, 1L, SeatStatus.AVAILABLE),
-                    new Seat(2L, 2L, SeatStatus.BOOKED),
-                    new Seat(3L, 3L, SeatStatus.AVAILABLE),
-                    new Seat(4L, 4L, SeatStatus.OCCUPIED)
-            );
-
-            ConcertSeat concertSeat = new ConcertSeat();
-            List<Seat> availableSeat = concertSeat.getAvailableSeats();
-            concertSeat.setSeats(availableSeat);
-
-            return ConcertResponse.builder()
-                    .concertId(concertId)
-                    .name("BTS World Tour")
-                    .price(150000L)
-                    .date("2025-05-01")
-                    .time("19:00")
-                    .location("서울 올림픽 경기장")
-                    .concertSeat(concertSeat)
-                    .build();
-        }
 
         Optional<Concert> concertOpt = concertRepository.findById(concertId);
         Concert concert = concertOpt.orElseThrow(() -> new RuntimeException("해당 concertId가 존재하지 않습니다 : " + concertId));
 
-        List<Seat> seatList = Arrays.asList(
-                new Seat(1L, 1L, SeatStatus.AVAILABLE),
-                new Seat(2L, 2L, SeatStatus.BOOKED),
-                new Seat(3L, 3L, SeatStatus.AVAILABLE),
-                new Seat(4L, 4L, SeatStatus.OCCUPIED)
-        );
-
         ConcertSeat concertSeat = new ConcertSeat();
         List<Seat> availableSeat = concertSeat.getAvailableSeats();
+
+        List<Seat> seatList = Arrays.asList(
+                Seat.builder().concertSeat(concertSeat).seatNum(1L).seatStatus(SeatStatus.AVAILABLE).build(),
+                Seat.builder().concertSeat(concertSeat).seatNum(2L).seatStatus(SeatStatus.BOOKED).build(),
+                Seat.builder().concertSeat(concertSeat).seatNum(3L).seatStatus(SeatStatus.AVAILABLE).build(),
+                Seat.builder().concertSeat(concertSeat).seatNum(4L).seatStatus(SeatStatus.OCCUPIED).build()
+        );
 
         return ConcertResponse.builder()
                 .concertId(concertId)

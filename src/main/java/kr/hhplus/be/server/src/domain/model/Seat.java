@@ -14,9 +14,11 @@ import java.util.stream.Collectors;
 import static java.util.stream.IntStream.range;
 
 @RequiredArgsConstructor
+@AllArgsConstructor
 @Setter
 @Getter
 @Entity
+@Builder
 @Schema(description = "좌석 도메인")
 public class Seat {
 
@@ -36,18 +38,6 @@ public class Seat {
 
     @Schema(description = "좌석 상태", example = "AVAILABLE")
     private SeatStatus seatStatus;
-
-    public Seat(Long seatId, Long seatNum, SeatStatus seatStatus) {
-        this.seatId = seatId;
-        this.seatNum = seatNum;
-        this.seatStatus = seatStatus;
-    }
-
-    public Seat(Long seatNum, SeatStatus seatStatus, ConcertSeat concertSeat) {
-        this.seatNum = seatNum;
-        this.seatStatus = seatStatus;
-        this.concertSeat = concertSeat;
-    }
 
     // 좌석의 예약 가능 상태를 반환
     public boolean isAvailable() {
