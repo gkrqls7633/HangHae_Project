@@ -12,7 +12,8 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    public UserResponse getUserPoint(String userId) {
+    public UserResponse getUserPoint(Long userId) {
+
         return userRepository.getUserPoint(userId);
     }
 }
