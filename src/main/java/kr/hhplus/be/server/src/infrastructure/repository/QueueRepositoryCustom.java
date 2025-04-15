@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface QueueRepositoryCustom {
 
-    List<Queue> findExpiredQueues(LocalDateTime now, TokenStatus tokenStatus);
+    List<Queue> findByExpiredAtBeforeAndTokenStatus(LocalDateTime now, TokenStatus tokenStatus);
 
 
 }

@@ -19,7 +19,7 @@ public class QueueRepositoryImpl implements QueueRepositoryCustom {
 
 
     @Override
-    public List<Queue> findExpiredQueues(LocalDateTime now, TokenStatus tokenStatus) {
+    public List<Queue> findByExpiredAtBeforeAndTokenStatus(LocalDateTime now, TokenStatus tokenStatus) {
         String jpql = "SELECT q FROM Queue q WHERE q.expiredAt < :now AND q.tokenStatus = :status";
         TypedQuery<Queue> query = em.createQuery(jpql, Queue.class);
         query.setParameter("now", now);
