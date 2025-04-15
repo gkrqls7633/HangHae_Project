@@ -26,12 +26,6 @@ class PointServiceIntegrationTest {
     private PointService pointService;
 
     @Autowired
-    private PointRepository pointRepository;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
     private PointTransactionHelper pointTransactionHelper;
 
     private Long savedUserId;
