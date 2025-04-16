@@ -45,6 +45,7 @@ public class Queue {
     private Long userId;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "token_status", length = 10)
     private TokenStatus tokenStatus;
 
     /* tokenValue 신규 발급
@@ -52,6 +53,7 @@ public class Queue {
     - 대기 상태 토큰 발급
     */
     public void newToken() {
+        this.userId = userId;
         this.tokenValue = UUID.randomUUID().toString();
         this.tokenStatus = TokenStatus.READY;
         this.issuedAt = LocalDateTime.now();

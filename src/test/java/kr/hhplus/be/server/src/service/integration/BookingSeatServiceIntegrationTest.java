@@ -2,9 +2,12 @@ package kr.hhplus.be.server.src.service.integration;
 
 import kr.hhplus.be.server.src.common.ResponseMessage;
 import kr.hhplus.be.server.src.domain.model.Booking;
+import kr.hhplus.be.server.src.domain.model.Queue;
 import kr.hhplus.be.server.src.domain.model.Seat;
 import kr.hhplus.be.server.src.domain.model.enums.SeatStatus;
+import kr.hhplus.be.server.src.domain.model.enums.TokenStatus;
 import kr.hhplus.be.server.src.domain.repository.BookingRepository;
+import kr.hhplus.be.server.src.domain.repository.QueueRepository;
 import kr.hhplus.be.server.src.domain.repository.SeatRepository;
 import kr.hhplus.be.server.src.interfaces.booking.BookingRequest;
 import kr.hhplus.be.server.src.interfaces.point.PointResponse;
@@ -36,6 +39,7 @@ class BookingSeatServiceIntegrationTest {
     private SeatRepository seatRepository;
 
     private BookingRequest bookingRequest;
+
 
     @BeforeEach
     void setup() {

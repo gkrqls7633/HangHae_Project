@@ -4,10 +4,8 @@ import jakarta.persistence.EntityNotFoundException;
 import kr.hhplus.be.server.src.common.ResponseMessage;
 import kr.hhplus.be.server.src.domain.model.*;
 import kr.hhplus.be.server.src.domain.model.enums.SeatStatus;
-import kr.hhplus.be.server.src.domain.repository.BookingRepository;
-import kr.hhplus.be.server.src.domain.repository.ConcertRepository;
-import kr.hhplus.be.server.src.domain.repository.SeatRepository;
-import kr.hhplus.be.server.src.domain.repository.UserRepository;
+import kr.hhplus.be.server.src.domain.model.enums.TokenStatus;
+import kr.hhplus.be.server.src.domain.repository.*;
 import kr.hhplus.be.server.src.interfaces.booking.BookingRequest;
 import kr.hhplus.be.server.src.interfaces.booking.BookingResponse;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.awt.print.Book;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -27,9 +26,17 @@ public class BookingService{
     private final SeatRepository seatRepository;
     private final ConcertRepository concertRepository;
     private final UserRepository userRepository;
+    private final QueueRepository queueRepository;
 
     @Transactional
     public ResponseMessage<BookingResponse> bookingSeat(BookingRequest bookingRequest) {
+
+        //활성화 상태의 토큰이 조회되지 않거나 || 해당 유효 기간(만료기간)이 현재시간보다 지난 경우 -> 서비스 불가
+        Optional<Queue> activeToken = queueRepository.findByUserIdAndTokenStatus(bookingRequest.getUserId(), TokenStatus.ACTIVE);
+
+        if (activeToken.isEmpty() || activeToken.get().getExpiredAt().isBefore(LocalDateTime.now())) {
+            throw new IllegalStateException("유효한 대기열 토큰이 존재하지 않습니다.");
+        }
 
         // 1. concertId로 Concert 객체 조회 / userId로 UserId 객체 조회 / seat 정보 조회
         Concert concert = concertRepository.findById(bookingRequest.getConcertId())

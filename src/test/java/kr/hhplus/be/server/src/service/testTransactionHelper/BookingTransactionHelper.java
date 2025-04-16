@@ -2,6 +2,7 @@ package kr.hhplus.be.server.src.service.testTransactionHelper;
 
 import kr.hhplus.be.server.src.domain.model.*;
 import kr.hhplus.be.server.src.domain.model.enums.SeatStatus;
+import kr.hhplus.be.server.src.domain.model.enums.TokenStatus;
 import kr.hhplus.be.server.src.domain.repository.*;
 import kr.hhplus.be.server.src.interfaces.booking.BookingRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +27,12 @@ public class BookingTransactionHelper {
 
     @Autowired
     private PointRepository pointRepository;
+
     @Autowired
     private ConcertSeatRepository concertSeatRepository;
+
+    @Autowired
+    private QueueRepository queueRepository;
 
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -74,8 +79,16 @@ public class BookingTransactionHelper {
         //좌석 저장
         seatRepository.saveAll(seatList);
 
-        BookingRequest bookingRequest = new BookingRequest(savedConcert.getConcertId(), seatList.get(0).getSeatNum(), savedUser.getUserId());
+        //유저 대기 토큰 발급
+        Queue queue = new Queue();
+        queue.setUserId(savedUser.getUserId());
+        queue.newToken();
 
+        //활성화 토큰으로 변경
+        queue.setTokenStatus(TokenStatus.ACTIVE);
+        queueRepository.save(queue);
+
+        BookingRequest bookingRequest = new BookingRequest(savedConcert.getConcertId(), seatList.get(0).getSeatNum(), savedUser.getUserId());
 
         return bookingRequest;
 
