@@ -70,9 +70,9 @@
 ### Docs
 - [마일스톤](https://github.com/users/gkrqls7633/projects/2)
 - [유스케이스 다이어그램](docs/diagram/콘서트예약시스템_유스케이스.png)
-- [시퀀스 다이어그램](docs/diagram/콘서트예약시스템_시퀀스다이어그램.png)
+- [시퀀스 다이어그램](docs/diagram/시퀀스다이어그램/콘서트예약시스템_시퀀스다이어그램(통합).png)
 - [클래스 다이어그램](docs/diagram/콘서트예약시스템_클래스다이어그램.png)
-- [ERD 다이어그램](docs/diagram/콘서트예약시스템_ERD다이어그램.png)
+- [ERD 다이어그램](docs/diagram/ERD다이어그램/콘서트예약시스템_ERD다이어그램1.1.png)
 
 
 ### 참고
