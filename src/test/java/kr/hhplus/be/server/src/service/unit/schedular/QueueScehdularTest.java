@@ -72,7 +72,7 @@ class QueueScehdularTest {
                 .thenReturn(new ResponseMessage<>(200, "대기열 토큰이 만료됐습니다.", null));
 
         // when
-        queueScheduler.expireExpiredTokens();
+        queueScheduler.expireTokens();
         // then
         verify(queueService, times(1)).expireQueueToken(any(QueueExpireRequest.class));
     }

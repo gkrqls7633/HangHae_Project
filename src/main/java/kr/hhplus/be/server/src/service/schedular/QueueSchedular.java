@@ -22,7 +22,7 @@ public class QueueSchedular {
 
     //스케줄 시간 정책 : 5분 임시 셋팅
     @Scheduled(cron = "0 0/5 * * * *")
-    public void expireExpiredTokens() {
+    public void expireTokens() {
 
         // 1. 만료된 토큰들 조회
         LocalDateTime now = LocalDateTime.now();
@@ -47,5 +47,27 @@ public class QueueSchedular {
         }
 
         System.out.println(expiredQueues.size() + "개의 토큰이 만료되었습니다.");
+    }
+
+    // 토큰 활성 시간 정책 : 10초 임시 셋팅
+    @Scheduled(cron = "*/10 * * * * *")//
+    public void readyToActivateTokens() {
+
+        // 1. READY 상태의 토큰들 조회
+        List<Queue> readyQueues = queueRepository.findByTokenStatus(TokenStatus.READY);
+
+        if (readyQueues.isEmpty()) {
+            System.out.println("#####활성화할 토큰이 없습니다.#####");
+            return;
+        }
+
+        // 2. READY → ACTIVE 상태로 변경
+        for (Queue queue : readyQueues) {
+            queue.setTokenStatus(TokenStatus.ACTIVE);
+            queue.refreshToken(); // 시간 갱신
+            queueRepository.save(queue);
+        }
+
+        System.out.println(readyQueues.size() + "개의 토큰이 ACTIVE 상태로 전환되었습니다.");
     }
 }
