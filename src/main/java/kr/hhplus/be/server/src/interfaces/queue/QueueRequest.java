@@ -14,6 +14,4 @@ public class QueueRequest {
     @Schema(description = "userId", example = "1")
     private Long userId;
 
-    @Schema(description = "bookingId", example = "1")
-    private Long bookingId;
 }

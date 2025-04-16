@@ -39,9 +39,6 @@ public class User {
     @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Point point;
 
-    @OneToMany(mappedBy = "user")
-    private List<Queue> queues;
-
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Booking> bookings;
 

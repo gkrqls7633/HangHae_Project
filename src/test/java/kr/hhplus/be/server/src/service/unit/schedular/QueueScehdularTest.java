@@ -20,6 +20,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -44,7 +45,7 @@ class QueueScehdularTest {
         // 1. User 객체 설정
         User mockUser = new User();
         mockUser.setUserId(123L);  // 예시로 User의 userId 설정
-        queue.setUser(mockUser);
+//        queue.setUser(mockUser);
 
         // 2. Booking 객체 설정
         Booking mockBooking = new Booking();
@@ -74,7 +75,6 @@ class QueueScehdularTest {
         queueScheduler.expireExpiredTokens();
         // then
         verify(queueService, times(1)).expireQueueToken(any(QueueExpireRequest.class));
-
     }
 
 }

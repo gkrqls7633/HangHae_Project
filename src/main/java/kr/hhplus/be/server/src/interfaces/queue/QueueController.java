@@ -42,8 +42,7 @@ public class QueueController {
                                 summary = "필수값만 포함된 요청 예시",
                                 value = """
                                     {
-                                      "userId": 123,
-                                      "bookingId": 1
+                                      "userId": 123
                                     }
                                     """
                             )

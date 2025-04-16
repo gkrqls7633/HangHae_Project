@@ -2,7 +2,6 @@ package kr.hhplus.be.server.src.interfaces.queue;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import kr.hhplus.be.server.src.domain.model.enums.TokenStatus;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -30,10 +29,6 @@ public class QueueExpireRequest {
 
     @Schema(description = "유저 ID", example = "123", required = true)
     private Long userId;
-
-    @Schema(description = "예약 ID", example = "1", required = true)
-    private Long bookingId;
-
 
     public QueueExpireRequest(Long queueId, String tokenValue, LocalDateTime issuedAt, LocalDateTime expiredAt, TokenStatus tokenStatus) {
         this.queueId = queueId;

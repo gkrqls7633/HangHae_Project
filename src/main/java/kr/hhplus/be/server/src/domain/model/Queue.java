@@ -41,43 +41,39 @@ public class Queue {
     @Schema(description = "토큰 만료 시간", example = "2025-04-11T15:30:00", required = true)
     private LocalDateTime expiredAt;
 
+    @Schema(description = "발급 대상 userId", example = "123L", required = true)
+    private Long userId;
+
     @Enumerated(EnumType.STRING)
     private TokenStatus tokenStatus;
 
-    //Booking과 1:1 관계
-//    @OneToOne
-//    @JoinColumn(name = "booking_id")
-//    private Booking booking;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
-
     /* tokenValue 신규 발급
     - 토큰 만료 시간 : 5분
+    - 대기 상태 토큰 발급
     */
     public void newToken() {
         this.tokenValue = UUID.randomUUID().toString();
-        this.tokenStatus = TokenStatus.ACTIVE;
+        this.tokenStatus = TokenStatus.READY;
         this.issuedAt = LocalDateTime.now();
         this.expiredAt = LocalDateTime.now().plusMinutes(TOKEN_EXPIRE_MINUTES);
     }
 
-    // 유효한 토큰이 존재하는지 확인
+    // 유효한 토큰(대기중)이 존재하는지 확인
     public boolean validateActiveToken() {
-//        if (this.tokenStatus == TokenStatus.ACTIVE) {
-//            throw new IllegalStateException("이미 유효한 토큰이 존재합니다.");
-//        }
-        return this.tokenStatus == TokenStatus.ACTIVE;
-
+        return this.tokenStatus == TokenStatus.READY || this.tokenStatus == TokenStatus.ACTIVE;
     }
 
 
     //유저 토큰 갱신 (다시 현재 시간부터 5분 연장)
     public void refreshToken() {
-        if (this.tokenStatus == TokenStatus.ACTIVE) {
+        if (this.tokenStatus == TokenStatus.READY) {
             this.issuedAt = LocalDateTime.now();
             this.expiredAt = this.issuedAt.plusMinutes(TOKEN_EXPIRE_MINUTES);
         }
+    }
+
+    //토큰 만료 여부 체크
+    public boolean isExpired() {
+        return (tokenStatus == TokenStatus.ACTIVE || tokenStatus == TokenStatus.READY) && expiredAt.isBefore(LocalDateTime.now());
     }
 }

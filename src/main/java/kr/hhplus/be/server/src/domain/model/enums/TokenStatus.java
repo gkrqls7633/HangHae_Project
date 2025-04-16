@@ -6,7 +6,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public enum TokenStatus {
 
     ACTIVE("활성화", "ACTIVE"),
-    EXPIRED("만료", "EXPIRED");
+    EXPIRED("만료", "EXPIRED"),
+    READY("대기", "READY");
 
     private final String description;
     private final String code;
