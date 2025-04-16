@@ -24,9 +24,9 @@ public class Booking {
     @Schema(description = "얘약 번호", example = "1")
     private Long bookingId;
 
-    // Queue와 1:1 관계
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "booking")
-    private Queue queue;
+//    // Queue와 1:1 관계
+//    @OneToOne(fetch = FetchType.LAZY, mappedBy = "booking")
+//    private Queue queue;
 
     // 결제와 1:1 관계
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "booking") // casecade.all은 부모가 자식을 자동으로 persist,remove함

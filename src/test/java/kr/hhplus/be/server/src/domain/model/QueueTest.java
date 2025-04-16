@@ -5,6 +5,8 @@ import kr.hhplus.be.server.src.domain.model.enums.TokenStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -20,20 +22,6 @@ class QueueTest {
     void setUp() {
         // Queue 객체 초기화
         queue = new Queue();
-    }
-
-    @DisplayName("신규 토큰 발급 시 유효한 토큰이 존재하면 실패한다.")
-    @Test
-    void newTokenValidateTest() {
-        //given
-        queue.setTokenStatus(TokenStatus.ACTIVE);
-
-        // when & then
-        IllegalStateException exception = assertThrows(IllegalStateException.class, () -> {
-            queue.validateActiveToken();
-        });
-
-        assertEquals("이미 유효한 토큰이 존재합니다.", exception.getMessage());
     }
 
     @DisplayName("신규 토큰 발급한다.")
@@ -63,6 +51,26 @@ class QueueTest {
         //5분 차이 나야한다.
         assertTrue("expiredAt should be 5 minutes after issuedAt, but difference is " + duration.toMinutes() + " minutes.",
                 duration.toMinutes() == 5);
+
+    }
+
+    @Test
+    @DisplayName("유저의 토큰을 갱신한다.")
+    void refreshTokenTest() {
+
+        //given
+        queue.setTokenStatus(TokenStatus.ACTIVE);
+        queue.setIssuedAt(LocalDateTime.now().minusMinutes(10));
+        queue.setExpiredAt(queue.getIssuedAt().plusMinutes(5));
+
+        //when
+        queue.refreshToken();
+
+        //then
+        LocalDateTime now = LocalDateTime.now();
+        assertThat(queue.getIssuedAt().isAfter(now.minusSeconds(2)));
+        assertThat(queue.getExpiredAt().isEqual(queue.getIssuedAt()));
+
 
     }
 }

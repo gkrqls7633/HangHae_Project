@@ -29,18 +29,18 @@ public class QueueService {
     /**
      * @param queueRequest
      * @return
-     * @description 특정 유저의 활성화 상태의 토큰이 존재하는지 확인 후 없는 경우 신규 토큰 발급
+     * @description 특정 유저의 활성화 상태의 토큰이 존재하는지 확인 후 없는 경우 '신규 토큰 발급'
      */
     public ResponseMessage<QueueResponse> issueQueueToken(QueueRequest queueRequest) {
 
         // 1. 유저가 이미 발급받은 ACTIVE 상태의 토큰이 있는지 조회
         Optional<Queue> existingQueue = queueRepository.findByBookingUserIdAndTokenStatus(queueRequest.getUserId(), TokenStatus.ACTIVE);
 
-        //todo : 유효한 토큰 존재하더라도, 해당 토큰 갱신 처리
-        //이미 유효한 토큰 존재하는 경우 예외 처리
         if (existingQueue.isPresent()) {
-            Queue existingQueueObj = existingQueue.get();
-            existingQueueObj.validateActiveToken();
+            Queue activeQueue = existingQueue.get();
+            //갱신처리
+            activeQueue.refreshToken();
+            queueRepository.save(activeQueue);
         }
 
         // todo : 재설계 필요 -> booking 정보를 굳이 체크해야하는지?? booking 정보 조회 안하고 바로 토큰만 발급하는 로직으로 가야하나?.
@@ -57,7 +57,7 @@ public class QueueService {
 
         // 4. 토큰 발급
         Queue queue = new Queue();
-        queue.setBooking(booking);
+//        queue.setBooking(booking);
         queue.setUser(user);
         queue.newToken();
 

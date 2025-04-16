@@ -49,7 +49,7 @@ class QueueScehdularTest {
         // 2. Booking 객체 설정
         Booking mockBooking = new Booking();
         mockBooking.setBookingId(1L);  // 예시로 Booking ID 설정
-        queue.setBooking(mockBooking);
+//        queue.setBooking(mockBooking);
 
         // 3. tokenValue 설정
         queue.setTokenValue("abc123token");

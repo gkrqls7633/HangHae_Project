@@ -17,8 +17,12 @@ import java.util.UUID;
 @Builder
 @Schema(description = "대기열 도메인")
 @Table(name = "queue", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"user_id", "booking_id"})
+        @UniqueConstraint(columnNames = {"user_id"}) //유저는 항상 하나의 유효한 토큰만 갖는다
 })
+
+//✔️ 유저는 항상 하나의 유효한 토큰만 갖는다
+//✔️ 신규 발급 시에도 기존 토큰 여부를 꼭 체크하고, 갱신(update) 으로 처리
+
 public class Queue {
 
     private static final long TOKEN_EXPIRE_MINUTES = 5;
@@ -41,9 +45,9 @@ public class Queue {
     private TokenStatus tokenStatus;
 
     //Booking과 1:1 관계
-    @OneToOne
-    @JoinColumn(name = "booking_id")
-    private Booking booking;
+//    @OneToOne
+//    @JoinColumn(name = "booking_id")
+//    private Booking booking;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -60,11 +64,20 @@ public class Queue {
     }
 
     // 유효한 토큰이 존재하는지 확인
-    public void validateActiveToken() {
-        if (this.tokenStatus == TokenStatus.ACTIVE) {
-            throw new IllegalStateException("이미 유효한 토큰이 존재합니다.");
-        }
+    public boolean validateActiveToken() {
+//        if (this.tokenStatus == TokenStatus.ACTIVE) {
+//            throw new IllegalStateException("이미 유효한 토큰이 존재합니다.");
+//        }
+        return this.tokenStatus == TokenStatus.ACTIVE;
+
     }
 
 
+    //유저 토큰 갱신 (다시 현재 시간부터 5분 연장)
+    public void refreshToken() {
+        if (this.tokenStatus == TokenStatus.ACTIVE) {
+            this.issuedAt = LocalDateTime.now();
+            this.expiredAt = this.issuedAt.plusMinutes(TOKEN_EXPIRE_MINUTES);
+        }
+    }
 }
