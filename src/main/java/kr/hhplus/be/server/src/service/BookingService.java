@@ -22,6 +22,7 @@ import java.util.Optional;
 @Service
 public class BookingService{
 
+    //todo : facade로 분리 고민
     private final BookingRepository bookingRepository;
     private final SeatRepository seatRepository;
     private final ConcertRepository concertRepository;
@@ -45,26 +46,16 @@ public class BookingService{
         User user = userRepository.findById(bookingRequest.getUserId())
                 .orElseThrow(() -> new EntityNotFoundException("유저 정보가 없습니다."));
 
-        Seat seat = seatRepository
-                .findByConcertSeat_Concert_ConcertIdAndSeatNum(
-                        bookingRequest.getConcertId(),
-                        bookingRequest.getSeatNum()
-                )
+        Seat seat = seatRepository.findByConcertSeat_Concert_ConcertIdAndSeatNum(bookingRequest.getConcertId(), bookingRequest.getSeatNum())
                 .orElseThrow(() -> new EntityNotFoundException("해당 좌석을 찾을 수 없습니다."));
 
         // 2. Booking 도메인 객체 생성
-        Booking booking = new Booking();
-        booking.setSeatNum(bookingRequest.getSeatNum());
-        booking.setConcert(concert);
-        booking.setUser(user);
+        Booking booking = new Booking(concert, bookingRequest.getSeatNum(), user);
 
         // 3. 예약 가능 여부 확인
         //  booking의 seatNum의 좌석 점유 여부 체크
         if (!booking.isAvailableBooking()) {
             return ResponseMessage.error(500, "선택 좌석은 예약 불가능한 좌석입니다.");
-
-//        } else if () {
-//            //todo : queuing token 확인 후 대기 순번 체크. 해당 차례 됐을 때 예약 서비스 이용 가능
 
         } else {
             //좌석 점유 처리

@@ -2,7 +2,6 @@ package kr.hhplus.be.server.src.domain.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
-import kr.hhplus.be.server.src.domain.model.enums.SeatStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,10 +23,6 @@ public class Booking {
     @Schema(description = "얘약 번호", example = "1")
     private Long bookingId;
 
-//    // Queue와 1:1 관계
-//    @OneToOne(fetch = FetchType.LAZY, mappedBy = "booking")
-//    private Queue queue;
-
     // 결제와 1:1 관계
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "booking") // casecade.all은 부모가 자식을 자동으로 persist,remove함
     private Payment payment;
@@ -48,11 +43,15 @@ public class Booking {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    public Booking(Concert concert, Long seatNum, User user) {
+        this.concert = concert;
+        this.seatNum = seatNum;
+        this.user = user;
+    }
 
-    //좌석 예약 가능 여부 체크
+    // 좌석 예약 가능 여부 체크
+    // 객체 조회 흐름 : concert -> concertSeat -> seats -> seatStatus
     public boolean isAvailableBooking() {
-
-        // 객체 조회 흐름 : concert -> concertSeat -> seats -> seatStatus
         ConcertSeat concertSeat = concert.getConcertSeat();
         List<Seat> seatList = concertSeat.getSeats();
         Seat filteredSeat = seatList.stream()
@@ -60,14 +59,7 @@ public class Booking {
                 .findFirst()
                 .orElse(null);
 
-        SeatStatus seatStatus = filteredSeat.getSeatStatus();
-
-        if ("AVAILABLE".equals(seatStatus.getCode())) {
-            return true;
-
-        } else {
-            return false;
-        }
+        return "AVAILABLE".equals(filteredSeat.getSeatStatus().getCode());
     }
 
 }
