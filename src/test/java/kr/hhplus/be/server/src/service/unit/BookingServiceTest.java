@@ -3,10 +3,8 @@ package kr.hhplus.be.server.src.service.unit;
 import kr.hhplus.be.server.src.common.ResponseMessage;
 import kr.hhplus.be.server.src.domain.model.*;
 import kr.hhplus.be.server.src.domain.model.enums.SeatStatus;
-import kr.hhplus.be.server.src.domain.repository.BookingRepository;
-import kr.hhplus.be.server.src.domain.repository.ConcertRepository;
-import kr.hhplus.be.server.src.domain.repository.SeatRepository;
-import kr.hhplus.be.server.src.domain.repository.UserRepository;
+import kr.hhplus.be.server.src.domain.model.enums.TokenStatus;
+import kr.hhplus.be.server.src.domain.repository.*;
 import kr.hhplus.be.server.src.interfaces.booking.BookingRequest;
 import kr.hhplus.be.server.src.interfaces.booking.BookingResponse;
 import kr.hhplus.be.server.src.service.BookingService;
@@ -43,6 +41,9 @@ class BookingServiceTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private QueueRepository queueRepository;
+
 
     @Test
     @DisplayName("유저의 포인트 조회 테스트")
@@ -67,6 +68,10 @@ class BookingServiceTest {
                 .address("서울특별시 강서구 등촌동")
                 .build();
 
+        Queue queue = new Queue();
+        queue.setUserId(123L);
+        queue.newToken();
+
         ConcertSeat concertSeat = new ConcertSeat();
         concertSeat.setConcert(concert);
 
@@ -80,6 +85,7 @@ class BookingServiceTest {
 
         concert.setConcertSeat(concertSeat);
 
+        when(queueRepository.findByUserIdAndTokenStatus(123L, TokenStatus.ACTIVE)).thenReturn(Optional.of(queue));
         when(concertRepository.findById(1L)).thenReturn(Optional.of(concert));
         when(userRepository.findById(123L)).thenReturn(Optional.of(user));
         when(seatRepository.findByConcertSeat_Concert_ConcertIdAndSeatNum(1L, 1L)).thenReturn(Optional.of(seatList.get(0)));

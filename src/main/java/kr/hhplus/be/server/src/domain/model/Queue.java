@@ -53,7 +53,7 @@ public class Queue {
     - 대기 상태 토큰 발급
     */
     public void newToken() {
-        this.userId = userId;
+//        this.userId = userId;
         this.tokenValue = UUID.randomUUID().toString();
         this.tokenStatus = TokenStatus.READY;
         this.issuedAt = LocalDateTime.now();
