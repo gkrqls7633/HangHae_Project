@@ -2,12 +2,10 @@ package kr.hhplus.be.server.src.domain.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
+import java.util.Objects;
 
 
 @NoArgsConstructor
@@ -15,6 +13,7 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
+@Builder
 @Schema(description = "예약 도메인")
 public class Booking {
 
@@ -22,10 +21,6 @@ public class Booking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Schema(description = "얘약 번호", example = "1")
     private Long bookingId;
-
-    // 결제와 1:1 관계
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "booking") // casecade.all은 부모가 자식을 자동으로 persist,remove함
-    private Payment payment;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "concert_concert_id")
@@ -60,6 +55,10 @@ public class Booking {
                 .orElse(null);
 
         return "AVAILABLE".equals(filteredSeat.getSeatStatus().getCode());
+    }
+
+    public boolean isBookedBy(Long userId) {
+        return user != null && Objects.equals(user.getUserId(), userId);
     }
 
 }

@@ -31,7 +31,6 @@ class BookingTest {
                 .concertSeat(mockConcertSeat)
                 .build();
         User mockUser = mock(User.class);
-        Payment mockPayment = mock(Payment.class);
 
         List<Seat> mockSeatList = Arrays.asList(
                 Seat.builder().concertSeat(mockConcertSeat).seatNum(1L).seatStatus(SeatStatus.AVAILABLE).build(),
@@ -42,7 +41,7 @@ class BookingTest {
 
         when(mockConcertSeat.getSeats()).thenReturn(mockSeatList);
 
-        Booking booking = new Booking(1L, mockPayment, mockConcert, 1L, 1L, mockUser);
+        Booking booking = new Booking(1L, mockConcert, 1L, 1L, mockUser);
 
         // when
         boolean isAvailableBooking = booking.isAvailableBooking();
@@ -70,7 +69,6 @@ class BookingTest {
                 .concertSeat(mockConcertSeat)
                 .build();
         User mockUser = mock(User.class);
-        Payment mockPayment = mock(Payment.class);
 
         List<Seat> mockSeatList = Arrays.asList(
                 Seat.builder().concertSeat(mockConcertSeat).seatNum(1L).seatStatus(SeatStatus.AVAILABLE).build(),
@@ -81,7 +79,7 @@ class BookingTest {
 
         when(mockConcertSeat.getSeats()).thenReturn(mockSeatList);
 
-        Booking booking = new Booking(1L, mockPayment, mockConcert, 2L, 2L, mockUser);
+        Booking booking = new Booking(1L, mockConcert, 2L, 2L, mockUser);
 
 
         // when

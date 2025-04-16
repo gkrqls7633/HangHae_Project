@@ -29,20 +29,16 @@ public class PaymentService {
 
     @Transactional
     public ResponseMessage<PaymentResponse> processPayment(PaymentRequest paymentRequest) {
-
-        PaymentResponse paymentResponse = new PaymentResponse();
-
         /*
         1. 예약 내역 조회
-         - 결제할 콘서트의 예약 여부 체크 (좌석 점유 되어있는지)
-         - Payment -> Booking
+         - 예약번호 유효성 검증
          */
         Booking booking = bookingRepository.findById(paymentRequest.getBookingId())
                 .orElseThrow(() -> new EntityNotFoundException("예약 내역이 존재하지 않습니다."));
 
         Payment paymentDomain = Payment.builder()
                 .userId(paymentRequest.getUserId())
-                .booking(booking)
+                .bookingId(booking.getBookingId())
                 .build();
 
         /*
@@ -50,7 +46,7 @@ public class PaymentService {
          - 결제할 콘서트의 예약 여부 체크 (좌석 점유 되어있는지)
          - Payment -> Booking
          */
-        if (!paymentDomain.isBookingCheck()) {
+        if (!paymentDomain.isBookingCheck(booking)) {
             throw new IllegalStateException("좌석 예약 내역을 재확인 해주세요.");
         }
 
@@ -73,13 +69,14 @@ public class PaymentService {
         //결제 요청 -> 유저 잔액 포인트 차감
         Payment payment = paymentRepository.save(paymentDomain);
 
-        paymentResponse.setPaymentId(payment.getPaymentId());
-        paymentResponse.setBookingId(paymentRequest.getBookingId());
-        paymentResponse.setPaymentStatus(PaymentStatus.COMPLETED);
-
         //유저 잔액 차감
         point.usePoint(concertInfo.getPrice());
         pointRepository.save(point);
+
+        PaymentResponse paymentResponse = new PaymentResponse();
+        paymentResponse.setPaymentId(payment.getPaymentId());
+        paymentResponse.setBookingId(paymentRequest.getBookingId());
+        paymentResponse.setPaymentStatus(PaymentStatus.COMPLETED);
 
         return ResponseMessage.success("결제가 완료됐습니다.", paymentResponse);
     }

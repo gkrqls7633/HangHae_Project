@@ -1,16 +1,9 @@
 package kr.hhplus.be.server.src.service.integration;
 
-import kr.hhplus.be.server.src.common.ResponseMessage;
-import kr.hhplus.be.server.src.domain.model.Booking;
-import kr.hhplus.be.server.src.domain.model.Queue;
 import kr.hhplus.be.server.src.domain.model.Seat;
 import kr.hhplus.be.server.src.domain.model.enums.SeatStatus;
-import kr.hhplus.be.server.src.domain.model.enums.TokenStatus;
-import kr.hhplus.be.server.src.domain.repository.BookingRepository;
-import kr.hhplus.be.server.src.domain.repository.QueueRepository;
 import kr.hhplus.be.server.src.domain.repository.SeatRepository;
 import kr.hhplus.be.server.src.interfaces.booking.BookingRequest;
-import kr.hhplus.be.server.src.interfaces.point.PointResponse;
 import kr.hhplus.be.server.src.service.BookingService;
 import kr.hhplus.be.server.src.service.testTransactionHelper.BookingTransactionHelper;
 import org.junit.jupiter.api.BeforeEach;
@@ -52,7 +45,7 @@ class BookingSeatServiceIntegrationTest {
 
         //given
         Long concertId = bookingRequest.getConcertId();
-        Long userId = bookingRequest.getUserId();
+//        Long userId = bookingRequest.getUserId();
         Long seatNum = bookingRequest.getSeatNum();
 
         //when

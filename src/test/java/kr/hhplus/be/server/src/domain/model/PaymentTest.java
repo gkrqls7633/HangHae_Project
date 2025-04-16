@@ -15,23 +15,22 @@ class PaymentTest {
     void isSameUserIdWithPayReqUserId() {
 
         // given
-        Long mockUserId = 123L; // 결제 요청의 userId
         User mockUser = new User();
-        mockUser.setUserId(mockUserId);
+        mockUser.setUserId(123L);
 
-        Long mockBookingUserId = 123L; // 예약된 userId
         User mockBookingUser = new User();
-        mockBookingUser.setUserId(mockBookingUserId);
+        mockBookingUser.setUserId(123L);
 
         Booking booking = new Booking();
+        booking.setBookingId(1L);
         booking.setUser(mockBookingUser);
 
         Payment payment = new Payment();
-        payment.setBooking(booking);
-        payment.setUserId(mockUserId);
+        payment.setBookingId(booking.getBookingId());
+        payment.setUserId(123L);
 
         //when
-        boolean result = payment.isBookingCheck();
+        boolean result = payment.isBookingCheck(booking);
 
         //then
         assertTrue(result);
@@ -43,24 +42,23 @@ class PaymentTest {
     void isNotSameUserIdWithPayReqUserId() {
 
         // given
-        Long mockUserId = 123L; // 결제 요청의 userId
         User mockUser = new User();
-        mockUser.setUserId(mockUserId);
+        mockUser.setUserId(123L);
 
-        Long mockBookingUserId = 321L; // 예약된 userId
         User mockBookingUser = new User();
-        mockBookingUser.setUserId(mockBookingUserId);
+        mockBookingUser.setUserId(321L);
 
 
         Booking booking = new Booking();
+        booking.setBookingId(1L);
         booking.setUser(mockBookingUser);
 
         Payment payment = new Payment();
-        payment.setBooking(booking);
-        payment.setUserId(mockUserId);
+        payment.setBookingId(booking.getBookingId());
+        payment.setUserId(123L);
 
         //when
-        boolean result = payment.isBookingCheck();
+        boolean result = payment.isBookingCheck(booking);
 
         //then
         assertFalse(result);
@@ -72,27 +70,51 @@ class PaymentTest {
     void isNotOccupiedSeat() {
 
         // given
-        Long mockUserId = 123L; // 결제 요청의 userId
         User mockUser = new User();
-        mockUser.setUserId(mockUserId);
+        mockUser.setUserId(123L);
 
-        Long mockBookingUserId = null; // 결제 요청의 userId
         User MockBookingUser = new User();
-        MockBookingUser.setUserId(mockBookingUserId);
+        MockBookingUser.setUserId(null);
 
         Booking booking = new Booking();
+        booking.setBookingId(1L);
         booking.setUser(MockBookingUser);
 
         Payment payment = new Payment();
-        payment.setBooking(booking);
-        payment.setUserId(mockUserId);
+        payment.setBookingId(booking.getBookingId());
+        payment.setUserId(123L);
 
         //when
-        boolean result = payment.isBookingCheck();
+        boolean result = payment.isBookingCheck(booking);
 
         //then
         assertFalse(result);
 
     }
+
+    @DisplayName("예약내역 존재하는지 확인한다.")
+    @Test
+    void isBookingCheckTest() {
+
+        //given
+        User mockUser = new User();
+        mockUser.setUserId(123L);
+
+        Booking booking = new Booking();
+        booking.setBookingId(1L);
+        booking.setUser(mockUser);
+
+        Payment payment = new Payment();
+        payment.setBookingId(booking.getBookingId());
+        payment.setUserId(123L);
+
+        //when
+        boolean result = payment.isBookingCheck(booking);
+
+        //then
+        assertTrue(result);
+
+    }
+
 
 }
