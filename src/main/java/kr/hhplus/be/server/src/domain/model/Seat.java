@@ -38,6 +38,7 @@ public class Seat {
 
     @Schema(description = "좌석 상태", example = "AVAILABLE")
     @Enumerated(EnumType.STRING)
+    @Column(name = "seat_status", length = 10)
     private SeatStatus seatStatus;
 
     // 좌석의 예약 가능 상태를 반환
