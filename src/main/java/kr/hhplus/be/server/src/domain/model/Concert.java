@@ -44,7 +44,6 @@ public class Concert {
     @Schema(description = "콘서트에 대한 좌석 목록")
     private ConcertSeat concertSeat;
 
-    // 새로운 Concert 객체 생성 시, 자동으로 좌석을 50개 생성하여 seat 리스트에 넣어줌
     public Concert(Long concertId, String name, Long price, String date, String time, String location) {
         this.concertId = concertId;
         this.name = name;
@@ -54,14 +53,14 @@ public class Concert {
         this.location = location;
     }
 
-
-    private SeatStatus getRandomSeatStatus(Random random) {
-        int statusIdx = random.nextInt(3);
-        return switch (statusIdx) {
-            case 0 -> SeatStatus.AVAILABLE;
-            case 1 -> SeatStatus.BOOKED;
-            case 2 -> SeatStatus.OCCUPIED;
-            default -> SeatStatus.AVAILABLE;
-        };
-    }
+//
+//    private SeatStatus getRandomSeatStatus(Random random) {
+//        int statusIdx = random.nextInt(3);
+//        return switch (statusIdx) {
+//            case 0 -> SeatStatus.AVAILABLE;
+//            case 1 -> SeatStatus.BOOKED;
+//            case 2 -> SeatStatus.OCCUPIED;
+//            default -> SeatStatus.AVAILABLE;
+//        };
+//    }
 }

@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class PaymentServicetest {
@@ -106,8 +106,30 @@ class PaymentServicetest {
         assertThrows(EntityNotFoundException.class, () -> {
             paymentService.processPayment(paymentRequest);
         });
-
     }
+
+    @DisplayName("결제 요청 최초 진입 시 결제 대기상태를 먼저 저장한다.")
+    @Test
+    void paymentPendingSavetest() {
+
+        //given
+        PaymentRequest paymentRequest = new PaymentRequest();
+        paymentRequest.setBookingId(1L);
+        paymentRequest.setUserId(1L);
+
+        given(bookingRepository.findById(1L)).willReturn(Optional.of(mockBooking));
+
+        // save 호출되면 예외 던져서 이후 로직 진행 막음
+        given(paymentRepository.save(any(Payment.class)))
+                .willAnswer(invocation -> {
+                    throw new RuntimeException("테스트용 중단");
+                });
+
+        // when & then
+        assertThrows(RuntimeException.class, () -> paymentService.processPayment(paymentRequest));
+        verify(paymentRepository, times(1)).save(any(Payment.class));
+    }
+
 
     @DisplayName("결제 요청 유저와 예약된 유저가 동일하지 않으면 에러 발생한다.")
     @Test

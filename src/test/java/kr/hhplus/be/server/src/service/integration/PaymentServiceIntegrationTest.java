@@ -2,9 +2,11 @@ package kr.hhplus.be.server.src.service.integration;
 
 
 import kr.hhplus.be.server.src.common.ResponseMessage;
+import kr.hhplus.be.server.src.domain.model.Payment;
 import kr.hhplus.be.server.src.domain.model.Point;
 import kr.hhplus.be.server.src.domain.model.enums.PaymentStatus;
 import kr.hhplus.be.server.src.domain.model.enums.SeatStatus;
+import kr.hhplus.be.server.src.domain.repository.PaymentRepository;
 import kr.hhplus.be.server.src.domain.repository.PointRepository;
 import kr.hhplus.be.server.src.interfaces.payment.PaymentRequest;
 import kr.hhplus.be.server.src.interfaces.payment.PaymentResponse;
@@ -18,6 +20,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @SpringBootTest
 @Transactional
@@ -31,6 +36,9 @@ class PaymentServiceIntegrationTest {
 
     @Autowired
     private PointRepository pointRepository;
+
+    @Autowired
+    private PaymentRepository paymentRepository;
 
     private PaymentRequest paymentRequest;
 

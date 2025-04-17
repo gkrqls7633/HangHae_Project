@@ -37,12 +37,12 @@ public class Seat {
     private Long seatNum;
 
     @Schema(description = "좌석 상태", example = "AVAILABLE")
+    @Enumerated(EnumType.STRING)
     private SeatStatus seatStatus;
 
     // 좌석의 예약 가능 상태를 반환
     public boolean isAvailable() {
         return this.seatStatus == SeatStatus.AVAILABLE;
     }
-
 
 }

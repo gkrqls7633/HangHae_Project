@@ -3,6 +3,8 @@ package kr.hhplus.be.server.src.domain.model;
 import io.micrometer.common.util.StringUtils;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
+import kr.hhplus.be.server.src.domain.model.enums.PaymentStatus;
+import kr.hhplus.be.server.src.domain.model.enums.SeatStatus;
 import lombok.*;
 
 import java.util.Objects;
@@ -26,6 +28,10 @@ public class Payment {
 
     @Schema(description = "유저id", example = "1")
     private Long userId;
+
+    @Schema(description = "결제 상태", example = "COMPLETED")
+    @Enumerated(EnumType.STRING)
+    private PaymentStatus paymentStatus;
 
     public boolean isBookingCheck(Booking booking) {
         return booking != null && booking.isBookedBy(this.userId);

@@ -52,7 +52,4 @@ public class User {
         this.address = address;
     }
 
-
-
-
 }
