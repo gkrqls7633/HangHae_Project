@@ -99,7 +99,6 @@ public class PaymentService {
             return ResponseMessage.success("결제가 완료됐습니다.", paymentResponse);
 
         } catch (RuntimeException e) {
-            // 예외 발생 시 로그 남기고 실패 처리 (이미 위에서 상태 저장한 경우도 있음)
             log.error("결제 실패 - {}", e.getMessage());
             throw e;
         }

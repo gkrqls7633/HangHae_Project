@@ -1,13 +1,9 @@
 package kr.hhplus.be.server.src.domain.model;
 
-import io.micrometer.common.util.StringUtils;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import kr.hhplus.be.server.src.domain.model.enums.PaymentStatus;
-import kr.hhplus.be.server.src.domain.model.enums.SeatStatus;
 import lombok.*;
-
-import java.util.Objects;
 
 @Entity
 @NoArgsConstructor
