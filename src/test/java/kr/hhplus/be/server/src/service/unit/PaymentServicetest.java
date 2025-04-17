@@ -1,10 +1,13 @@
 package kr.hhplus.be.server.src.service.unit;
 
 import jakarta.persistence.EntityNotFoundException;
+import kr.hhplus.be.server.src.common.ResponseMessage;
 import kr.hhplus.be.server.src.domain.model.*;
+import kr.hhplus.be.server.src.domain.model.enums.PaymentStatus;
 import kr.hhplus.be.server.src.domain.model.enums.SeatStatus;
 import kr.hhplus.be.server.src.domain.repository.*;
 import kr.hhplus.be.server.src.interfaces.payment.PaymentRequest;
+import kr.hhplus.be.server.src.interfaces.payment.PaymentResponse;
 import kr.hhplus.be.server.src.service.PaymentService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -18,6 +21,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
@@ -240,7 +244,6 @@ class PaymentServicetest {
         when(concertRepository.findById(anyLong())).thenReturn(Optional.ofNullable(mockConcert));
         when(pointRepository.findById(anyLong())).thenReturn(Optional.of(point));
 
-
         // when & then
         IllegalStateException exception = assertThrows(IllegalStateException.class, () -> {
             paymentService.processPayment(paymentRequest);
@@ -248,4 +251,44 @@ class PaymentServicetest {
 
         assertEquals("잔액을 확인해주세요.", exception.getMessage());
     }
+
+    @DisplayName("유저의 포인트가 충분하면 결제가 완료된다.")
+    @Test
+    void enoughPointPaymentTest() {
+
+        //given
+        Long mockSeatId = 1L;
+
+        PaymentRequest paymentRequest = new PaymentRequest();
+        paymentRequest.setBookingId(1L);
+        paymentRequest.setUserId(1L);
+
+        Point point = new Point();
+        point.setPointBalance(50000L);
+        point.setUserId(1L);
+
+
+        Payment savedPayment = Payment.builder()
+                .paymentId(999L)
+                .bookingId(1L)
+                .userId(1L)
+                .build();
+
+        when(bookingRepository.findById(1L)).thenReturn(Optional.of(mockBooking));
+        when(seatRepository.findById(mockSeatId)).thenReturn(Optional.of(mockSeat));
+        when(concertRepository.findById(anyLong())).thenReturn(Optional.ofNullable(mockConcert));
+        when(pointRepository.findById(anyLong())).thenReturn(Optional.of(mockPoint));
+        when(paymentRepository.save(any(Payment.class))).thenReturn(savedPayment);
+
+        //when
+        ResponseMessage<PaymentResponse> response = paymentService.processPayment(paymentRequest);
+
+        //then
+        assertEquals(50000L ,point.getPointBalance()); //포인트 잔액 차감 확인
+        assertEquals("결제가 완료됐습니다.", response.getMessage());
+        assertEquals(PaymentStatus.COMPLETED, response.getData().getPaymentStatus());
+        assertEquals(999L, response.getData().getPaymentId());
+        assertEquals(1L, response.getData().getBookingId());
+    }
+
 }

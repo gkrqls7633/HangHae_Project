@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Setter
+@Getter
 @NoArgsConstructor
 @Schema(description = "결제 처리 응답")
 public class PaymentResponse {
