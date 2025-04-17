@@ -17,6 +17,9 @@ import static java.util.stream.IntStream.range;
 @Setter
 @Builder
 @Entity
+@Table(name = "concert", indexes = {
+        @Index(name = "idx_date", columnList = "date")
+})
 @Schema(description = "콘서트 도메안")
 public class Concert {
 
@@ -53,14 +56,4 @@ public class Concert {
         this.location = location;
     }
 
-//
-//    private SeatStatus getRandomSeatStatus(Random random) {
-//        int statusIdx = random.nextInt(3);
-//        return switch (statusIdx) {
-//            case 0 -> SeatStatus.AVAILABLE;
-//            case 1 -> SeatStatus.BOOKED;
-//            case 2 -> SeatStatus.OCCUPIED;
-//            default -> SeatStatus.AVAILABLE;
-//        };
-//    }
 }

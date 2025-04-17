@@ -12,6 +12,7 @@ import kr.hhplus.be.server.src.interfaces.queue.QueueRequest;
 import kr.hhplus.be.server.src.interfaces.queue.QueueResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -27,6 +28,7 @@ public class QueueService {
      * @return
      * @description 특정 유저의 활성화 상태의 토큰이 존재하는지 확인 후 없는 경우 '신규 토큰 발급', 있는 경우 '토큰 갱신'
      */
+    @Transactional
     public ResponseMessage<QueueResponse> issueQueueToken(QueueRequest queueRequest) {
 
         // 1. User 정보를 조회해서 해당 유저에 대한 정보를 가져옵니다.
@@ -53,7 +55,6 @@ public class QueueService {
                     .expiredAt(activeQueue.getExpiredAt())
                     .build();
         } else {
-            
             //토큰 신규 발급 처리
             Queue queue = new Queue();
             queue.newToken();
@@ -75,6 +76,7 @@ public class QueueService {
      * @return
      * @description controller에서 호출되는 단건으로 토큰 만료시키는 메서드 / 스케줄러에서 토큰 만료 호출하는 메서드
      */
+    @Transactional
     public ResponseMessage<QueueResponse> expireQueueToken(QueueExpireRequest queueExpireRequest) {
 
         //1. 만료 요청 들어온 토큰 조회

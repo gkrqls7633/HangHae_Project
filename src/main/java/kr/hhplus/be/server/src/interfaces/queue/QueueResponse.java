@@ -3,10 +3,12 @@ package kr.hhplus.be.server.src.interfaces.queue;
 import io.swagger.v3.oas.annotations.media.Schema;
 import kr.hhplus.be.server.src.domain.model.enums.TokenStatus;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
 
+@Getter
 @Builder
 public class QueueResponse {
 

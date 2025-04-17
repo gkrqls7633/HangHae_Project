@@ -11,6 +11,10 @@ import lombok.*;
 @Builder
 @Getter
 @Setter
+@Table(name = "payment", indexes = {
+        @Index(name = "idx_booking_id", columnList = "booking_id"),
+        @Index(name = "idx_user_id", columnList = "user_id")
+})
 @Schema(description = "결제 도메인")
 public class Payment {
 

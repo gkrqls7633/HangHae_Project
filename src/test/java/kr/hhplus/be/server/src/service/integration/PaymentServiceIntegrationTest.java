@@ -55,7 +55,7 @@ class PaymentServiceIntegrationTest {
         //when
         ResponseMessage<PaymentResponse> response =  paymentService.processPayment(paymentRequest);
 
-        // 💰 유저 포인트 차감 처리 확인
+        // 유저 포인트 차감 처리 확인
         Point updatedPoint = pointRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("포인트 정보가 없습니다."));
 

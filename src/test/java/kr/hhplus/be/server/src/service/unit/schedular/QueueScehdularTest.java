@@ -93,14 +93,14 @@ class QueueScehdularTest {
         // 5. tokenStatus 설정 (예시로 ACTIVE 상태로 설정)
         queue.setTokenStatus(TokenStatus.READY);
 
-        when(queueRepository.findByTokenStatus(any()))
+        when(queueRepository.findByTokenStatusAndExpiredAtAfter(any(), any()))
                 .thenReturn(List.of(queue));
 
         // when
         queueScheduler.readyToActivateTokens();
 
         // then
-        verify(queueRepository, times(1)).findByTokenStatus(any(TokenStatus.class));
+        verify(queueRepository, times(1)).findByTokenStatusAndExpiredAtAfter(any(TokenStatus.class), any(LocalDateTime.class));
         verify(queueRepository, times(1)).save(any(Queue.class));
 
     }
