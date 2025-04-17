@@ -5,7 +5,6 @@ package kr.hhplus.be.server.src.interfaces.queue;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.stereotype.Service;
 
 @Getter
 @Setter
@@ -15,6 +14,4 @@ public class QueueRequest {
     @Schema(description = "userId", example = "1")
     private Long userId;
 
-    @Schema(description = "bookingId", example = "1")
-    private Long bookingId;
 }

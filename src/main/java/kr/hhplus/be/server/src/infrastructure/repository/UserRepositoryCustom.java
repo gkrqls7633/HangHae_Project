@@ -10,5 +10,5 @@ import java.util.List;
 
 public interface UserRepositoryCustom {
 
-    UserResponse getUserPoint(String userId);
+    UserResponse getUserPoint(Long userId);
 }

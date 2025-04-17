@@ -24,6 +24,6 @@ public class QueueResponse {
     private LocalDateTime expiredAt;
 
     @Schema(description = "예약id", example = "1")
-    private Long bookId;
+    private Long bookingId;
 
 }

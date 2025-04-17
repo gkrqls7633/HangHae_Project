@@ -20,7 +20,7 @@ public class UserController {
 
     @Operation(summary = "유저 포인트 조회.", description = "유저의 포인트를 조회한다.")
     @GetMapping("/points")
-    public UserResponse getUserPoint(@RequestParam String userId) {
+    public UserResponse getUserPoint(@RequestParam Long userId) {
         return userService.getUserPoint(userId);
     }
 

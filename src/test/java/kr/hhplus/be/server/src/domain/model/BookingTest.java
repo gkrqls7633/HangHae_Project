@@ -20,24 +20,28 @@ class BookingTest {
         // 객체 조회 흐름 : concert -> concertSeat -> seats -> seatStatus
 
         // Mocking
-        Concert mockConcert = mock(Concert.class);
         ConcertSeat mockConcertSeat = mock(ConcertSeat.class);
+        Concert mockConcert = Concert.builder()
+                .concertId(1L)
+                .name("BTS World Tour")
+                .price(150000L)
+                .date("2025-05-01")
+                .time("19:00")
+                .location("서울 올림픽 경기장")
+                .concertSeat(mockConcertSeat)
+                .build();
         User mockUser = mock(User.class);
-        Queue mockQueue = mock(Queue.class);
-        Payment mockPayment = mock(Payment.class);
-
 
         List<Seat> mockSeatList = Arrays.asList(
-                new Seat(1L, 1L, SeatStatus.AVAILABLE),
-                new Seat(2L, 2L, SeatStatus.BOOKED),
-                new Seat(3L, 3L, SeatStatus.AVAILABLE),
-                new Seat(4L, 4L, SeatStatus.OCCUPIED)
+                Seat.builder().concertSeat(mockConcertSeat).seatNum(1L).seatStatus(SeatStatus.AVAILABLE).build(),
+                Seat.builder().concertSeat(mockConcertSeat).seatNum(2L).seatStatus(SeatStatus.BOOKED).build(),
+                Seat.builder().concertSeat(mockConcertSeat).seatNum(3L).seatStatus(SeatStatus.AVAILABLE).build(),
+                Seat.builder().concertSeat(mockConcertSeat).seatNum(4L).seatStatus(SeatStatus.OCCUPIED).build()
         );
 
-        when(mockConcert.getConcertSeat()).thenReturn(mockConcertSeat);
         when(mockConcertSeat.getSeats()).thenReturn(mockSeatList);
 
-        Booking booking = new Booking(1L, mockQueue, mockPayment, mockConcert, 1L, 1L, mockUser);
+        Booking booking = new Booking(1L, mockConcert, 1L, 1L, mockUser);
 
         // when
         boolean isAvailableBooking = booking.isAvailableBooking();
@@ -54,23 +58,28 @@ class BookingTest {
         // 객체 조회 흐름 : concert -> concertSeat -> seats -> seatStatus
 
         // Mocking
-        Concert mockConcert = mock(Concert.class);
         ConcertSeat mockConcertSeat = mock(ConcertSeat.class);
+        Concert mockConcert = Concert.builder()
+                .concertId(1L)
+                .name("BTS World Tour")
+                .price(150000L)
+                .date("2025-05-01")
+                .time("19:00")
+                .location("서울 올림픽 경기장")
+                .concertSeat(mockConcertSeat)
+                .build();
         User mockUser = mock(User.class);
-        Queue mockQueue = mock(Queue.class);
-        Payment mockPayment = mock(Payment.class);
 
         List<Seat> mockSeatList = Arrays.asList(
-                new Seat(1L, 1L, SeatStatus.AVAILABLE),
-                new Seat(2L, 2L, SeatStatus.BOOKED),
-                new Seat(3L, 3L, SeatStatus.AVAILABLE),
-                new Seat(4L, 4L, SeatStatus.OCCUPIED)
+                Seat.builder().concertSeat(mockConcertSeat).seatNum(1L).seatStatus(SeatStatus.AVAILABLE).build(),
+                Seat.builder().concertSeat(mockConcertSeat).seatNum(2L).seatStatus(SeatStatus.BOOKED).build(),
+                Seat.builder().concertSeat(mockConcertSeat).seatNum(3L).seatStatus(SeatStatus.AVAILABLE).build(),
+                Seat.builder().concertSeat(mockConcertSeat).seatNum(4L).seatStatus(SeatStatus.OCCUPIED).build()
         );
 
-        when(mockConcert.getConcertSeat()).thenReturn(mockConcertSeat);
         when(mockConcertSeat.getSeats()).thenReturn(mockSeatList);
 
-        Booking booking = new Booking(1L, mockQueue, mockPayment, mockConcert, 2L, 2L, mockUser);
+        Booking booking = new Booking(1L, mockConcert, 2L, 2L, mockUser);
 
 
         // when

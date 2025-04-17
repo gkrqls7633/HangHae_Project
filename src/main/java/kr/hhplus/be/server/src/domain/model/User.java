@@ -2,10 +2,7 @@ package kr.hhplus.be.server.src.domain.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
@@ -15,14 +12,14 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
+@Table(name = "`user`")
 public class User {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Schema(description = "유저Id", example = "1")
     private Long userId;
-
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Point point;
 
     @Schema(description = "유저명", example = "김항해")
     private String userName;
@@ -39,8 +36,8 @@ public class User {
     @Schema(description = "주소", example = "서울특별시 강서구 염창동")
     private String address;
 
-    @OneToMany(mappedBy = "user")
-    private List<Queue> queues;
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Point point;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Booking> bookings;
@@ -54,8 +51,5 @@ public class User {
         this.email = email;
         this.address = address;
     }
-
-
-
 
 }

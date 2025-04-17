@@ -4,26 +4,25 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import kr.hhplus.be.server.src.interfaces.point.PointChargeRequest;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.hibernate.annotations.OptimisticLockType;
+import org.hibernate.annotations.OptimisticLocking;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Getter
 @Setter
+@Builder
 @Schema(description = "포인트 도메인")
 public class Point {
 
     @Id
-    @Schema(description = "userId", example = "1")
-    @JsonProperty("userId")
-    private String userId;
+    private Long userId;
 
-    @OneToOne
-    @JoinColumn(name = "userId")
+    @OneToOne(fetch = FetchType.LAZY)
+    @MapsId
+    @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
 
 

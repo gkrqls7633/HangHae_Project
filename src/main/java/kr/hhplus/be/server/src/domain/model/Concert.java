@@ -3,10 +3,7 @@ package kr.hhplus.be.server.src.domain.model;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import kr.hhplus.be.server.src.domain.model.enums.SeatStatus;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 import java.util.Random;
@@ -18,11 +15,13 @@ import static java.util.stream.IntStream.range;
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
 @Entity
 @Schema(description = "콘서트 도메안")
 public class Concert {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Schema(description = "콘서트 ID", example = "1")
     private Long concertId;
 
@@ -45,7 +44,6 @@ public class Concert {
     @Schema(description = "콘서트에 대한 좌석 목록")
     private ConcertSeat concertSeat;
 
-    // 새로운 Concert 객체 생성 시, 자동으로 좌석을 50개 생성하여 seat 리스트에 넣어줌
     public Concert(Long concertId, String name, Long price, String date, String time, String location) {
         this.concertId = concertId;
         this.name = name;
@@ -53,42 +51,16 @@ public class Concert {
         this.date = date;
         this.time = time;
         this.location = location;
-//        this.concertSeat = concertSeat;
     }
 
-    //콘서트 좌석을 AVAILABLE로 50개 최초 생성
-    private List<Seat> createSeats(int count) {
-        return range(1, count + 1)
-                .mapToObj(i -> new Seat(
-                        (long) i,
-                        (long) i,
-                        SeatStatus.AVAILABLE
-                ))
-                .collect(Collectors.toList());
-    }
-
-    //콘서트 좌석을 랜덤 상태로 50개 생성
-    private List<Seat> createRandomSeats(int count) {
-        Random random = new Random();
-        return range(1, count + 1)
-                .mapToObj(i -> {
-                    SeatStatus seatStatus = getRandomSeatStatus(random);
-                    return new Seat(
-                            (long) i,
-                            (long) i,
-                            seatStatus
-                    );
-                })
-                .collect(Collectors.toList());
-    }
-
-    private SeatStatus getRandomSeatStatus(Random random) {
-        int statusIdx = random.nextInt(3);
-        return switch (statusIdx) {
-            case 0 -> SeatStatus.AVAILABLE;
-            case 1 -> SeatStatus.BOOKED;
-            case 2 -> SeatStatus.OCCUPIED;
-            default -> SeatStatus.AVAILABLE;
-        };
-    }
+//
+//    private SeatStatus getRandomSeatStatus(Random random) {
+//        int statusIdx = random.nextInt(3);
+//        return switch (statusIdx) {
+//            case 0 -> SeatStatus.AVAILABLE;
+//            case 1 -> SeatStatus.BOOKED;
+//            case 2 -> SeatStatus.OCCUPIED;
+//            default -> SeatStatus.AVAILABLE;
+//        };
+//    }
 }

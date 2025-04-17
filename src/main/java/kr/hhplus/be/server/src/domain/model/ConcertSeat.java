@@ -21,11 +21,12 @@ import java.util.stream.Collectors;
 public class ConcertSeat {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Schema(description = "콘서트 좌석 ID", example = "1")
     private Long concertSeatId;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "concert_id", referencedColumnName = "concertId", insertable = false, updatable = false)
+    @JoinColumn(name = "concert_id", referencedColumnName = "concertId")
     @JsonIgnore
     private Concert concert;
 

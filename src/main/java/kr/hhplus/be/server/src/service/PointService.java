@@ -8,6 +8,8 @@ import kr.hhplus.be.server.src.interfaces.point.PointChargeRequest;
 import kr.hhplus.be.server.src.interfaces.point.PointResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +22,7 @@ public class PointService {
      * @param userId
      * @return 포인트 잔액
      */
+    @Transactional(isolation = Isolation.READ_UNCOMMITTED)
     public ResponseMessage<PointResponse> getPoint(Long userId) {
 
         Point point = pointRepository.findById(userId)
@@ -39,6 +42,7 @@ public class PointService {
      * @param pointChargeRequest
      * @return
      */
+    @Transactional
     public ResponseMessage<PointResponse> chargePoint(PointChargeRequest pointChargeRequest) {
 
         //현재 잔액 조회
@@ -56,6 +60,5 @@ public class PointService {
                 .build();
 
         return ResponseMessage.success("포인트가 정상적으로 충전됐습니다.", pointResponse);
-
     }
 }

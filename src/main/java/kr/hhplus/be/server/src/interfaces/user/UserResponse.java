@@ -1,17 +1,17 @@
 package kr.hhplus.be.server.src.interfaces.user;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @RequiredArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
+@Builder
 @Schema(description = "유저 응답")
 public class UserResponse {
 
-    private String userId;
+    private Long userId;
 
     private Long point;
 
