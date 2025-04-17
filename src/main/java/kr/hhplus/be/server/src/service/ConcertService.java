@@ -8,12 +8,14 @@ import kr.hhplus.be.server.src.domain.repository.ConcertRepository;
 import kr.hhplus.be.server.src.domain.repository.ConcertSeatRepository;
 import kr.hhplus.be.server.src.interfaces.concert.ConcertResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class ConcertService {
@@ -29,17 +31,23 @@ public class ConcertService {
      */
     public List<ConcertResponse> getConcertList() {
 
-        List<Concert> concertList = concertRepository.findAll();
-        return concertList.stream()
-                .map(concert -> ConcertResponse.builder()
-                        .concertId(concert.getConcertId())
-                        .name(concert.getName())
-                        .price(concert.getPrice())
-                        .date(concert.getDate())
-                        .time(concert.getTime())
-                        .location(concert.getLocation())
-                        .build())
-                .collect(Collectors.toList());
+        try {
+            List<Concert> concertList = concertRepository.findAll();
+            return concertList.stream()
+                    .map(concert -> ConcertResponse.builder()
+                            .concertId(concert.getConcertId())
+                            .name(concert.getName())
+                            .price(concert.getPrice())
+                            .date(concert.getDate())
+                            .time(concert.getTime())
+                            .location(concert.getLocation())
+                            .build())
+                    .collect(Collectors.toList());
+
+        } catch (Exception e) {
+            log.error("콘서트 목록 조회 중 오류 발생", e);
+            throw new RuntimeException("콘서트 목록 조회 실패");
+        }
     }
 
     /**
@@ -53,7 +61,11 @@ public class ConcertService {
         Concert concert = concertRepository.findById(concertId)
                 .orElseThrow(() -> new RuntimeException("해당 concertId가 존재하지 않습니다 : " + concertId));
 
-        ConcertSeat concertSeat = concertSeatRepository.findWithSeatsByConcertId(concertId);
+        List<Seat> seatTotalList = concertSeatRepository.findAllSeatsByConcertId(concertId);
+
+        ConcertSeat concertSeat = new ConcertSeat();
+        concertSeat.setConcert(concert);
+        concertSeat.setSeats(seatTotalList);
 
         //예약 가능 좌석 filter
         List<Seat> availableSeats = concertSeat.getAvailableSeats();
