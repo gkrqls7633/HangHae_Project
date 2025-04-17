@@ -6,7 +6,6 @@ import kr.hhplus.be.server.src.domain.model.enums.TokenStatus;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 import java.util.UUID;
 
 @NoArgsConstructor
@@ -16,7 +15,14 @@ import java.util.UUID;
 @Setter
 @Builder
 @Schema(description = "대기열 도메인")
-@Table(name = "queue", uniqueConstraints = {
+@Table(name = "queue",
+        indexes = {
+                @Index(name = "idx_issued_at", columnList = "issued_at"),
+                @Index(name = "idx_expired_at", columnList = "expired_at"),
+                @Index(name = "idx_user_id", columnList = "user_id"),
+                @Index(name = "idx_token_status_expired_at", columnList = "token_status, expired_at")
+        },
+        uniqueConstraints = {
         @UniqueConstraint(columnNames = {"user_id"}) //유저는 항상 하나의 유효한 토큰만 갖는다
 })
 

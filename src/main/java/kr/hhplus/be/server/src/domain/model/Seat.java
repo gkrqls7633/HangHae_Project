@@ -19,6 +19,9 @@ import static java.util.stream.IntStream.range;
 @Getter
 @Entity
 @Builder
+@Table(name = "seat", indexes = {
+        @Index(name = "idx_concert_seat_num", columnList = "concert_seat_id, seat_num")
+})
 @Schema(description = "좌석 도메인")
 public class Seat {
 

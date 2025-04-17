@@ -11,8 +11,8 @@ public class BookingRequest {
     @Schema(description = "concertId", example = "1", required = true)
     private Long concertId;
 
-    @Schema(description = "seatId", example = "1",  required = false)
-    private Long seatId;
+//    @Schema(description = "seatId", example = "1",  required = false)
+//    private Long seatId;
 
     @Schema(description = "seatNum", example = "1", required = true)
     private Long seatNum;

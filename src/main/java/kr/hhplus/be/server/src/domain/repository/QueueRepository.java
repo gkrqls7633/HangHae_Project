@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,4 +18,6 @@ public interface QueueRepository extends JpaRepository<Queue, Long>, QueueReposi
     Optional<Queue> findByUserIdAndTokenStatus(@Param("userId") Long userId, @Param("tokenStatus") TokenStatus tokenStatus);
 
     List<Queue> findByTokenStatus(TokenStatus tokenStatus);
+
+    List<Queue> findByTokenStatusAndExpiredAtAfter(TokenStatus tokenStatus, LocalDateTime currentTime);
 }
