@@ -8,4 +8,8 @@ public interface ConcertSeatRepository {
     List<Seat> findAllSeatsByConcertId(Long concertId);
 
     ConcertSeat save(ConcertSeat concertSeat);
+
+    void deleteAll();
+
+    void deleteAllInBatch();
 }

@@ -7,11 +7,14 @@ import kr.hhplus.be.server.src.domain.seat.SeatRepository;
 import kr.hhplus.be.server.src.interfaces.booking.BookingRequest;
 import kr.hhplus.be.server.src.interfaces.booking.BookingResponse;
 import kr.hhplus.be.server.src.domain.booking.BookingService;
+import kr.hhplus.be.server.src.TestcontainersConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -27,6 +30,8 @@ import static org.junit.Assert.assertTrue;
 
 @SpringBootTest
 @Transactional
+@ActiveProfiles("test")
+@Import(TestcontainersConfiguration.class)
 class BookingSeatServiceIntegrationTest {
 
     @Autowired

@@ -23,6 +23,16 @@ public class UserRepositoryImpl implements UserRepository {
         return userJpaRepository.save(user);
     }
 
+    @Override
+    public void deleteAll() {
+        userJpaRepository.deleteAll();
+    }
+
+    @Override
+    public void deleteAllInBatch() {
+        userJpaRepository.deleteAllInBatch();
+    }
+
 //    @Override
 //    public UserResponse getUserPoint(Long userId) {
 //        String jpql = "SELECT p FROM Point p WHERE p.userId = :userId";

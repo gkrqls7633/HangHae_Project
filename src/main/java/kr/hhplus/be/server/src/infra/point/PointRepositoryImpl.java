@@ -39,4 +39,9 @@ public class PointRepositoryImpl implements PointRepository {
 
         return query.getResultList();
     }
+
+    @Override
+    public void deleteAllInBatch() {
+        pointJpaRepository.deleteAllInBatch();
+    }
 }

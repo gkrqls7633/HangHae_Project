@@ -53,4 +53,14 @@ public class SeatRepositoryImpl implements SeatRepository {
     public void saveAll(List<Seat> seatList) {
         seatJpaRepository.saveAll(seatList);
     }
+
+    @Override
+    public void deleteAll() {
+        seatJpaRepository.deleteAll();
+    }
+
+    @Override
+    public void deleteAllInBatch() {
+        seatJpaRepository.deleteAllInBatch();
+    }
 }

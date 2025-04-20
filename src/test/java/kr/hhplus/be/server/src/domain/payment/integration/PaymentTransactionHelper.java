@@ -54,7 +54,18 @@ public class PaymentTransactionHelper {
     private QueueRepository queueRepository;
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void cleanTestData() {
+        pointRepository.deleteAllInBatch();
+        seatRepository.deleteAllInBatch();
+        concertSeatRepository.deleteAllInBatch();
+        bookingRepository.deleteAllInBatch();
+        concertRepository.deleteAllInBatch();
+        userRepository.deleteAllInBatch();
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public PaymentRequest setupTestData() {
+
         //유저 저장
         User user = User.builder()
 //                .userId(1L)
@@ -100,6 +111,12 @@ public class PaymentTransactionHelper {
         //좌석 저장
         seatRepository.saveAll(seatList);
 
+        Seat selectedSeat = seatList.stream()
+                .filter(seat -> seat.getSeatNum() == 1L)
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("예약 가능한 좌석이 없습니다."));
+
+
         //유저 대기 토큰 발급
         Queue queue = new Queue();
         queue.setUserId(savedUser.getUserId());
@@ -112,8 +129,8 @@ public class PaymentTransactionHelper {
         //예약내역 저장
         Booking booking = Booking.builder()
                 .concert(savedConcert)
-                .seatNum(1L)
-                .seatId(1L)
+                .seatNum(selectedSeat.getSeatNum())
+                .seatId(selectedSeat.getSeatId())
                 .user(savedUser)
                 .build();
         bookingRepository.save(booking);

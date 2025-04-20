@@ -11,4 +11,8 @@ public interface ConcertRepository {
     List<Concert> findAll();
 
     Concert save(Concert concert);
+
+    void deleteAll();
+
+    void deleteAllInBatch();
 }

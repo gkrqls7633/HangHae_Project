@@ -6,4 +6,8 @@ public interface BookingRepository {
     Booking save(Booking booking);
 
     Optional<Booking> findById(Long bookingId);
+
+    void deleteAll();
+
+    void deleteAllInBatch();
 }

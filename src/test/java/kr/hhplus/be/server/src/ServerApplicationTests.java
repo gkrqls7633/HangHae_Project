@@ -1,10 +1,11 @@
-package kr.hhplus.be.server;
+package kr.hhplus.be.server.src;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
+@ActiveProfiles("test")
 class ServerApplicationTests {
 
 	@Test

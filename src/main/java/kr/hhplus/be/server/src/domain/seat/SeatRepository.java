@@ -11,4 +11,8 @@ public interface SeatRepository {
     Optional<Seat> findById(Long seatId);
 
     void saveAll(List<Seat> seatList);
+
+    void deleteAll();
+
+    void deleteAllInBatch();
 }

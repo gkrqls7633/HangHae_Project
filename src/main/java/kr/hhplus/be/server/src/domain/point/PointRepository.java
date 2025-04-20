@@ -9,4 +9,6 @@ public interface PointRepository {
     Point save(Point point);
 
     List<Point> findByPointBalanceGreaterThanEqual(Long amount);
+
+    void deleteAllInBatch();
 }
