@@ -1,6 +1,7 @@
 package kr.hhplus.be.server.src.application.service;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.OptimisticLockException;
 import kr.hhplus.be.server.src.common.ResponseMessage;
 import kr.hhplus.be.server.src.domain.point.Point;
 import kr.hhplus.be.server.src.domain.point.PointRepository;
@@ -17,6 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class PointServiceImpl implements PointService {
 
     private final PointRepository pointRepository;
+
+    private static final int MAX_RETRY = 3;
 
     /**
      * @description 유저의 포인트 잔액을 조회한다.
@@ -37,6 +40,27 @@ public class PointServiceImpl implements PointService {
                 .build();
 
         return ResponseMessage.success("포인트 잔액이 정상적으로 조회됐습니다.", pointResponse);
+    }
+
+    @Transactional
+    public ResponseMessage<PointResponse> chargePointWithRetry(PointChargeRequest request) {
+        int retryCount = 0;
+
+        while (retryCount < MAX_RETRY) {
+            try {
+                return chargePoint(request);
+            } catch (OptimisticLockException e) {
+                retryCount++;
+                if (retryCount >= MAX_RETRY) {
+                    throw new RuntimeException("포인트 충전에 실패했습니다. 다시 시도해주세요.", e);
+                }
+                try {
+                    Thread.sleep(100); // 잠시 대기 후 재시도
+                } catch (InterruptedException ignored) {}
+            }
+        }
+
+        throw new RuntimeException("알 수 없는 이유로 포인트 충전에 실패했습니다.");
     }
 
     /**
