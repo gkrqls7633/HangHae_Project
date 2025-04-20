@@ -6,7 +6,7 @@ import kr.hhplus.be.server.src.domain.concert.ConcertService;
 import kr.hhplus.be.server.src.domain.concertseat.ConcertSeat;
 import kr.hhplus.be.server.src.domain.concertseat.ConcertSeatRepository;
 import kr.hhplus.be.server.src.domain.seat.Seat;
-import kr.hhplus.be.server.src.interfaces.concert.ConcertResponse;
+import kr.hhplus.be.server.src.interfaces.concert.dto.ConcertResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

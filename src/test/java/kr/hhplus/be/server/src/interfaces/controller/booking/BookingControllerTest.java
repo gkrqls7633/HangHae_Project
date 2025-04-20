@@ -7,7 +7,7 @@
 //import kr.hhplus.be.server.src.domain.concert.Concert;
 //import kr.hhplus.be.server.src.domain.seat.Seat;
 //import kr.hhplus.be.server.src.domain.model.enums.SeatStatus;
-//import kr.hhplus.be.server.src.interfaces.booking.BookingResponse;
+//import kr.hhplus.be.server.src.interfaces.booking.dto.BookingResponse;
 //import kr.hhplus.be.server.src.service.BookingService;
 //import org.junit.jupiter.api.DisplayName;
 //import org.junit.jupiter.api.Test;

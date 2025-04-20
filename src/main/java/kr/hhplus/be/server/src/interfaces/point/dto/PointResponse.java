@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.src.interfaces.point;
+package kr.hhplus.be.server.src.interfaces.point.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;

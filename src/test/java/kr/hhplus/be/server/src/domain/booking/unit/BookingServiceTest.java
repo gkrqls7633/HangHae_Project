@@ -15,16 +15,14 @@ import kr.hhplus.be.server.src.domain.seat.Seat;
 import kr.hhplus.be.server.src.domain.seat.SeatRepository;
 import kr.hhplus.be.server.src.domain.user.User;
 import kr.hhplus.be.server.src.domain.user.UserRepository;
-import kr.hhplus.be.server.src.interfaces.booking.BookingRequest;
-import kr.hhplus.be.server.src.interfaces.booking.BookingResponse;
-import kr.hhplus.be.server.src.domain.booking.BookingService;
+import kr.hhplus.be.server.src.interfaces.booking.dto.BookingRequest;
+import kr.hhplus.be.server.src.interfaces.booking.dto.BookingResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Arrays;
 import java.util.List;

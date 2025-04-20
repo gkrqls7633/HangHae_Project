@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.src.interfaces.queue;
+package kr.hhplus.be.server.src.interfaces.queue.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import kr.hhplus.be.server.src.domain.enums.TokenStatus;

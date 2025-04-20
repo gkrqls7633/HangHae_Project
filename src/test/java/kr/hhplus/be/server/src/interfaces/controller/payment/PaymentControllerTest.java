@@ -3,7 +3,7 @@
 //import kr.hhplus.be.server.src.interfaces.payment.PaymentController;
 //import kr.hhplus.be.server.src.common.ResponseMessage;
 //import kr.hhplus.be.server.src.domain.payment.Payment;
-//import kr.hhplus.be.server.src.interfaces.payment.PaymentResponse;
+//import kr.hhplus.be.server.src.interfaces.payment.dto.PaymentResponse;
 //import org.junit.jupiter.api.DisplayName;
 //import org.junit.jupiter.api.Test;
 //import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;

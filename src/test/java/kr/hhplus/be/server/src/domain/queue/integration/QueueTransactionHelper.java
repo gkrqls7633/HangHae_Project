@@ -4,7 +4,7 @@ import kr.hhplus.be.server.src.domain.queue.Queue;
 import kr.hhplus.be.server.src.domain.queue.QueueRepository;
 import kr.hhplus.be.server.src.domain.user.User;
 import kr.hhplus.be.server.src.domain.user.UserRepository;
-import kr.hhplus.be.server.src.interfaces.queue.QueueRequest;
+import kr.hhplus.be.server.src.interfaces.queue.dto.QueueRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

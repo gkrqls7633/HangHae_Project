@@ -1,6 +1,6 @@
 package kr.hhplus.be.server.src.domain.concert;
 
-import kr.hhplus.be.server.src.interfaces.concert.ConcertResponse;
+import kr.hhplus.be.server.src.interfaces.concert.dto.ConcertResponse;
 import java.util.List;
 
 public interface ConcertService {

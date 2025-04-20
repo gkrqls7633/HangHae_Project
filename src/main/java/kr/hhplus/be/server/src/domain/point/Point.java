@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import kr.hhplus.be.server.src.domain.user.User;
-import kr.hhplus.be.server.src.interfaces.point.PointChargeRequest;
+import kr.hhplus.be.server.src.interfaces.point.dto.PointChargeRequest;
 import lombok.*;
 
 @NoArgsConstructor

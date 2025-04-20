@@ -17,7 +17,7 @@ import kr.hhplus.be.server.src.domain.seat.Seat;
 import kr.hhplus.be.server.src.domain.seat.SeatRepository;
 import kr.hhplus.be.server.src.domain.user.User;
 import kr.hhplus.be.server.src.domain.user.UserRepository;
-import kr.hhplus.be.server.src.interfaces.payment.PaymentRequest;
+import kr.hhplus.be.server.src.interfaces.payment.dto.PaymentRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;

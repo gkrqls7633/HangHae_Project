@@ -2,8 +2,8 @@ package kr.hhplus.be.server.src.domain.point.integration;
 
 import kr.hhplus.be.server.src.TestcontainersConfiguration;
 import kr.hhplus.be.server.src.common.ResponseMessage;
-import kr.hhplus.be.server.src.interfaces.point.PointChargeRequest;
-import kr.hhplus.be.server.src.interfaces.point.PointResponse;
+import kr.hhplus.be.server.src.interfaces.point.dto.PointChargeRequest;
+import kr.hhplus.be.server.src.interfaces.point.dto.PointResponse;
 import kr.hhplus.be.server.src.domain.point.PointService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

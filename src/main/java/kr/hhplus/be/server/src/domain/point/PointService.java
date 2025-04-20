@@ -1,8 +1,8 @@
 package kr.hhplus.be.server.src.domain.point;
 
 import kr.hhplus.be.server.src.common.ResponseMessage;
-import kr.hhplus.be.server.src.interfaces.point.PointChargeRequest;
-import kr.hhplus.be.server.src.interfaces.point.PointResponse;
+import kr.hhplus.be.server.src.interfaces.point.dto.PointChargeRequest;
+import kr.hhplus.be.server.src.interfaces.point.dto.PointResponse;
 
 public interface PointService {
 

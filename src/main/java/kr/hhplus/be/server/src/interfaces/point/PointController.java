@@ -5,6 +5,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kr.hhplus.be.server.src.common.ResponseMessage;
 import kr.hhplus.be.server.src.domain.point.PointService;
+import kr.hhplus.be.server.src.interfaces.point.dto.PointChargeRequest;
+import kr.hhplus.be.server.src.interfaces.point.dto.PointResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 

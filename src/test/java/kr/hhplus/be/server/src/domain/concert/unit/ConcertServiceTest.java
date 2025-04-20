@@ -7,7 +7,7 @@ import kr.hhplus.be.server.src.domain.concertseat.ConcertSeat;
 import kr.hhplus.be.server.src.domain.concertseat.ConcertSeatRepository;
 import kr.hhplus.be.server.src.domain.seat.Seat;
 import kr.hhplus.be.server.src.domain.enums.SeatStatus;
-import kr.hhplus.be.server.src.interfaces.concert.ConcertResponse;
+import kr.hhplus.be.server.src.interfaces.concert.dto.ConcertResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
