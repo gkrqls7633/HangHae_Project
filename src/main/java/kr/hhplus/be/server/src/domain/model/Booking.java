@@ -14,6 +14,10 @@ import java.util.Objects;
 @Setter
 @Entity
 @Builder
+@Table(name = "booking", indexes = {
+        @Index(name = "idx_user_id", columnList = "user_id"),
+        @Index(name = "idx_concert_id", columnList = "concert_concert_id")
+})
 @Schema(description = "예약 도메인")
 public class Booking {
 

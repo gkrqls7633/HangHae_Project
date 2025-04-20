@@ -53,8 +53,11 @@ public class QueueSchedular {
     @Scheduled(cron = "*/10 * * * * *")//
     public void readyToActivateTokens() {
 
-        // 1. READY 상태의 토큰들 조회
-        List<Queue> readyQueues = queueRepository.findByTokenStatus(TokenStatus.READY);
+        // 1. READY 상태 & 만료 되지 않은 토큰들 조회
+        List<Queue> readyQueues = queueRepository.findByTokenStatusAndExpiredAtAfter(
+                  TokenStatus.READY
+                , LocalDateTime.now()
+        );
 
         if (readyQueues.isEmpty()) {
             System.out.println("#####활성화할 토큰이 없습니다.#####");

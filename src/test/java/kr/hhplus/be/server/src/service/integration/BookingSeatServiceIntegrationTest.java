@@ -1,9 +1,11 @@
 package kr.hhplus.be.server.src.service.integration;
 
+import kr.hhplus.be.server.src.common.ResponseMessage;
 import kr.hhplus.be.server.src.domain.model.Seat;
 import kr.hhplus.be.server.src.domain.model.enums.SeatStatus;
 import kr.hhplus.be.server.src.domain.repository.SeatRepository;
 import kr.hhplus.be.server.src.interfaces.booking.BookingRequest;
+import kr.hhplus.be.server.src.interfaces.booking.BookingResponse;
 import kr.hhplus.be.server.src.service.BookingService;
 import kr.hhplus.be.server.src.service.testTransactionHelper.BookingTransactionHelper;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,7 +15,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -56,5 +64,59 @@ class BookingSeatServiceIntegrationTest {
         assertTrue("좌석이 존재해야 합니다.", seatOpt.isPresent());
         Seat seat = seatOpt.get();
         assertEquals(seat.getSeatStatus(), SeatStatus.OCCUPIED);
+    }
+
+
+    //동시성 이슈 -> 현재는 두 요청 모두 성공
+    @DisplayName("동일 좌석 동시 예약 요청 시 하나만 성공해야 한다.")
+    @Test
+    void testConcurrencyBookingSeatTest() throws InterruptedException {
+        int threadCount = 3;
+        ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
+        CountDownLatch latch = new CountDownLatch(threadCount);
+
+        //future로 비동기 작업 받을 수 있게 처리
+        List<Future<ResponseMessage<BookingResponse>>> results = new ArrayList<>();
+
+        for (int i = 0; i < threadCount; i++) {
+            Future<ResponseMessage<BookingResponse>> result = executorService.submit(() -> {
+                try {
+                    return bookingService.bookingSeat(bookingRequest);
+                } catch (Exception e) {
+                    return ResponseMessage.error(500, e.getMessage());
+                } finally {
+                    latch.countDown();
+                }
+            });
+            results.add(result);
+        }
+
+        latch.await(); // 모든 스레드 완료까지 대기
+
+        long successCount = results.stream()
+                .filter(future -> {
+                    try {
+                        return future.get().getStatus() == 200;
+                    } catch (Exception e) {
+                        return false;
+                    }
+                })
+                .count();
+
+        long failCount = results.stream()
+                .filter(future -> {
+                    try {
+                        return future.get().getStatus() != 200;
+                    } catch (Exception e) {
+                        return true;
+                    }
+                })
+                .count();
+
+        System.out.println("성공한 예약 요청 수: " + successCount);
+        System.out.println("실패한 예약 요청 수: " + failCount);
+
+        // 기대: 성공 1건
+        assertEquals(1, successCount);
     }
 }
