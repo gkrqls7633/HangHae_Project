@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.src.domain.concert.unit;
 
+import kr.hhplus.be.server.src.application.service.ConcertServiceImpl;
 import kr.hhplus.be.server.src.domain.concert.Concert;
 import kr.hhplus.be.server.src.domain.concert.ConcertRepository;
 import kr.hhplus.be.server.src.domain.concertseat.ConcertSeat;
@@ -7,7 +8,6 @@ import kr.hhplus.be.server.src.domain.concertseat.ConcertSeatRepository;
 import kr.hhplus.be.server.src.domain.seat.Seat;
 import kr.hhplus.be.server.src.domain.enums.SeatStatus;
 import kr.hhplus.be.server.src.interfaces.concert.ConcertResponse;
-import kr.hhplus.be.server.src.domain.concert.ConcertService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,7 +29,7 @@ import static org.mockito.Mockito.when;
 public class ConcertServiceTest {
 
     @InjectMocks
-    private ConcertService concertService;
+    private ConcertServiceImpl concertService;
 
     @Mock
     private ConcertRepository concertRepository;

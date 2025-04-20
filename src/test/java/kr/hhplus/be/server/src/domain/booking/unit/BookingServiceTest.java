@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.src.domain.booking.unit;
 
+import kr.hhplus.be.server.src.application.service.BookingServiceImpl;
 import kr.hhplus.be.server.src.common.ResponseMessage;
 import kr.hhplus.be.server.src.domain.booking.Booking;
 import kr.hhplus.be.server.src.domain.booking.BookingRepository;
@@ -36,7 +37,7 @@ import static org.mockito.Mockito.*;
 class BookingServiceTest {
 
     @InjectMocks
-    private BookingService bookingService;
+    private BookingServiceImpl bookingService;
 
     @Mock
     private BookingRepository bookingRepository;

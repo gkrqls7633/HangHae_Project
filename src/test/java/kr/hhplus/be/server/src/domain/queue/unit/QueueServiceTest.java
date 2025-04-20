@@ -1,6 +1,7 @@
 package kr.hhplus.be.server.src.domain.queue.unit;
 
 import jakarta.persistence.EntityNotFoundException;
+import kr.hhplus.be.server.src.application.service.QueueServiceImpl;
 import kr.hhplus.be.server.src.common.ResponseMessage;
 import kr.hhplus.be.server.src.domain.queue.Queue;
 import kr.hhplus.be.server.src.domain.queue.QueueRepository;
@@ -29,7 +30,7 @@ import static org.mockito.Mockito.when;
 class QueueServiceTest {
 
     @InjectMocks
-    private QueueService queueService;
+    private QueueServiceImpl queueService;
 
     @Mock
     private QueueRepository queueRepository;

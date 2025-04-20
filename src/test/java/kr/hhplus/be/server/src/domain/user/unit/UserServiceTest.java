@@ -1,10 +1,10 @@
 package kr.hhplus.be.server.src.domain.user.unit;
 
+import kr.hhplus.be.server.src.application.service.UserServiceImpl;
 import kr.hhplus.be.server.src.domain.point.Point;
 import kr.hhplus.be.server.src.domain.user.User;
 import kr.hhplus.be.server.src.domain.user.UserRepository;
 import kr.hhplus.be.server.src.interfaces.user.UserResponse;
-import kr.hhplus.be.server.src.domain.user.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,7 +24,7 @@ class UserServiceTest {
     private UserRepository userRepository;
 
     @InjectMocks
-    private UserService userService;
+    private UserServiceImpl userService;
 
     @Test
     @DisplayName("유저의 포인트를 조회한다.")

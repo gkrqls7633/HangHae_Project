@@ -1,6 +1,7 @@
 package kr.hhplus.be.server.src.domain.payment.integration;
 
 
+import kr.hhplus.be.server.src.application.service.PaymentServiceImpl;
 import kr.hhplus.be.server.src.common.ResponseMessage;
 import kr.hhplus.be.server.src.domain.payment.PaymentRepository;
 import kr.hhplus.be.server.src.domain.point.Point;
@@ -23,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class PaymentServiceIntegrationTest {
 
     @Autowired
-    private PaymentService paymentService;
+    private PaymentServiceImpl paymentService;
 
     @Autowired
     private PaymentTransactionHelper paymentTransactionHelper;

@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.src.domain.queue.unit;
 
+import kr.hhplus.be.server.src.application.service.QueueServiceImpl;
 import kr.hhplus.be.server.src.common.ResponseMessage;
 import kr.hhplus.be.server.src.domain.queue.Queue;
 import kr.hhplus.be.server.src.domain.queue.QueueRepository;
@@ -28,7 +29,7 @@ class QueueScehdularTest {
     private QueueRepository queueRepository;
 
     @Mock
-    private QueueService queueService;
+    private QueueServiceImpl queueService;
 
     @InjectMocks
     private QueueSchedular queueScheduler;

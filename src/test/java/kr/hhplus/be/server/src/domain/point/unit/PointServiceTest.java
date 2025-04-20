@@ -2,13 +2,13 @@ package kr.hhplus.be.server.src.domain.point.unit;
 
 
 import jakarta.persistence.EntityNotFoundException;
+import kr.hhplus.be.server.src.application.service.PointServiceImpl;
 import kr.hhplus.be.server.src.common.ResponseMessage;
 import kr.hhplus.be.server.src.domain.point.Point;
 import kr.hhplus.be.server.src.domain.point.PointRepository;
 import kr.hhplus.be.server.src.domain.user.User;
 import kr.hhplus.be.server.src.interfaces.point.PointChargeRequest;
 import kr.hhplus.be.server.src.interfaces.point.PointResponse;
-import kr.hhplus.be.server.src.domain.point.PointService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
 class PointServiceTest {
 
     @InjectMocks
-    private PointService pointService;
+    private PointServiceImpl pointService;
 
     @Mock
     private PointRepository pointRepository;
