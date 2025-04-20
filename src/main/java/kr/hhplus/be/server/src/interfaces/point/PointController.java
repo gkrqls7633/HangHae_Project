@@ -4,9 +4,7 @@ package kr.hhplus.be.server.src.interfaces.point;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kr.hhplus.be.server.src.common.ResponseMessage;
-import kr.hhplus.be.server.src.domain.model.Point;
-import kr.hhplus.be.server.src.domain.model.User;
-import kr.hhplus.be.server.src.service.PointService;
+import kr.hhplus.be.server.src.domain.point.PointService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 

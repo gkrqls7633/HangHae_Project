@@ -3,9 +3,9 @@
 //import com.fasterxml.jackson.databind.ObjectMapper;
 //import kr.hhplus.be.server.src.interfaces.booking.BookingController;
 //import kr.hhplus.be.server.src.common.ResponseMessage;
-//import kr.hhplus.be.server.src.domain.model.Booking;
-//import kr.hhplus.be.server.src.domain.model.Concert;
-//import kr.hhplus.be.server.src.domain.model.Seat;
+//import kr.hhplus.be.server.src.domain.booking.Booking;
+//import kr.hhplus.be.server.src.domain.concert.Concert;
+//import kr.hhplus.be.server.src.domain.seat.Seat;
 //import kr.hhplus.be.server.src.domain.model.enums.SeatStatus;
 //import kr.hhplus.be.server.src.interfaces.booking.BookingResponse;
 //import kr.hhplus.be.server.src.service.BookingService;

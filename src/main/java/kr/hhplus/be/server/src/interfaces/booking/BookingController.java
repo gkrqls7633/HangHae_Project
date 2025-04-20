@@ -2,12 +2,10 @@ package kr.hhplus.be.server.src.interfaces.booking;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import kr.hhplus.be.server.src.application.BookingPaymentFacade;
 import kr.hhplus.be.server.src.common.ResponseMessage;
-import kr.hhplus.be.server.src.domain.model.Booking;
-import kr.hhplus.be.server.src.domain.model.Payment;
+import kr.hhplus.be.server.src.domain.booking.Booking;
 import kr.hhplus.be.server.src.interfaces.payment.PaymentResponse;
-import kr.hhplus.be.server.src.service.BookingService;
+import kr.hhplus.be.server.src.domain.booking.BookingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 public class BookingController {
 
     private final BookingService bookingService;
-    private final BookingPaymentFacade bookingPaymentFacade;
+//    private final BookingPaymentFacade bookingPaymentFacade;
 
     @Operation(summary = "좌석 예약 요청", description = "좌석 예약을 요청합니다.")
     @PostMapping("/seats")
@@ -35,10 +33,10 @@ public class BookingController {
     }
 
     //Facade로 한번에 처리?
-    @Operation(summary = "좌석예약 + 결제 요청", description = "좌석 예약 + 결제를 한번에 요청합니다.")
-    @PostMapping("/payments/seats")
-    public ResponseMessage<PaymentResponse> BookingPaymentFacade(@RequestBody BookingRequest bookingRequest) {
-        return bookingPaymentFacade.processBookingPayment(bookingRequest);
-    }
+//    @Operation(summary = "좌석예약 + 결제 요청", description = "좌석 예약 + 결제를 한번에 요청합니다.")
+//    @PostMapping("/payments/seats")
+//    public ResponseMessage<PaymentResponse> BookingPaymentFacade(@RequestBody BookingRequest bookingRequest) {
+//        return bookingPaymentFacade.processBookingPayment(bookingRequest);
+//    }
 
 }

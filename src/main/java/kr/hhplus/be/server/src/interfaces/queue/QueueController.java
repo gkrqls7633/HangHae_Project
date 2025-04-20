@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kr.hhplus.be.server.src.common.ResponseMessage;
-import kr.hhplus.be.server.src.service.QueueService;
+import kr.hhplus.be.server.src.domain.queue.QueueService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

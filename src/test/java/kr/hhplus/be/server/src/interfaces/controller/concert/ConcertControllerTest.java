@@ -2,7 +2,7 @@
 //
 //import kr.hhplus.be.server.src.interfaces.concert.ConcertController;
 //import kr.hhplus.be.server.src.common.ResponseMessage;
-//import kr.hhplus.be.server.src.domain.model.Concert;
+//import kr.hhplus.be.server.src.domain.concert.Concert;
 //import org.junit.jupiter.api.DisplayName;
 //import org.junit.jupiter.api.Test;
 //

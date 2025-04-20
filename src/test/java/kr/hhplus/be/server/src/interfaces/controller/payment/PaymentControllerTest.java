@@ -2,7 +2,7 @@
 //
 //import kr.hhplus.be.server.src.interfaces.payment.PaymentController;
 //import kr.hhplus.be.server.src.common.ResponseMessage;
-//import kr.hhplus.be.server.src.domain.model.Payment;
+//import kr.hhplus.be.server.src.domain.payment.Payment;
 //import kr.hhplus.be.server.src.interfaces.payment.PaymentResponse;
 //import org.junit.jupiter.api.DisplayName;
 //import org.junit.jupiter.api.Test;

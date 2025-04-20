@@ -3,27 +3,16 @@ package kr.hhplus.be.server.src.interfaces.concert;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kr.hhplus.be.server.src.common.ResponseMessage;
-import kr.hhplus.be.server.src.domain.model.Concert;
-import kr.hhplus.be.server.src.domain.model.Seat;
-import kr.hhplus.be.server.src.domain.model.enums.SeatStatus;
-import kr.hhplus.be.server.src.service.ConcertService;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import kr.hhplus.be.server.src.domain.concert.ConcertService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 
 @Tag(name = "콘서트", description = "콘서트 API")

@@ -1,7 +1,7 @@
 package kr.hhplus.be.server.src.interfaces.concert;
 
-import kr.hhplus.be.server.src.domain.model.ConcertSeat;
-import kr.hhplus.be.server.src.domain.model.Seat;
+import kr.hhplus.be.server.src.domain.concertseat.ConcertSeat;
+import kr.hhplus.be.server.src.domain.seat.Seat;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;

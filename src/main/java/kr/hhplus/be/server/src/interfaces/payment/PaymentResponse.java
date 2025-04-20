@@ -2,7 +2,7 @@ package kr.hhplus.be.server.src.interfaces.payment;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
-import kr.hhplus.be.server.src.domain.model.enums.PaymentStatus;
+import kr.hhplus.be.server.src.domain.enums.PaymentStatus;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

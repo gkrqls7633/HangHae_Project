@@ -1,7 +1,7 @@
 package kr.hhplus.be.server.src.interfaces.queue;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import kr.hhplus.be.server.src.domain.model.enums.TokenStatus;
+import kr.hhplus.be.server.src.domain.enums.TokenStatus;
 import lombok.Getter;
 import lombok.Setter;
 
