@@ -104,4 +104,28 @@ public class BookingTransactionHelper {
 
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public User createUser(Long num) {
+        User user = new User();
+        user.setUserName("김항해" + num);
+        user.setPhoneNumber("010-1234-5678");
+        user.setEmail("test@naver.com");
+        user.setAddress("서울특별시 강서구 염창동");
+
+        return userRepository.save(user);
+
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public Queue createQueue(User user) {
+        //유저 대기 토큰 발급
+        Queue queue = new Queue();
+        queue.setUserId(user.getUserId());
+        queue.newToken(); //발급
+
+        //활성화 토큰으로 변경
+        queue.setTokenStatus(TokenStatus.ACTIVE);
+        return queueRepository.save(queue);
+    }
+
 }

@@ -8,4 +8,7 @@ public interface BookingService{
 
     ResponseMessage<BookingResponse> bookingSeat(BookingRequest bookingRequest);
 
+    ResponseMessage<BookingResponse> bookingSeatWithLock(BookingRequest bookgingRequest);
+
+    ResponseMessage<BookingResponse> bookingSeatWithPessimisticLock(BookingRequest bookgingRequest);
 }

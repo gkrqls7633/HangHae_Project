@@ -1,29 +1,34 @@
 package kr.hhplus.be.server.src.domain.booking.integration;
 
 import kr.hhplus.be.server.src.common.ResponseMessage;
+import kr.hhplus.be.server.src.domain.enums.TokenStatus;
+import kr.hhplus.be.server.src.domain.queue.Queue;
 import kr.hhplus.be.server.src.domain.seat.Seat;
 import kr.hhplus.be.server.src.domain.enums.SeatStatus;
 import kr.hhplus.be.server.src.domain.seat.SeatRepository;
+import kr.hhplus.be.server.src.domain.user.User;
 import kr.hhplus.be.server.src.interfaces.booking.dto.BookingRequest;
 import kr.hhplus.be.server.src.interfaces.booking.dto.BookingResponse;
 import kr.hhplus.be.server.src.domain.booking.BookingService;
 import kr.hhplus.be.server.src.TestcontainersConfiguration;
+import kr.hhplus.be.server.src.interfaces.point.dto.PointChargeRequest;
+import kr.hhplus.be.server.src.interfaces.point.dto.PointResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -75,7 +80,7 @@ class BookingSeatServiceIntegrationTest {
     @DisplayName("동일 좌석 동시 예약 요청 시 하나만 성공해야 한다.")
     @Test
     void testConcurrencyBookingSeatTest() throws InterruptedException {
-        int threadCount = 3;
+        int threadCount = 10;
         ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
         CountDownLatch latch = new CountDownLatch(threadCount);
 
@@ -122,5 +127,117 @@ class BookingSeatServiceIntegrationTest {
 
         // 기대: 성공 1건
         assertEquals(1, successCount);
+    }
+
+    @DisplayName("동시 좌석 예약 시 하나만 성공한다.(낙관적 락)")
+    @Test
+    void bookingSeatOptimisticLockTest() throws InterruptedException {
+        User user1 = bookingTransactionHelper.createUser(1L);
+        User user2 = bookingTransactionHelper.createUser(2L);
+
+        Queue queue1 = bookingTransactionHelper.createQueue(user1);
+        Queue queue2 = bookingTransactionHelper.createQueue(user2);
+
+        BookingRequest request1 = new BookingRequest(bookingRequest.getConcertId(), 1L, user1.getUserId());
+        BookingRequest request2 = new BookingRequest(bookingRequest.getConcertId(), 1L, user2.getUserId());
+
+        ExecutorService executor = Executors.newFixedThreadPool(2);
+        List<Future<ResponseMessage<BookingResponse>>> futures = new ArrayList<>();
+
+        futures.add(executor.submit(() -> bookingService.bookingSeat(request1)));
+        futures.add(executor.submit(() -> bookingService.bookingSeat(request2)));
+
+        long startTime = System.currentTimeMillis();
+
+        int successCount = 0;
+        int failCount = 0;
+
+        for (Future<ResponseMessage<BookingResponse>> future : futures) {
+            try {
+                ResponseMessage<BookingResponse> response = future.get();
+                if (response.getStatus() == 200) {
+                    successCount++;
+                } else {
+                    failCount++;
+                }
+            } catch (ExecutionException e) {
+                Throwable cause = e.getCause();
+                if (cause instanceof ObjectOptimisticLockingFailureException) {
+                    failCount++;
+                } else {
+                    throw new RuntimeException("Unexpected exception", cause);
+                }
+            }
+        }
+
+        executor.shutdown();
+        executor.awaitTermination(5, TimeUnit.SECONDS);
+
+        long endTime = System.currentTimeMillis();
+        long duration = endTime - startTime;
+
+        System.out.println("성공한 스레드 수: " + successCount);
+        System.out.println("실패한 스레드 수: " + failCount);
+        System.out.println("총 소요 시간: " + duration + "ms");
+
+
+        assertEquals(1, successCount);
+        assertEquals(1, failCount);
+    }
+
+    @DisplayName("동시 좌석 예약 시 하나만 성공한다.(비관적 락)")
+    @Test
+    void bookingSeatPessimisticLockTest() throws InterruptedException {
+        User user1 = bookingTransactionHelper.createUser(1L);
+        User user2 = bookingTransactionHelper.createUser(2L);
+
+        Queue queue1 = bookingTransactionHelper.createQueue(user1);
+        Queue queue2 = bookingTransactionHelper.createQueue(user2);
+
+        BookingRequest request1 = new BookingRequest(bookingRequest.getConcertId(), 1L, user1.getUserId());
+        BookingRequest request2 = new BookingRequest(bookingRequest.getConcertId(), 1L, user2.getUserId());
+
+        ExecutorService executor = Executors.newFixedThreadPool(2);
+        List<Future<ResponseMessage<BookingResponse>>> futures = new ArrayList<>();
+
+        futures.add(executor.submit(() -> bookingService.bookingSeatWithPessimisticLock(request1)));
+        futures.add(executor.submit(() -> bookingService.bookingSeatWithPessimisticLock(request2)));
+
+        long startTime = System.currentTimeMillis();
+
+        int successCount = 0;
+        int failCount = 0;
+
+        for (Future<ResponseMessage<BookingResponse>> future : futures) {
+            try {
+                ResponseMessage<BookingResponse> response = future.get();
+                if (response.getStatus() == 200) {
+                    successCount++;
+                } else {
+                    failCount++;
+                }
+            } catch (ExecutionException e) {
+                Throwable cause = e.getCause();
+                if (cause instanceof ObjectOptimisticLockingFailureException) {
+                    failCount++;
+                } else {
+                    throw new RuntimeException("Unexpected exception", cause);
+                }
+            }
+        }
+
+        executor.shutdown();
+        executor.awaitTermination(5, TimeUnit.SECONDS);
+
+        long endTime = System.currentTimeMillis();
+        long duration = endTime - startTime;
+
+        System.out.println("성공한 스레드 수: " + successCount);
+        System.out.println("실패한 스레드 수: " + failCount);
+        System.out.println("총 소요 시간: " + duration + "ms");
+
+
+        assertEquals(1, successCount);
+        assertEquals(1, failCount);
     }
 }

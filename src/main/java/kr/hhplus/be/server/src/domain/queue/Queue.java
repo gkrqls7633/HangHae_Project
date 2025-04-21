@@ -3,6 +3,7 @@ package kr.hhplus.be.server.src.domain.queue;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import kr.hhplus.be.server.src.domain.enums.TokenStatus;
+import kr.hhplus.be.server.src.domain.user.User;
 import lombok.*;
 
 import java.time.LocalDateTime;
