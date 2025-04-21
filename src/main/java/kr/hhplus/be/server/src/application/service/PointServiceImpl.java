@@ -83,7 +83,6 @@ public class PointServiceImpl implements PointService {
 
         point.setCharged(true);
 
-
         PointResponse pointResponse = PointResponse.builder()
                 .pointBalance(point.getPointBalance())
                 .build();

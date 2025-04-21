@@ -31,11 +31,10 @@ public class Point {
     @JsonProperty("pointBalance")
     private Long pointBalance;
 
-    private boolean charged = false;
-
-
     @Version
     private Long version; // 낙관적 락을 위한 버전 필드
+
+    private boolean charged = false;
 
     public boolean isEnough(Long concertPrice) {
 

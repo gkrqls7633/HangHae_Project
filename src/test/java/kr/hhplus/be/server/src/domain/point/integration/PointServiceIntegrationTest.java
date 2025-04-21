@@ -1,6 +1,5 @@
 package kr.hhplus.be.server.src.domain.point.integration;
 
-import jakarta.persistence.OptimisticLockException;
 import kr.hhplus.be.server.src.TestcontainersConfiguration;
 import kr.hhplus.be.server.src.common.ResponseMessage;
 import kr.hhplus.be.server.src.interfaces.point.dto.PointChargeRequest;
@@ -12,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -62,10 +62,10 @@ class PointServiceIntegrationTest {
         assertEquals(Optional.of(250000L).get(), response.getData().getPointBalance());
     }
 
-    @DisplayName("동일 유저에 대해 동시 포인트 충전 요청 시 하나만 성공해야 한다.")
+    @DisplayName("동일 유저에 대해 동시 포인트 충전 요청 시 하나만 성공해야 한다.(락 x)")
     @Test
     void testConcurrencyChargePointTest() throws InterruptedException {
-        int threadCount = 3;
+        int threadCount = 10;
         ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
         CountDownLatch latch = new CountDownLatch(threadCount);
 
@@ -115,52 +115,65 @@ class PointServiceIntegrationTest {
         assertEquals(1, successCount);  // 중복 충전이 발생하지 않도록 1번만 성공해야 함
     }
 
-    @DisplayName("동일 유저에 대해 동시 포인트 충전 요청 시 하나만 성공해야 한다.(낙관적락 반영)")
+    @DisplayName("동일 유저에 대해 동시 포인트 충전 요청 시 하나만 성공해야 한다.(낙관적 락 반영)")
     @Test
     void optimisticLockTest() throws InterruptedException {
         //given
         PointChargeRequest pointChargeRequest = new PointChargeRequest(savedUserId, 100000L);
 
         // 스레드 수
-        int threadCount = 5;
+        int threadCount = 10;
         List<Thread> threads = new ArrayList<>();
         final AtomicInteger successCount = new AtomicInteger(0);
+        final AtomicInteger failureCount = new AtomicInteger(0);
 
         long startTime = System.currentTimeMillis();
 
+        CountDownLatch startLatch = new CountDownLatch(1); // 시작 신호
+        CountDownLatch doneLatch = new CountDownLatch(threadCount); // 완료 대기
 
         for (int i = 0; i < threadCount; i++) {
             threads.add(new Thread(() -> {
                 try {
+                    startLatch.await(); // 모두가 동시에 시작 대기
+
                     ResponseMessage<PointResponse> result = pointService.chargePointWithLock(pointChargeRequest);
                     if (result.getStatus() == 200) {
                         successCount.incrementAndGet();
                     }
-                } catch (OptimisticLockException e) {
+                } catch (ObjectOptimisticLockingFailureException e) {
+                    failureCount.incrementAndGet();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                } finally {
+                    doneLatch.countDown();
                 }
             }));
         }
 
-        // 모든 스레드 실행
+        // 스레드 시작
         for (Thread thread : threads) {
             thread.start();
         }
 
-        // 모든 스레드 종료 대기
-        for (Thread thread : threads) {
-            thread.join();
-        }
+        // 시작 신호!
+        startLatch.countDown();
+
+        // 완료까지 대기
+        doneLatch.await();
 
         long endTime = System.currentTimeMillis();
         long duration = endTime - startTime;
 
         System.out.println("성공한 스레드 수: " + successCount.get());
+        System.out.println("실패한 스레드 수: " + failureCount.get());
         System.out.println("총 소요 시간: " + duration + "ms");
+
         //then : 성공은 1
         assertEquals(1, successCount.get());
     }
 
-    @DisplayName("동일 유저에 대해 동시 포인트 충전 요청 시 하나만 성공해야 한다.(비관적 반영)")
+    @DisplayName("동일 유저에 대해 동시 포인트 충전 요청 시 하나만 성공해야 한다.(비관적 락 반영)")
     @Test
     void pessimiticLockTest() throws InterruptedException {
         //given
@@ -169,7 +182,8 @@ class PointServiceIntegrationTest {
         // 스레드 수
         int threadCount = 10;
         List<Thread> threads = new ArrayList<>();
-        final AtomicInteger successCount = new AtomicInteger(0);  // 성공한 스레드 수
+        final AtomicInteger successCount = new AtomicInteger(0);
+        final AtomicInteger failureCount = new AtomicInteger(0);
 
         long startTime = System.currentTimeMillis();
 
@@ -181,7 +195,8 @@ class PointServiceIntegrationTest {
                     if (result.getStatus() == 200) {
                         successCount.incrementAndGet();
                     }
-                } catch (OptimisticLockException e) {
+                } catch (ObjectOptimisticLockingFailureException | IllegalStateException e) {
+                    failureCount.incrementAndGet();
                 }
             }));
         }
@@ -200,11 +215,11 @@ class PointServiceIntegrationTest {
         long duration = endTime - startTime;
 
         System.out.println("성공한 스레드 수: " + successCount.get());
+        System.out.println("실패한 스레드 수: " + failureCount.get());
         System.out.println("총 소요 시간: " + duration + "ms");
 
         //then : 성공은 1
         assertEquals(1, successCount.get());
     }
-
 
 }
