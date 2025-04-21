@@ -71,13 +71,18 @@ public class PointServiceImpl implements PointService {
         Point point = pointRepository.findById(pointChargeRequest.getUserId())
                 .orElseThrow(() -> new EntityNotFoundException("포인트 정보가 없습니다."));
 
+        if (point.isCharged()) {
+            throw new IllegalStateException("이미 충전된 요청입니다.");
+        }
+
         //충전 호출
         point.chargePoint(pointChargeRequest);
 
-        log.info("point version 체크 : {}", point.getVersion());
-
         //충전 저장
         pointRepository.save(point);
+
+        point.setCharged(true);
+
 
         PointResponse pointResponse = PointResponse.builder()
                 .pointBalance(point.getPointBalance())
@@ -85,4 +90,35 @@ public class PointServiceImpl implements PointService {
 
         return ResponseMessage.success("포인트가 정상적으로 충전됐습니다.", pointResponse);
     }
+
+    @Transactional
+    public ResponseMessage<PointResponse> chargePointWithPessimisticLock(PointChargeRequest pointChargeRequest) {
+
+        // 비관적 락을 사용하여 현재 포인트 정보 가져오기
+        Point point = pointRepository.findByUserIdForUpdate(pointChargeRequest.getUserId())
+                .orElseThrow(() -> new EntityNotFoundException("포인트 정보가 없습니다."));
+
+        // 이미 충전된 요청이라면 예외를 던지기
+        if (point.isCharged()) { // 충전 상태를 체크하는 로직
+            throw new IllegalStateException("이미 충전된 요청입니다.");
+        }
+
+        // 충전 호출
+        point.chargePoint(pointChargeRequest);
+
+        // 충전 상태를 업데이트 (중복 충전을 방지하기 위해 플래그 업데이트)
+        point.setCharged(true);
+
+        // 포인트 정보 저장
+        pointRepository.save(point);
+
+        // 충전 후 응답 반환
+        PointResponse pointResponse = PointResponse.builder()
+                .pointBalance(point.getPointBalance())
+                .build();
+
+        return ResponseMessage.success("포인트가 정상적으로 충전됐습니다.", pointResponse);
+    }
+
+
 }

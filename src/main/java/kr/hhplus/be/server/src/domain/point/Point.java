@@ -31,6 +31,9 @@ public class Point {
     @JsonProperty("pointBalance")
     private Long pointBalance;
 
+    private boolean charged = false;
+
+
     @Version
     private Long version; // 낙관적 락을 위한 버전 필드
 
@@ -72,4 +75,12 @@ public class Point {
 
     }
 
+    public boolean isCharged() {
+        return charged;
+    }
+
+    // 충전 상태 업데이트 메서드
+    public void setCharged(boolean charged) {
+        this.charged = charged;
+    }
 }

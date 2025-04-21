@@ -10,7 +10,7 @@ public interface PointService {
 
     ResponseMessage<PointResponse> chargePoint(PointChargeRequest pointChargeRequest);
 
-//    ResponseMessage<PointResponse> chargePointWithRetry(PointChargeRequest pointChagrgeRequest);
-
     ResponseMessage<PointResponse> chargePointWithLock(PointChargeRequest pointChagrgeRequest);
+
+    ResponseMessage<PointResponse> chargePointWithPessimisticLock(PointChargeRequest pointChargeRequest);
 }
