@@ -60,7 +60,7 @@ class PointServiceIntegrationTest {
         assertEquals(Optional.of(250000L).get(), response.getData().getPointBalance());
     }
 
-    @DisplayName("동일 유저에 대해 동시 포인트 충전 요청 시 하나만 성공해야 한다.")
+    @DisplayName("동일 유저에 대해 동시 포인트 충전 요청 시 하나만 성공해야 한다.(락 반영x)")
     @Test
     void testConcurrencyChargePointTest() throws InterruptedException {
         int threadCount = 3;
@@ -110,6 +110,70 @@ class PointServiceIntegrationTest {
         System.out.println("실패한 포인트 충전 요청 수: " + failCount);
 
         // 기대: 충전 성공 1건, 실패 2건
+        assertEquals(1, successCount);  // 중복 충전이 발생하지 않도록 1번만 성공해야 함
+    }
+
+    @DisplayName("동일 유저에 대해 동시 포인트 충전 요청 시 하나만 성공해야 한다.(락 반영)")
+    @Test
+    void testConcurrencyChargePointWithOptimisticLock() throws InterruptedException {
+        int threadCount = 10;
+        ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
+        CountDownLatch latch = new CountDownLatch(threadCount);
+
+        PointChargeRequest pointChargeRequest = new PointChargeRequest(savedUserId, 100000L);
+
+        List<Future<ResponseMessage<PointResponse>>> results = new ArrayList<>();
+
+        long startTime = System.currentTimeMillis();  // 시작 시간 측정
+
+        for (int i = 0; i < threadCount; i++) {
+            Future<ResponseMessage<PointResponse>> result = executorService.submit(() -> {
+                try {
+                    return pointService.chargePointWithLock(pointChargeRequest);  // Optimistic Lock을 적용한 메서드 호출
+
+                } catch (Exception e) {
+                    System.out.println("락 발생!!!!");
+                    throw e;
+
+//                    return ResponseMessage.error(500, e.getMessage());
+                } finally {
+                    latch.countDown();
+                }
+            });
+            results.add(result);
+        }
+
+        latch.await();  // 모든 스레드가 끝날 때까지 기다림
+
+        long endTime = System.currentTimeMillis();  // 종료 시간 측정
+        long duration = endTime - startTime;
+
+        // 결과 확인: 성공과 실패의 개수를 셈
+        long successCount = results.stream()
+                .filter(future -> {
+                    try {
+                        return future.get().getStatus() == 200;
+                    } catch (Exception e) {
+                        return false;
+                    }
+                })
+                .count();
+
+        long failCount = results.stream()
+                .filter(future -> {
+                    try {
+                        return future.get().getStatus() != 200;
+                    } catch (Exception e) {
+                        return true;
+                    }
+                })
+                .count();
+
+        System.out.println("성공한 포인트 충전 요청 수: " + successCount);
+        System.out.println("실패한 포인트 충전 요청 수: " + failCount);
+        System.out.println("전체 처리 시간(ms): " + duration);
+
+        // 기대: 충전 성공 1건, 실패 9건
         assertEquals(1, successCount);  // 중복 충전이 발생하지 않도록 1번만 성공해야 함
     }
 

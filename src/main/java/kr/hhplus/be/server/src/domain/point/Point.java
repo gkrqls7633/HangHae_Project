@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import kr.hhplus.be.server.src.domain.user.User;
 import kr.hhplus.be.server.src.interfaces.point.dto.PointChargeRequest;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -13,6 +14,7 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
+@Slf4j
 @Schema(description = "포인트 도메인")
 public class Point {
 
@@ -29,6 +31,8 @@ public class Point {
     @JsonProperty("pointBalance")
     private Long pointBalance;
 
+    @Version
+    private Long version; // 낙관적 락을 위한 버전 필드
 
     public boolean isEnough(Long concertPrice) {
 

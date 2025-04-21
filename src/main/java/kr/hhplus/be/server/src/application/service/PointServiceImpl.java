@@ -9,12 +9,16 @@ import kr.hhplus.be.server.src.domain.point.PointService;
 import kr.hhplus.be.server.src.interfaces.point.dto.PointChargeRequest;
 import kr.hhplus.be.server.src.interfaces.point.dto.PointResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class PointServiceImpl implements PointService {
 
     private final PointRepository pointRepository;
@@ -27,7 +31,7 @@ public class PointServiceImpl implements PointService {
      * @return 포인트 잔액
      */
     @Override
-    @Transactional(isolation = Isolation.READ_UNCOMMITTED)
+    @Transactional
     public ResponseMessage<PointResponse> getPoint(Long userId) {
 
         Point point = pointRepository.findById(userId)
@@ -42,25 +46,16 @@ public class PointServiceImpl implements PointService {
         return ResponseMessage.success("포인트 잔액이 정상적으로 조회됐습니다.", pointResponse);
     }
 
-    @Transactional
-    public ResponseMessage<PointResponse> chargePointWithRetry(PointChargeRequest request) {
-        int retryCount = 0;
+    //낙관적 락 반영 메서드
+    @Override
+    public ResponseMessage<PointResponse> chargePointWithLock(PointChargeRequest pointChargeRequest) {
+        try {
+            return chargePoint(pointChargeRequest);
 
-        while (retryCount < MAX_RETRY) {
-            try {
-                return chargePoint(request);
-            } catch (OptimisticLockException e) {
-                retryCount++;
-                if (retryCount >= MAX_RETRY) {
-                    throw new RuntimeException("포인트 충전에 실패했습니다. 다시 시도해주세요.", e);
-                }
-                try {
-                    Thread.sleep(100); // 잠시 대기 후 재시도
-                } catch (InterruptedException ignored) {}
-            }
+        } catch (ObjectOptimisticLockingFailureException e) {
+            log.error("충전 실패: Optimistic Lock 예외 발생", e);
+            throw e;
         }
-
-        throw new RuntimeException("알 수 없는 이유로 포인트 충전에 실패했습니다.");
     }
 
     /**
@@ -69,7 +64,7 @@ public class PointServiceImpl implements PointService {
      * @return
      */
     @Override
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public ResponseMessage<PointResponse> chargePoint(PointChargeRequest pointChargeRequest) {
 
         //현재 잔액 조회
@@ -78,6 +73,8 @@ public class PointServiceImpl implements PointService {
 
         //충전 호출
         point.chargePoint(pointChargeRequest);
+
+        log.info("point version 체크 : {}", point.getVersion());
 
         //충전 저장
         pointRepository.save(point);
