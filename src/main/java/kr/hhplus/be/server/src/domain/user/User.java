@@ -2,6 +2,7 @@ package kr.hhplus.be.server.src.domain.user;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
+import kr.hhplus.be.server.src.domain.BaseTimeEntity;
 import kr.hhplus.be.server.src.domain.booking.Booking;
 import kr.hhplus.be.server.src.domain.point.Point;
 import lombok.*;
@@ -11,12 +12,12 @@ import java.util.List;
 @Entity
 @Schema(description = "유저 도메인")
 @AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Setter
 @Builder
 @Table(name = "`user`")
-public class User {
+public class User extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,17 +42,17 @@ public class User {
     @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Point point;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Booking> bookings;
+//    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+//    private List<Booking> bookings;
 
-
-    public User(Long userId, String userName, String password, String phoneNumber, String email, String address) {
-        this.userId = userId;
-        this.userName = userName;
-        this.password = password;
-        this.phoneNumber = phoneNumber;
-        this.email = email;
-        this.address = address;
+    public static User of(String userName, String password, String phoneNumber, String email, String address) {
+        return User.builder()
+                .userName(userName)
+                .password(password)
+                .phoneNumber(phoneNumber)
+                .email(email)
+                .address(address)
+                .build();
     }
 
 }

@@ -2,6 +2,7 @@ package kr.hhplus.be.server.src.domain.booking;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
+import kr.hhplus.be.server.src.domain.BaseTimeEntity;
 import kr.hhplus.be.server.src.domain.concert.Concert;
 import kr.hhplus.be.server.src.domain.concertseat.ConcertSeat;
 import kr.hhplus.be.server.src.domain.seat.Seat;
@@ -12,7 +13,7 @@ import java.util.List;
 import java.util.Objects;
 
 
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Getter
 @Setter
@@ -23,7 +24,7 @@ import java.util.Objects;
         @Index(name = "idx_concert_id", columnList = "concert_id")
 })
 @Schema(description = "예약 도메인")
-public class Booking {
+public class Booking extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -50,6 +51,13 @@ public class Booking {
         this.concert = concert;
         this.seatNum = seatNum;
         this.user = user;
+    }
+
+    public static Booking of(Long bookingId, User user) {
+        return Booking.builder()
+                .bookingId(bookingId)
+                .user(user)
+                .build();
     }
 
     // 좌석 예약 가능 여부 체크

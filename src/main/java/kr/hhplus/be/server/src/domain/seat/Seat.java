@@ -3,12 +3,14 @@ package kr.hhplus.be.server.src.domain.seat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
+import kr.hhplus.be.server.src.domain.BaseTimeEntity;
 import kr.hhplus.be.server.src.domain.concertseat.ConcertSeat;
 import kr.hhplus.be.server.src.domain.enums.SeatStatus;
 import lombok.*;
 
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Setter
 @Getter
 @Entity
@@ -17,7 +19,7 @@ import lombok.*;
         @Index(name = "idx_concert_seat_num", columnList = "concert_seat_id, seat_num")
 })
 @Schema(description = "좌석 도메인")
-public class Seat {
+public class Seat extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

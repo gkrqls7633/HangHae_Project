@@ -29,8 +29,7 @@ public class QueueTransactionHelper {
                 .build();
         User savedUser = userRepository.save(user);
 
-        Queue queue = new Queue();
-        queue.newToken();
+        Queue queue = Queue.newToken();
         queueRepository.save(queue);
 
         queueRequest = new QueueRequest();

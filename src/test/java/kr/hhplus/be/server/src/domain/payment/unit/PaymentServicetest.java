@@ -266,9 +266,7 @@ class PaymentServicetest {
         paymentRequest.setBookingId(1L);
         paymentRequest.setUserId(1L);
 
-        Point point = new Point();
-        point.setPointBalance(50000L);
-        point.setUserId(1L);
+        Point point = Point.of(1L, 50000L);
 
         when(bookingRepository.findById(1L)).thenReturn(Optional.of(mockBooking));
         when(seatRepository.findById(mockSeatId)).thenReturn(Optional.of(mockSeat));
@@ -294,10 +292,7 @@ class PaymentServicetest {
         paymentRequest.setBookingId(1L);
         paymentRequest.setUserId(1L);
 
-        Point point = new Point();
-        point.setPointBalance(50000L);
-        point.setUserId(1L);
-
+        Point point = Point.of(1L, 50000L);
 
         Payment savedPayment = Payment.builder()
                 .paymentId(999L)

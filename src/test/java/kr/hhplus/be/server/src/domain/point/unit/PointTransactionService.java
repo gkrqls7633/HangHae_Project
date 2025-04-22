@@ -121,16 +121,12 @@ public class PointTransactionService {
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void insertNewPoint(Long userId, Long pointBalance) {
 
-        User user = new User();
-        user.setUserName("김테스트");
-        user.setPhoneNumber("010-1234-1234");
-        user.setEmail("test2@naver.com");
-        user.setAddress("서울특별시 강서구 등촌동");
+        User user = User.of("김항해", "12345", "010-1234-5678", "test@naver.com", "서울특별시 강서구 염창동");
+
         User savedUser = userRepository.save(user);
 
-        Point point = new Point();
-        point.setUser(savedUser);
-        point.setPointBalance(200000L);
+        Point point = Point.of(savedUser.getUserId(), savedUser, 200000L);
+
         pointRepository.save(point);
         System.out.println("✏️ [B] 새로운 row 삽입 완료");
     }

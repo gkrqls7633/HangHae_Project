@@ -54,8 +54,7 @@ class QueueServiceTest {
                 .address("서울특별시 강서구 등촌동")
                 .build();
 
-        Queue queue = new Queue();
-        queue.newToken();
+        Queue queue = Queue.newToken();
         queue.setTokenStatus(TokenStatus.ACTIVE);
 
         when(userRepository.findById(mockUserId)).thenReturn(Optional.of(mockUser));

@@ -21,32 +21,31 @@ class QueueTest {
     @BeforeEach
     void setUp() {
         // Queue 객체 초기화
-        queue = new Queue();
+        queue = queue.newToken();
     }
 
     @DisplayName("신규 토큰 발급한다.")
     @Test
     void newTokenTest() {
 
-        //when
-        queue.newToken();
+        Queue mockQueue = queue;
 
         // then
         // 1. tokenValue는 UUID 형식의 값이어야 한다.
-        assertNotNull(queue.getTokenValue());
-        assertTrue(UUID.fromString(queue.getTokenValue()) instanceof UUID);
+        assertNotNull(mockQueue.getTokenValue());
+        assertTrue(UUID.fromString(mockQueue.getTokenValue()) instanceof UUID);
 
         // 2. tokenStatus는 대기중(ready) 상태다.
-        assertEquals(TokenStatus.READY, queue.getTokenStatus());
+        assertEquals(TokenStatus.READY, mockQueue.getTokenStatus());
 
         // 3. issuedAt은 현재 시간보다 바로 직전이다.
-        assertNotNull(queue.getIssuedAt());
-        assertTrue(queue.getIssuedAt().isBefore(LocalDateTime.now()));
+        assertNotNull(mockQueue.getIssuedAt());
+        assertTrue(mockQueue.getIssuedAt().isBefore(LocalDateTime.now()));
 
         // 4. expiredAt은 issuedAt + TOKEN_EXPIRE_MINUTES 후로 셋팅된다.
-        assertNotNull(queue.getExpiredAt());
-        assertTrue(queue.getExpiredAt().isAfter(queue.getIssuedAt()));
-        Duration duration = Duration.between(queue.getIssuedAt(), queue.getExpiredAt());
+        assertNotNull(mockQueue.getExpiredAt());
+        assertTrue(mockQueue.getExpiredAt().isAfter(mockQueue.getIssuedAt()));
+        Duration duration = Duration.between(mockQueue.getIssuedAt(), mockQueue.getExpiredAt());
 
         //5분 차이 나야한다.
         assertTrue("expiredAt should be 5 minutes after issuedAt, but difference is " + duration.toMinutes() + " minutes.",

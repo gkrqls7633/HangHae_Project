@@ -58,8 +58,7 @@ public class QueueServiceImpl implements QueueService {
                     .build();
         } else {
             //토큰 신규 발급 처리
-            Queue queue = new Queue();
-            queue.newToken();
+            Queue queue = Queue.newToken();
             queueRepository.save(queue);
 
             queueResponse = QueueResponse.builder()

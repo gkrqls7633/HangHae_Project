@@ -2,11 +2,12 @@ package kr.hhplus.be.server.src.domain.concert;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
+import kr.hhplus.be.server.src.domain.BaseTimeEntity;
 import kr.hhplus.be.server.src.domain.concertseat.ConcertSeat;
 import lombok.*;
 
 @AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Setter
 @Builder
@@ -15,7 +16,7 @@ import lombok.*;
         @Index(name = "idx_date", columnList = "date")
 })
 @Schema(description = "콘서트 도메안")
-public class Concert {
+public class Concert extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

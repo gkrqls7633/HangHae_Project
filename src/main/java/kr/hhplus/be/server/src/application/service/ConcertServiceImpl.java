@@ -63,9 +63,7 @@ public class ConcertServiceImpl implements ConcertService {
 
         List<Seat> seatTotalList = concertSeatRepository.findAllSeatsByConcertId(concertId);
 
-        ConcertSeat concertSeat = new ConcertSeat();
-        concertSeat.setConcert(concert);
-        concertSeat.setSeats(seatTotalList);
+        ConcertSeat concertSeat = ConcertSeat.of(concert, seatTotalList);
 
         //예약 가능 좌석 filter
         List<Seat> availableSeats = concertSeat.getAvailableSeats();
