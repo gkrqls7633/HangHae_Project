@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.src.interfaces.concert;
+package kr.hhplus.be.server.src.interfaces.concert.dto;
 
 import kr.hhplus.be.server.src.domain.concertseat.ConcertSeat;
 import kr.hhplus.be.server.src.domain.seat.Seat;

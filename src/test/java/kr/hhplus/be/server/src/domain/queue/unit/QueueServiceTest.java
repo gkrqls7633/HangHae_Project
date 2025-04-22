@@ -1,15 +1,15 @@
 package kr.hhplus.be.server.src.domain.queue.unit;
 
 import jakarta.persistence.EntityNotFoundException;
+import kr.hhplus.be.server.src.application.service.QueueServiceImpl;
 import kr.hhplus.be.server.src.common.ResponseMessage;
 import kr.hhplus.be.server.src.domain.queue.Queue;
 import kr.hhplus.be.server.src.domain.queue.QueueRepository;
 import kr.hhplus.be.server.src.domain.user.User;
 import kr.hhplus.be.server.src.domain.enums.TokenStatus;
 import kr.hhplus.be.server.src.domain.user.UserRepository;
-import kr.hhplus.be.server.src.interfaces.queue.QueueRequest;
-import kr.hhplus.be.server.src.interfaces.queue.QueueResponse;
-import kr.hhplus.be.server.src.domain.queue.QueueService;
+import kr.hhplus.be.server.src.interfaces.queue.dto.QueueRequest;
+import kr.hhplus.be.server.src.interfaces.queue.dto.QueueResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,7 +29,7 @@ import static org.mockito.Mockito.when;
 class QueueServiceTest {
 
     @InjectMocks
-    private QueueService queueService;
+    private QueueServiceImpl queueService;
 
     @Mock
     private QueueRepository queueRepository;

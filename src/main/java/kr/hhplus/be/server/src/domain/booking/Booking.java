@@ -20,7 +20,7 @@ import java.util.Objects;
 @Builder
 @Table(name = "booking", indexes = {
         @Index(name = "idx_user_id", columnList = "user_id"),
-        @Index(name = "idx_concert_id", columnList = "concert_concert_id")
+        @Index(name = "idx_concert_id", columnList = "concert_id")
 })
 @Schema(description = "예약 도메인")
 public class Booking {
@@ -31,7 +31,7 @@ public class Booking {
     private Long bookingId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "concert_concert_id")
+    @JoinColumn(name = "concert_id")
     @Schema(description = "콘서트 정보",
             example = "{ \"concertId\": 1, \"name\": \"BTS World Tour\", \"price\": 150000, \"date\": \"2025-05-01\", \"time\": \"19:00\", \"location\": \"서울 올림픽 경기장\" }")
     private Concert concert;

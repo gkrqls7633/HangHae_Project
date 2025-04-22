@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.src.interfaces.queue;
+package kr.hhplus.be.server.src.interfaces.queue.dto;
 
 // 대기열 진입 위한 req DTO
 

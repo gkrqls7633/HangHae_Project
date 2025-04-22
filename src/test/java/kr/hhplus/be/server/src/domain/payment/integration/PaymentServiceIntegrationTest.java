@@ -1,29 +1,34 @@
 package kr.hhplus.be.server.src.domain.payment.integration;
 
 
+import kr.hhplus.be.server.src.TestcontainersConfiguration;
+import kr.hhplus.be.server.src.application.service.PaymentServiceImpl;
 import kr.hhplus.be.server.src.common.ResponseMessage;
 import kr.hhplus.be.server.src.domain.payment.PaymentRepository;
 import kr.hhplus.be.server.src.domain.point.Point;
 import kr.hhplus.be.server.src.domain.enums.PaymentStatus;
 import kr.hhplus.be.server.src.domain.point.PointRepository;
-import kr.hhplus.be.server.src.interfaces.payment.PaymentRequest;
-import kr.hhplus.be.server.src.interfaces.payment.PaymentResponse;
-import kr.hhplus.be.server.src.domain.payment.PaymentService;
+import kr.hhplus.be.server.src.interfaces.payment.dto.PaymentRequest;
+import kr.hhplus.be.server.src.interfaces.payment.dto.PaymentResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
+@ActiveProfiles("test")
+@Import(TestcontainersConfiguration.class)
 @Transactional
 class PaymentServiceIntegrationTest {
 
     @Autowired
-    private PaymentService paymentService;
+    private PaymentServiceImpl paymentService;
 
     @Autowired
     private PaymentTransactionHelper paymentTransactionHelper;
@@ -38,6 +43,8 @@ class PaymentServiceIntegrationTest {
 
     @BeforeEach
     void setUp() {
+
+        paymentTransactionHelper.cleanTestData();
         paymentRequest = paymentTransactionHelper.setupTestData();
     }
 

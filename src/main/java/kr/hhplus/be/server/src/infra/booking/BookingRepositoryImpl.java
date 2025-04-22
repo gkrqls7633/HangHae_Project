@@ -22,4 +22,14 @@ public class BookingRepositoryImpl implements BookingRepository {
     public Optional<Booking> findById(Long bookingId) {
         return bookingJpaRepository.findById(bookingId);
     }
+
+    @Override
+    public void deleteAll() {
+        bookingJpaRepository.deleteAll();
+    }
+
+    @Override
+    public void deleteAllInBatch() {
+        bookingJpaRepository.deleteAllInBatch();
+    }
 }

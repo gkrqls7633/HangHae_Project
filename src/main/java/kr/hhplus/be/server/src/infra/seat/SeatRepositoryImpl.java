@@ -1,9 +1,6 @@
 package kr.hhplus.be.server.src.infra.seat;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.NoResultException;
-import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.TypedQuery;
+import jakarta.persistence.*;
 import kr.hhplus.be.server.src.domain.seat.Seat;
 import kr.hhplus.be.server.src.domain.seat.SeatRepository;
 import lombok.RequiredArgsConstructor;
@@ -52,5 +49,30 @@ public class SeatRepositoryImpl implements SeatRepository {
     @Override
     public void saveAll(List<Seat> seatList) {
         seatJpaRepository.saveAll(seatList);
+    }
+
+    @Override
+    public void deleteAll() {
+        seatJpaRepository.deleteAll();
+    }
+
+    @Override
+    public void deleteAllInBatch() {
+        seatJpaRepository.deleteAllInBatch();
+    }
+
+    @Override
+    public Optional<Seat> findByConcertIdAndSeatNumWithLock(Long concertId, Long seatNum) {
+        try {
+            Seat seat = em.createQuery(
+                            "SELECT s FROM Seat s WHERE s.concertSeat.concert.concertId = :concertId AND s.seatNum = :seatNum", Seat.class)
+                    .setParameter("concertId", concertId)
+                    .setParameter("seatNum", seatNum)
+                    .setLockMode(LockModeType.PESSIMISTIC_WRITE)
+                    .getSingleResult();
+            return Optional.of(seat);
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
     }
 }

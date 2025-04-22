@@ -38,6 +38,9 @@ public class Seat {
     @Column(name = "seat_status", length = 10)
     private SeatStatus seatStatus;
 
+    @Version
+    private Long version;
+
     // 좌석의 예약 가능 상태를 반환
     public boolean isAvailable() {
         return this.seatStatus == SeatStatus.AVAILABLE;

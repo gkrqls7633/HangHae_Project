@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.src.interfaces.booking;
+package kr.hhplus.be.server.src.interfaces.booking.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;

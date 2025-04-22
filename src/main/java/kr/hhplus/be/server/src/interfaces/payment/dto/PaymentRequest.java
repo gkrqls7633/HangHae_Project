@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.src.interfaces.payment;
+package kr.hhplus.be.server.src.interfaces.payment.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;

@@ -23,4 +23,14 @@ public class ConcertSeatRepositoryImpl implements ConcertSeatRepository {
     public ConcertSeat save(ConcertSeat concertSeat) {
         return concertSeatJpaRepository.save(concertSeat);
     }
+
+    @Override
+    public void deleteAll() {
+        concertSeatJpaRepository.deleteAll();
+    }
+
+    @Override
+    public void deleteAllInBatch() {
+        concertSeatJpaRepository.deleteAllInBatch();
+    }
 }

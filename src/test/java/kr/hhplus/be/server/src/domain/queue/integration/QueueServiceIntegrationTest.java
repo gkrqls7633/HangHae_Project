@@ -2,8 +2,8 @@ package kr.hhplus.be.server.src.domain.queue.integration;
 
 import kr.hhplus.be.server.src.common.ResponseMessage;
 import kr.hhplus.be.server.src.domain.enums.TokenStatus;
-import kr.hhplus.be.server.src.interfaces.queue.QueueRequest;
-import kr.hhplus.be.server.src.interfaces.queue.QueueResponse;
+import kr.hhplus.be.server.src.interfaces.queue.dto.QueueRequest;
+import kr.hhplus.be.server.src.interfaces.queue.dto.QueueResponse;
 import kr.hhplus.be.server.src.domain.queue.QueueService;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,7 +12,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Nested;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
+import org.testcontainers.utility.TestcontainersConfiguration;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -20,6 +23,8 @@ import java.time.LocalDateTime;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
+@ActiveProfiles("test")
+@Import(TestcontainersConfiguration.class)
 @Transactional
 class QueueServiceIntegrationTest {
 

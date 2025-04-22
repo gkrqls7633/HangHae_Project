@@ -4,7 +4,7 @@ import kr.hhplus.be.server.src.domain.enums.TokenStatus;
 import kr.hhplus.be.server.src.domain.queue.Queue;
 import kr.hhplus.be.server.src.domain.queue.QueueRepository;
 import kr.hhplus.be.server.src.domain.queue.QueueService;
-import kr.hhplus.be.server.src.interfaces.queue.QueueExpireRequest;
+import kr.hhplus.be.server.src.interfaces.queue.dto.QueueExpireRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;

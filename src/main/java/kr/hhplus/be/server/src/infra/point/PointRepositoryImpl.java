@@ -1,8 +1,6 @@
 package kr.hhplus.be.server.src.infra.point;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.TypedQuery;
+import jakarta.persistence.*;
 import kr.hhplus.be.server.src.domain.point.Point;
 import kr.hhplus.be.server.src.domain.point.PointRepository;
 import lombok.RequiredArgsConstructor;
@@ -38,5 +36,26 @@ public class PointRepositoryImpl implements PointRepository {
         query.setParameter("amount", amount);
 
         return query.getResultList();
+    }
+
+    @Override
+    public void deleteAllInBatch() {
+        pointJpaRepository.deleteAllInBatch();
+    }
+
+    @Override
+    public Optional<Point> findByUserIdForUpdate(Long userId) {
+        String jpql = "SELECT p FROM Point p WHERE p.userId = :userId";
+
+        try {
+            Point point = em.createQuery(jpql, Point.class)
+                    .setParameter("userId", userId)
+                    .setLockMode(LockModeType.PESSIMISTIC_WRITE)  // 비관적 락 적용
+                    .getSingleResult();
+
+            return Optional.of(point);
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
     }
 }

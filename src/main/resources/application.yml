@@ -13,10 +13,10 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     open-in-view: false
-    generate-ddl: false
+    generate-ddl: true
     show-sql: true  #false
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
     properties:
       hibernate.timezone.default_storage: NORMALIZE_UTC
       hibernate.jdbc.time_zone: UTC
@@ -25,9 +25,6 @@ spring:
     level:
       org.hibernate.SQL : DEBUG
       org.hibernate.type.descriptor.sql.BasicBinder: TRACE  # 파라미터 바인딩 값도 출력
-
-
-
 
 ---
 spring.config.activate.on-profile: local, test

@@ -1,6 +1,7 @@
 package kr.hhplus.be.server.src.domain.payment.unit;
 
 import jakarta.persistence.EntityNotFoundException;
+import kr.hhplus.be.server.src.application.service.PaymentServiceImpl;
 import kr.hhplus.be.server.src.common.ResponseMessage;
 import kr.hhplus.be.server.src.domain.booking.Booking;
 import kr.hhplus.be.server.src.domain.booking.BookingRepository;
@@ -15,9 +16,8 @@ import kr.hhplus.be.server.src.domain.point.PointRepository;
 import kr.hhplus.be.server.src.domain.seat.Seat;
 import kr.hhplus.be.server.src.domain.seat.SeatRepository;
 import kr.hhplus.be.server.src.domain.user.User;
-import kr.hhplus.be.server.src.interfaces.payment.PaymentRequest;
-import kr.hhplus.be.server.src.interfaces.payment.PaymentResponse;
-import kr.hhplus.be.server.src.domain.payment.PaymentService;
+import kr.hhplus.be.server.src.interfaces.payment.dto.PaymentRequest;
+import kr.hhplus.be.server.src.interfaces.payment.dto.PaymentResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -39,7 +39,7 @@ import static org.mockito.Mockito.*;
 class PaymentServicetest {
 
     @InjectMocks
-    private PaymentService paymentService;
+    private PaymentServiceImpl paymentService;
 
     @Mock
     private BookingRepository bookingRepository;
