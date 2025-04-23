@@ -15,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -99,6 +101,28 @@ public class QueueServiceImpl implements QueueService {
                 .build();
 
         return ResponseMessage.success("대기열 토큰이 만료되었습니다.", queueResponse);
+    }
+
+    /*
+     만료된 토큰들 조회
+     */
+    @Override
+    public List<Queue> findExpiredQueues(LocalDateTime now, TokenStatus tokenStatus) {
+        List<Queue> expiredQueues = queueRepository.findByExpiredAtBeforeAndTokenStatus(now, TokenStatus.ACTIVE);
+
+        return expiredQueues;
+    }
+
+    /*
+    READY 상태 & 만료 되지 않은 토큰들 조회
+     */
+    @Override
+    public List<Queue> findReadToActivateTokens(TokenStatus tokenStatus, LocalDateTime now) {
+        List<Queue> readyQueues = queueRepository.findByTokenStatusAndExpiredAtAfter(
+                TokenStatus.READY
+                , LocalDateTime.now()
+        );
+        return readyQueues;
     }
 
 }
