@@ -50,7 +50,7 @@ public class Seat extends BaseTimeEntity {
         return this.seatStatus == SeatStatus.AVAILABLE;
     }
 
-    public void changeBookingSeat() {
+    public void changeBookedSeat() {
         this.setSeatStatus(SeatStatus.BOOKED);
     }
 

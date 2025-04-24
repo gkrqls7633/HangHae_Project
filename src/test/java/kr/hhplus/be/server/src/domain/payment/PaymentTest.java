@@ -1,14 +1,36 @@
 package kr.hhplus.be.server.src.domain.payment;
 
 import kr.hhplus.be.server.src.domain.booking.Booking;
+import kr.hhplus.be.server.src.domain.enums.PaymentStatus;
 import kr.hhplus.be.server.src.domain.user.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class PaymentTest {
+
+    @ParameterizedTest
+    @CsvSource({
+            "PENDING, COMPLETED",
+            "PENDING, FAILED"
+    })
+    @DisplayName("결제 상태를 변경할 수 있다.")
+    void changePaymentStatusTest(PaymentStatus initialStatus, PaymentStatus newStatus) {
+        // given
+        Payment payment = new Payment();
+        payment.setPaymentStatus(initialStatus);
+
+        // when
+        payment.changePaymentStatus(newStatus);
+
+        // then
+        assertEquals(newStatus, payment.getPaymentStatus());
+    }
 
 
     @DisplayName("결제 요청 좌석이 요청한 유저와 동일해야한다.")

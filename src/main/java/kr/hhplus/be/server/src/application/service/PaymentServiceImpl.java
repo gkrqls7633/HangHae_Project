@@ -57,7 +57,7 @@ public class PaymentServiceImpl implements PaymentService {
             2. 결제 요청 유저와 예약된 유저 동일한지 체크
              */
             if (!paymentDomain.isBookingCheck(booking)) {
-                paymentDomain.setPaymentStatus(PaymentStatus.FAILED);
+                paymentDomain.changePaymentStatus(PaymentStatus.FAILED);
                 paymentRepository.save(paymentDomain);
                 throw new IllegalArgumentException("유저 정보가 일치하지 않습니다.");
             }
@@ -70,7 +70,7 @@ public class PaymentServiceImpl implements PaymentService {
                     .orElseThrow(() -> new IllegalArgumentException("해당 좌석이 존재하지 않습니다."));
 
             if (seat.getSeatStatus() == SeatStatus.BOOKED) {
-                paymentDomain.setPaymentStatus(PaymentStatus.FAILED);
+                paymentDomain.changePaymentStatus(PaymentStatus.FAILED);
                 paymentRepository.save(paymentDomain);
                 throw new IllegalStateException("좌석 예약 내역을 재확인 해주세요.");
             }
@@ -89,13 +89,13 @@ public class PaymentServiceImpl implements PaymentService {
 
             //포인트 부족 체크
             if (!point.isEnough(concertInfo.getPrice())) {
-                paymentDomain.setPaymentStatus(PaymentStatus.FAILED);
+                paymentDomain.changePaymentStatus(PaymentStatus.FAILED);
                 paymentRepository.save(paymentDomain);
                 throw new IllegalStateException("잔액을 확인해주세요.");
             }
 
             //결제 요청 -> 유저 잔액 포인트 차감
-            paymentDomain.changeCompletedStatus();
+            paymentDomain.changePaymentStatus(PaymentStatus.COMPLETED);
             Payment payment = paymentRepository.save(paymentDomain);
 
             //유저 잔액 차감
@@ -103,13 +103,14 @@ public class PaymentServiceImpl implements PaymentService {
             pointRepository.save(point);
 
             //좌석 상태 occupied -> Booked(예약 완료된 좌석)로 변경
-            seat.changeBookingSeat();
+            seat.changeBookedSeat();
             seatRepository.save(seat);
 
-            PaymentResponse paymentResponse = new PaymentResponse();
-            paymentResponse.setPaymentId(payment.getPaymentId());
-            paymentResponse.setBookingId(paymentRequest.getBookingId());
-            paymentResponse.setPaymentStatus(PaymentStatus.COMPLETED);
+            PaymentResponse paymentResponse = PaymentResponse.of(
+                      payment.getPaymentId()
+                    , paymentRequest.getBookingId()
+                    , PaymentStatus.COMPLETED
+            );
 
             return ResponseMessage.success("결제가 완료됐습니다.", paymentResponse);
 

@@ -102,6 +102,21 @@ class PaymentServicetest {
 
     }
 
+    @DisplayName("좌석 상태를 booked로 변경한다.")
+    @Test
+    void changeBookedSeat() {
+
+        //given
+        mockSeat.setSeatStatus(SeatStatus.OCCUPIED);
+
+        //when
+        mockSeat.changeBookedSeat();
+
+        //then
+        assertEquals(mockSeat.getSeatStatus(), SeatStatus.BOOKED);
+
+    }
+
     @DisplayName("예약 내역이 존재하지 않으면 에러 발생한다.")
     @Test
     void noBookingErrorTest() {
