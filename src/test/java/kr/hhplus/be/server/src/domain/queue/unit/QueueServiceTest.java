@@ -54,7 +54,7 @@ class QueueServiceTest {
                 .address("서울특별시 강서구 등촌동")
                 .build();
 
-        Queue queue = Queue.newToken();
+        Queue queue = Queue.newToken(mockUser.getUserId());
         queue.setTokenStatus(TokenStatus.ACTIVE);
 
         when(userRepository.findById(mockUserId)).thenReturn(Optional.of(mockUser));
@@ -65,7 +65,7 @@ class QueueServiceTest {
         ResponseMessage<QueueResponse> response = queueService.issueQueueToken(queueRequest);
 
         // Then
-        assertEquals("대기열 토큰을 발급 완료했습니다.", response.getMessage());
+        assertEquals("대기열 토큰을 갱신 완료했습니다.", response.getMessage());
         assertEquals(response.getData().getTokenStatus(), TokenStatus.ACTIVE);
         verify(queueRepository).save(queue);
     }

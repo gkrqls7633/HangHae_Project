@@ -21,7 +21,7 @@ class QueueTest {
     @BeforeEach
     void setUp() {
         // Queue 객체 초기화
-        queue = queue.newToken();
+        queue = queue.newToken(123L);
     }
 
     @DisplayName("신규 토큰 발급한다.")

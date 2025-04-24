@@ -116,8 +116,7 @@ public class PaymentTransactionHelper {
 
 
         //유저 대기 토큰 발급
-        Queue queue = Queue.newToken();
-        queue.setUserId(savedUser.getUserId());
+        Queue queue = Queue.newToken(savedUser.getUserId());
 
         //활성화 토큰으로 변경
         queue.setTokenStatus(TokenStatus.ACTIVE);

@@ -86,8 +86,7 @@ public class BookingTransactionHelper {
         seatRepository.saveAll(seatList);
 
         //유저 대기 토큰 발급
-        Queue queue = Queue.newToken();
-        queue.setUserId(savedUser.getUserId());
+        Queue queue = Queue.newToken(savedUser.getUserId());
 
         //활성화 토큰으로 변경
         queue.setTokenStatus(TokenStatus.ACTIVE);
@@ -114,8 +113,7 @@ public class BookingTransactionHelper {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public Queue createQueue(User user) {
         //유저 대기 토큰 발급
-        Queue queue = Queue.newToken();
-        queue.setUserId(user.getUserId());
+        Queue queue = Queue.newToken(user.getUserId());
 
         //활성화 토큰으로 변경
         queue.setTokenStatus(TokenStatus.ACTIVE);

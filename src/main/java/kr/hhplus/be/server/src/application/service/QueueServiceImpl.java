@@ -44,7 +44,7 @@ public class QueueServiceImpl implements QueueService {
 
         QueueResponse queueResponse;
 
-        //토큰 존재하는 경우 갱신 / 존재하지 않는 경우 신규 발급
+        //활성화 중인 토큰 존재하는 경우 갱신 / 만료상태 토큰이 있거나 or 토큰 존재하지 않는 경우 신규 발급
         if (existingQueue.isPresent()) {
             Queue activeQueue = existingQueue.get();
 
@@ -58,9 +58,11 @@ public class QueueServiceImpl implements QueueService {
                     .issuedAt(activeQueue.getIssuedAt())
                     .expiredAt(activeQueue.getExpiredAt())
                     .build();
+            return ResponseMessage.success("대기열 토큰을 갱신 완료했습니다.", queueResponse);
+
         } else {
             //토큰 신규 발급 처리
-            Queue queue = Queue.newToken();
+            Queue queue = Queue.newToken(user.getUserId());
             queueRepository.save(queue);
 
             queueResponse = QueueResponse.builder()
@@ -69,9 +71,10 @@ public class QueueServiceImpl implements QueueService {
                     .issuedAt(queue.getIssuedAt())
                     .expiredAt(queue.getExpiredAt())
                     .build();
+            return ResponseMessage.success("대기열 토큰을 발급 완료했습니다.", queueResponse);
+
         }
 
-        return ResponseMessage.success("대기열 토큰을 발급 완료했습니다.", queueResponse);
     }
 
     /**

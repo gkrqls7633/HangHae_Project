@@ -37,7 +37,7 @@ class QueueScehdularTest {
     @Test
     public void expireTokensTest() {
         // given
-        Queue queue = Queue.newToken();
+        Queue queue = Queue.newToken(123L);
 
         // 1. User 객체 설정
         User mockUser = User.of("김항해", "12345", "010-1234-5678", "test@naver.com", "서울특별시 강서구 염창동");
@@ -63,7 +63,7 @@ class QueueScehdularTest {
     @Test
     public void readyToActiveTokensTest() {
         // given
-        Queue queue = Queue.newToken();
+        Queue queue = Queue.newToken(123L);
 
         // 1. User 객체 설정
         User mockUser = User.of("김항해", "12345", "010-1234-5678", "test@naver.com", "서울특별시 강서구 염창동");

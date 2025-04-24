@@ -6,7 +6,9 @@ import kr.hhplus.be.server.src.domain.concert.ConcertService;
 import kr.hhplus.be.server.src.domain.concertseat.ConcertSeat;
 import kr.hhplus.be.server.src.domain.concertseat.ConcertSeatRepository;
 import kr.hhplus.be.server.src.domain.seat.Seat;
+import kr.hhplus.be.server.src.interfaces.concert.dto.ConcertInfoResponse;
 import kr.hhplus.be.server.src.interfaces.concert.dto.ConcertResponse;
+import kr.hhplus.be.server.src.interfaces.seat.dto.SeatResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -29,12 +31,12 @@ public class ConcertServiceImpl implements ConcertService {
      * @return 콘서트 목록 전체 리스트
      */
     @Override
-    public List<ConcertResponse> getConcertList() {
+    public List<ConcertInfoResponse> getConcertList() {
 
         try {
             List<Concert> concertList = concertRepository.findAll();
             return concertList.stream()
-                    .map(concert -> ConcertResponse.builder()
+                    .map(concert -> ConcertInfoResponse.builder()
                             .concertId(concert.getConcertId())
                             .name(concert.getName())
                             .price(concert.getPrice())
@@ -58,11 +60,14 @@ public class ConcertServiceImpl implements ConcertService {
     @Override
     public ConcertResponse getAvailableSeats(Long concertId) {
 
+        //콘서트 조회
         Concert concert = concertRepository.findById(concertId)
                 .orElseThrow(() -> new RuntimeException("해당 concertId가 존재하지 않습니다 : " + concertId));
 
+        //좌석 리스트 조회
         List<Seat> seatTotalList = concertSeatRepository.findAllSeatsByConcertId(concertId);
 
+        //콘서트-좌석 매핑 정보
         ConcertSeat concertSeat = ConcertSeat.of(concert, seatTotalList);
 
         //예약 가능 좌석 filter
@@ -75,7 +80,11 @@ public class ConcertServiceImpl implements ConcertService {
                 .date(concert.getDate())
                 .time(concert.getTime())
                 .location(concert.getLocation())
-                .seatList(availableSeats)
+                .seatList(
+                    availableSeats.stream()
+                        .map(SeatResponse::from)
+                        .toList()
+                )
                 .build();
 
         return concertResponse;

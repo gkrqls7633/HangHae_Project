@@ -12,13 +12,13 @@ import java.time.LocalDateTime;
 
 @Getter
 @MappedSuperclass // 상속받는 엔티티가 필드를 컬럼으로 인식하게 함
-@EntityListeners(AuditingEntityListener.class) // 자동으로 시간값 넣어주는 리스너
+@EntityListeners(AuditingEntityListener.class)
 public abstract class BaseTimeEntity {
 
     @CreatedDate
     @Column(updatable = false)
-    private LocalDateTime createdAt;
+    private LocalDateTime cretDttm;
 
     @LastModifiedDate
-    private LocalDateTime updatedAt;
+    private LocalDateTime amndDttm;
 }

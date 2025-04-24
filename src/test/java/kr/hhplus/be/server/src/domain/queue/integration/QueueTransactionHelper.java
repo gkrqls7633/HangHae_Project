@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.src.domain.queue.integration;
 
+import kr.hhplus.be.server.src.domain.enums.TokenStatus;
 import kr.hhplus.be.server.src.domain.queue.Queue;
 import kr.hhplus.be.server.src.domain.queue.QueueRepository;
 import kr.hhplus.be.server.src.domain.user.User;
@@ -7,6 +8,8 @@ import kr.hhplus.be.server.src.domain.user.UserRepository;
 import kr.hhplus.be.server.src.interfaces.queue.dto.QueueRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class QueueTransactionHelper {
@@ -19,6 +22,7 @@ public class QueueTransactionHelper {
 
     private QueueRequest queueRequest;
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public QueueRequest setupTestData() {
 
         User user = User.builder()
@@ -29,7 +33,8 @@ public class QueueTransactionHelper {
                 .build();
         User savedUser = userRepository.save(user);
 
-        Queue queue = Queue.newToken();
+        Queue queue = Queue.newToken(savedUser.getUserId());
+        queue.setTokenStatus(TokenStatus.ACTIVE);  //바로 활성화 위해
         queueRepository.save(queue);
 
         queueRequest = new QueueRequest();
@@ -38,6 +43,7 @@ public class QueueTransactionHelper {
         return queueRequest;
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public QueueRequest setupTestDataWithNoQueue() {
 
         User user = User.builder()

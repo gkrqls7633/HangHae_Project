@@ -45,7 +45,7 @@ class QueueServiceIntegrationTest {
             queueRequest = queueTransactionHelper.setupTestData();
         }
 
-        @DisplayName("유저 정보 체크 후 토큰 갱신 처리한다.")
+        @DisplayName("유저 정보 체크 후 활성화 중인 토큰 갱신 처리한다.")
         @Test
         void issueQueueToken() {
 
@@ -57,8 +57,8 @@ class QueueServiceIntegrationTest {
             LocalDateTime now = LocalDateTime.now();
 
             //then
-            //갱신 후 다시 Ready 상태인지 확인
-            assertEquals(response.getData().getTokenStatus(), TokenStatus.READY);
+            //갱신 후 다시 활성화 상태유지되는지 확인
+            assertEquals(response.getData().getTokenStatus(), TokenStatus.ACTIVE);
 
             //만료시간 갱신 확인
             Assert.assertTrue(response.getData().getExpiredAt().isAfter(now));

@@ -44,6 +44,7 @@ public class Seat extends BaseTimeEntity {
     private Long version;
 
     // 좌석의 예약 가능 상태를 반환
+    @JsonIgnore
     public boolean isAvailable() {
         return this.seatStatus == SeatStatus.AVAILABLE;
     }

@@ -56,12 +56,13 @@ public class Queue extends BaseTimeEntity {
     - 토큰 만료 시간 : 5분
     - 대기 상태 토큰 발급
     */
-    public static Queue newToken() {
+    public static Queue newToken(Long userId) {
         return Queue.builder()
                 .tokenValue(UUID.randomUUID().toString())
                 .tokenStatus(TokenStatus.READY)
                 .issuedAt(LocalDateTime.now())
                 .expiredAt(LocalDateTime.now().plusMinutes(TOKEN_EXPIRE_MINUTES))
+                .userId(userId)
                 .build();
     }
 
