@@ -16,8 +16,6 @@ import java.util.List;
 @Service
 public class QueueSchedular {
 
-    private final QueueRepository queueRepository;
-
     private final QueueService queueService;
 
     //스케줄 시간 정책 : 5분 임시 셋팅
