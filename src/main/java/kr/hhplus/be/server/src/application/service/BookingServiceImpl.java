@@ -15,6 +15,8 @@ import kr.hhplus.be.server.src.domain.seat.Seat;
 import kr.hhplus.be.server.src.domain.seat.SeatRepository;
 import kr.hhplus.be.server.src.domain.user.User;
 import kr.hhplus.be.server.src.domain.user.UserRepository;
+import kr.hhplus.be.server.src.interfaces.booking.dto.BookingCancelRequest;
+import kr.hhplus.be.server.src.interfaces.booking.dto.BookingCancelResponse;
 import kr.hhplus.be.server.src.interfaces.booking.dto.BookingRequest;
 import kr.hhplus.be.server.src.interfaces.booking.dto.BookingResponse;
 import lombok.RequiredArgsConstructor;
@@ -139,6 +141,17 @@ public class BookingServiceImpl implements BookingService {
         bookingResponse.setSeatNum(seat.getSeatNum());
 
         return ResponseMessage.success("좌석 예약이 완료됐습니다.", bookingResponse);
+    }
+
+    @Override
+    public ResponseMessage<BookingCancelResponse> cancelBookingSeat(BookingCancelRequest bookingCancelRequest) {
+
+        //todo  : 좌석 취소 기능 구현
+        //seat 도메인 좌석 상태 Occupied -> Available로 변경
+
+        //booking 도메인 -> 삭제처리? 예약상태여부? 고려 필요
+
+        return ResponseMessage.success("좌석 예약이 취소됐습니다.");
     }
 
 }
