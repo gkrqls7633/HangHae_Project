@@ -54,11 +54,11 @@ class QueueTest {
     }
 
     @Test
-    @DisplayName("유저의 토큰을 갱신한다.")
-    void refreshTokenTest() {
+    @DisplayName("토큰 대기상태 유저의 토큰을 갱신한다.")
+    void refreshReadyTokenTest() {
 
         //given
-        queue.setTokenStatus(TokenStatus.ACTIVE);
+        queue.setTokenStatus(TokenStatus.READY);
         queue.setIssuedAt(LocalDateTime.now().minusMinutes(10));
         queue.setExpiredAt(queue.getIssuedAt().plusMinutes(5));
 
@@ -67,6 +67,28 @@ class QueueTest {
 
         //then
         LocalDateTime now = LocalDateTime.now();
+        assertThat(queue.getTokenStatus()).isEqualTo(TokenStatus.READY);
+        assertThat(queue.getIssuedAt().isAfter(now.minusSeconds(2)));
+        assertThat(queue.getExpiredAt().isEqual(queue.getIssuedAt()));
+
+
+    }
+
+    @Test
+    @DisplayName("토큰 만료상태 유저의 토큰을 갱신한다.")
+    void refreshExpiredTokenTest() {
+
+        //given
+        queue.setTokenStatus(TokenStatus.EXPIRED);
+        queue.setIssuedAt(LocalDateTime.now().minusMinutes(10));
+        queue.setExpiredAt(queue.getIssuedAt().plusMinutes(5));
+
+        //when
+        queue.refreshToken();
+
+        //then
+        LocalDateTime now = LocalDateTime.now();
+        assertThat(queue.getTokenStatus()).isEqualTo(TokenStatus.READY);
         assertThat(queue.getIssuedAt().isAfter(now.minusSeconds(2)));
         assertThat(queue.getExpiredAt().isEqual(queue.getIssuedAt()));
 

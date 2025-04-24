@@ -78,7 +78,7 @@ class QueueScehdularTest {
 
         // then
         verify(queueService, times(1)).findReadToActivateTokens(any(TokenStatus.class), any(LocalDateTime.class));
-        verify(queueRepository, times(1)).save(any(Queue.class));
+        verify(queueService, times(1)).save(any(Queue.class));
 
     }
 

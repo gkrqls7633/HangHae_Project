@@ -95,4 +95,31 @@ class QueueServiceIntegrationTest {
         Assert.assertTrue("expiredAt should be 5 minutes after issuedAt, but difference is " + duration.toMinutes() + " minutes.",
                 duration.toMinutes() == 5);
     }
+
+    @DisplayName("유저 정보 체크 후 만료 상태의 토큰이 있는 경우 해당 토큰 갱신 처리한다.")
+    @Test
+    void issueNewQueueExistingExpiredToken() {
+
+        QueueRequest queueRequest = queueTransactionHelper.setupTestDataExistingExpiredQueue();
+
+        //given
+        Long userId = queueRequest.getUserId();
+
+        //when
+        ResponseMessage<QueueResponse> response = queueService.issueQueueToken(queueRequest);
+        LocalDateTime now = LocalDateTime.now();
+
+        //then
+        //갱신 후 다시 Ready 상태인지 확인
+        assertEquals(response.getData().getTokenStatus(), TokenStatus.READY);
+
+        //만료시간 갱신 확인
+        Assert.assertTrue(response.getData().getExpiredAt().isAfter(now));
+
+        //발급시간 갱신 확인
+        Duration duration = Duration.between(response.getData().getIssuedAt(), response.getData().getExpiredAt());
+        Assert.assertTrue("expiredAt should be 5 minutes after issuedAt, but difference is " + duration.toMinutes() + " minutes.",
+                duration.toMinutes() == 5);
+
+    }
 }

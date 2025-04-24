@@ -5,6 +5,8 @@ import kr.hhplus.be.server.src.interfaces.point.dto.PointChargeRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDateTime;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class PointTest {
@@ -156,6 +158,11 @@ class PointTest {
 
         assertEquals("충전 금액은 0 이상이어야 합니다.", exception.getMessage());
 
+    }
+
+    @Test
+    void testmethod(){
+        System.out.println(LocalDateTime.now());
     }
 
 }
