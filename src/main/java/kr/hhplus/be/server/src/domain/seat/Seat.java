@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import kr.hhplus.be.server.src.domain.BaseTimeEntity;
 import kr.hhplus.be.server.src.domain.concertseat.ConcertSeat;
 import kr.hhplus.be.server.src.domain.enums.SeatStatus;
+import kr.hhplus.be.server.src.interfaces.booking.dto.BookingCancelRequest;
 import lombok.*;
 
 //@RequiredArgsConstructor
@@ -47,6 +48,10 @@ public class Seat extends BaseTimeEntity {
     @JsonIgnore
     public boolean isAvailable() {
         return this.seatStatus == SeatStatus.AVAILABLE;
+    }
+
+    public void changeBookingSeat() {
+        this.setSeatStatus(SeatStatus.BOOKED);
     }
 
 }

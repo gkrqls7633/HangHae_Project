@@ -39,4 +39,8 @@ public class Payment extends BaseTimeEntity {
         return booking != null && booking.isBookedBy(this.userId);
     }
 
+    public void changeCompletedStatus() {
+        this.paymentStatus = PaymentStatus.COMPLETED;
+    }
+
 }

@@ -69,7 +69,7 @@ public class PaymentServiceImpl implements PaymentService {
             Seat seat = seatRepository.findById(booking.getSeatId())
                     .orElseThrow(() -> new IllegalArgumentException("해당 좌석이 존재하지 않습니다."));
 
-            if (seat.getSeatStatus() == SeatStatus.BOOKED || seat.getSeatStatus() == SeatStatus.OCCUPIED) {
+            if (seat.getSeatStatus() == SeatStatus.BOOKED) {
                 paymentDomain.setPaymentStatus(PaymentStatus.FAILED);
                 paymentRepository.save(paymentDomain);
                 throw new IllegalStateException("좌석 예약 내역을 재확인 해주세요.");
@@ -95,11 +95,16 @@ public class PaymentServiceImpl implements PaymentService {
             }
 
             //결제 요청 -> 유저 잔액 포인트 차감
+            paymentDomain.changeCompletedStatus();
             Payment payment = paymentRepository.save(paymentDomain);
 
             //유저 잔액 차감
             point.usePoint(concertInfo.getPrice());
             pointRepository.save(point);
+
+            //좌석 상태 occupied -> Booked(예약 완료된 좌석)로 변경
+            seat.changeBookingSeat();
+            seatRepository.save(seat);
 
             PaymentResponse paymentResponse = new PaymentResponse();
             paymentResponse.setPaymentId(payment.getPaymentId());
