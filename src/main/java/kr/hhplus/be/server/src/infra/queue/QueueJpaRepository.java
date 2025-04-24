@@ -13,9 +13,13 @@ public interface QueueJpaRepository extends JpaRepository<Queue, Long> {
 //    @Query("SELECT q FROM Queue q WHERE q.userId = :userId AND q.tokenStatus = :tokenStatus")
     Optional<Queue> findByUserIdAndTokenStatus(Long userId, TokenStatus tokenStatus);
 
-    List<Queue> findByTokenStatus(TokenStatus tokenStatus);
 
     List<Queue> findByTokenStatusAndExpiredAtAfter(TokenStatus tokenStatus, LocalDateTime currentTime);
 
     Optional<Queue> findByQueueIdAndTokenStatus(Long queueId, TokenStatus tokenStatus);
+
+    List<Queue> findAllByTokenStatus(TokenStatus tokenStatus);
+
+    Queue findByTokenStatus(TokenStatus tokenStatus);
+
 }

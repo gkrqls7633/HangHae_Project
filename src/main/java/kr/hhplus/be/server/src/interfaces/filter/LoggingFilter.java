@@ -86,7 +86,8 @@ public class LoggingFilter implements Filter {
                     """,
                 traceId,
                 method, uri, query,
-                userAgent, auth,
+                userAgent,
+                auth,
                 isLoggableBody ? "- Body: " + requestBody : "- Body: (skipped - GET or non-JSON/Form)",
                 response.getStatus(), duration,
                 responseBody
