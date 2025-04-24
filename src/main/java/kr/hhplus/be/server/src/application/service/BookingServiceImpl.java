@@ -72,7 +72,7 @@ public class BookingServiceImpl implements BookingService {
                 .orElseThrow(() -> new EntityNotFoundException("해당 좌석을 찾을 수 없습니다."));
 
         // 2. Booking 도메인 객체 생성
-        Booking booking = new Booking(concert, bookingRequest.getSeatNum(), user);
+        Booking booking = new Booking(concert, bookingRequest.getSeatNum(), seat.getSeatId(), user);
 
         // 3. 예약 가능 여부 확인
         //  booking의 seatNum의 좌석 점유 여부 체크
@@ -117,7 +117,7 @@ public class BookingServiceImpl implements BookingService {
                 .orElseThrow(() -> new EntityNotFoundException("해당 좌석을 찾을 수 없습니다."));
 
         // 2. Booking 도메인 객체 생성
-        Booking booking = new Booking(concert, bookingRequest.getSeatNum(), user);
+        Booking booking = new Booking(concert, bookingRequest.getSeatNum(), seat.getSeatId(), user);
 
         // 3. 예약 가능 여부 확인
         //  booking의 seatNum의 좌석 점유 여부 체크

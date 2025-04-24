@@ -26,7 +26,7 @@ public class PointTransactionHelper {
         Point point = Point.of(savedUser.getUserId(), savedUser, 200000L);
         pointRepository.save(point);
 
-//        pointRepository.flush();
+        pointRepository.flush();
         return savedUser.getUserId();
     }
 }

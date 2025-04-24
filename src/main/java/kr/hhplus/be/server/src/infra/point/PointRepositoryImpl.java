@@ -58,4 +58,9 @@ public class PointRepositoryImpl implements PointRepository {
             return Optional.empty();
         }
     }
+
+    @Override
+    public void flush() {
+        pointJpaRepository.flush();
+    }
 }

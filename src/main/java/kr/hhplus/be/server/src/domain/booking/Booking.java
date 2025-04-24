@@ -47,9 +47,10 @@ public class Booking extends BaseTimeEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    public Booking(Concert concert, Long seatNum, User user) {
+    public Booking(Concert concert, Long seatNum, Long seatId, User user) {
         this.concert = concert;
         this.seatNum = seatNum;
+        this.seatId = seatId;
         this.user = user;
     }
 
