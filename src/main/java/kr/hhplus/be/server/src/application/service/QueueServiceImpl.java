@@ -87,8 +87,10 @@ public class QueueServiceImpl implements QueueService {
     public ResponseMessage<QueueResponse> expireQueueToken(QueueExpireRequest queueExpireRequest) {
 
         //1. 만료 요청 들어온 토큰 조회
-        Queue queue = queueRepository.findById(queueExpireRequest.getQueueId())
-                .orElseThrow(() -> new EntityNotFoundException("해당 토큰이 존재하지 않습니다."));
+        Queue queue = queueRepository.findByQueueIdAndTokenStatus(
+                queueExpireRequest.getQueueId(),
+                TokenStatus.ACTIVE
+        ).orElseThrow(() -> new EntityNotFoundException("해당 토큰이 존재하지 않거나, 이미 만료된 상태입니다."));
 
         // 2. 토큰 만료 처리
         if (queue.isExpired()) {
@@ -128,4 +130,8 @@ public class QueueServiceImpl implements QueueService {
         return readyQueues;
     }
 
+    @Override
+    public Queue save(Queue queue) {
+        return queueRepository.save(queue);
+    }
 }

@@ -20,4 +20,6 @@ public interface QueueService {
     List<Queue> findExpiredQueues(LocalDateTime now, TokenStatus tokenStatus);
 
     List<Queue> findReadToActivateTokens(TokenStatus tokenStatus, LocalDateTime now);
+
+    Queue save(Queue queue);
 }

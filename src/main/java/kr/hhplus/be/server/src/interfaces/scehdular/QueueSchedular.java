@@ -56,8 +56,6 @@ public class QueueSchedular {
         // 1. READY 상태 & 만료 되지 않은 토큰들 조회
         List<Queue> readyQueues = queueService.findReadToActivateTokens(TokenStatus.READY, LocalDateTime.now());
 
-
-
         if (readyQueues.isEmpty()) {
             System.out.println("#####활성화할 토큰이 없습니다.#####");
             return;
@@ -67,7 +65,7 @@ public class QueueSchedular {
         for (Queue queue : readyQueues) {
             queue.setTokenStatus(TokenStatus.ACTIVE);
             queue.refreshToken(); // 시간 갱신
-            queueRepository.save(queue);
+            queueService.save(queue);
         }
 
         System.out.println(readyQueues.size() + "개의 토큰이 ACTIVE 상태로 전환되었습니다.");

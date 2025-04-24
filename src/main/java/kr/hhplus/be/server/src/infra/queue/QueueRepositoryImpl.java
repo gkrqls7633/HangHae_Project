@@ -55,4 +55,9 @@ public class QueueRepositoryImpl implements QueueRepository {
         query.setParameter("status", tokenStatus);
         return query.getResultList();
     }
+
+    @Override
+    public Optional<Queue> findByQueueIdAndTokenStatus(Long queueId, TokenStatus tokenStatus) {
+        return queueJpaRepository.findByQueueIdAndTokenStatus(queueId, tokenStatus);
+    }
 }

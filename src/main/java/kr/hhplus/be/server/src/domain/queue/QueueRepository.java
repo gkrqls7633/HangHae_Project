@@ -20,4 +20,6 @@ public interface QueueRepository {
     Optional<Queue> findById(Long queueId);
 
     List<Queue> findByExpiredAtBeforeAndTokenStatus(LocalDateTime now, TokenStatus tokenStatus);
+
+    Optional<Queue> findByQueueIdAndTokenStatus(Long queueId, TokenStatus tokenStatus);
 }

@@ -69,27 +69,15 @@ class QueueScehdularTest {
         User mockUser = User.of("김항해", "12345", "010-1234-5678", "test@naver.com", "서울특별시 강서구 염창동");
         mockUser.setUserId(123L);  // 예시로 User의 userId 설정
 
-        // 2. tokenValue 설정
-        queue.setTokenValue("abc123token");
-
-        // 3. issuedAt 설정 (현재 시간 설정)
-        LocalDateTime now = LocalDateTime.now(); // 현재 시간을 고정
-        queue.setIssuedAt(now);
-
-        // 4. expiredAt 설정 (5분 후 시간 설정)
-        queue.setExpiredAt(LocalDateTime.now().plusMinutes(5));
-
-        // 5. tokenStatus 설정 (예시로 ACTIVE 상태로 설정)
-        queue.setTokenStatus(TokenStatus.READY);
-
-        when(queueRepository.findByTokenStatusAndExpiredAtAfter(any(), any()))
+        // 2. ready 상태 & 만료시간 지나지 않은 토큰 조회
+        when(queueService.findReadToActivateTokens(any(), any()))
                 .thenReturn(List.of(queue));
 
         // when
         queueScheduler.readyToActivateTokens();
 
         // then
-        verify(queueRepository, times(1)).findByTokenStatusAndExpiredAtAfter(any(TokenStatus.class), any(LocalDateTime.class));
+        verify(queueService, times(1)).findReadToActivateTokens(any(TokenStatus.class), any(LocalDateTime.class));
         verify(queueRepository, times(1)).save(any(Queue.class));
 
     }
