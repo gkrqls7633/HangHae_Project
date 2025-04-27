@@ -2,6 +2,7 @@ package kr.hhplus.be.server.src.domain.queue;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
+import kr.hhplus.be.server.src.domain.BaseTimeEntity;
 import kr.hhplus.be.server.src.domain.enums.TokenStatus;
 import kr.hhplus.be.server.src.domain.user.User;
 import lombok.*;
@@ -9,7 +10,7 @@ import lombok.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Entity
 @Getter
@@ -27,12 +28,8 @@ import java.util.UUID;
         @UniqueConstraint(columnNames = {"user_id"}) //유저는 항상 하나의 유효한 토큰만 갖는다
 })
 
-//✔️ 유저는 항상 하나의 유효한 토큰만 갖는다
-//✔️ 신규 발급 시에도 기존 토큰 여부를 꼭 체크하고, 갱신(update) 으로 처리
+public class Queue extends BaseTimeEntity {
 
-public class Queue {
-
-    private static final long TOKEN_EXPIRE_MINUTES = 5;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -59,12 +56,14 @@ public class Queue {
     - 토큰 만료 시간 : 5분
     - 대기 상태 토큰 발급
     */
-    public void newToken() {
-//        this.userId = userId;
-        this.tokenValue = UUID.randomUUID().toString();
-        this.tokenStatus = TokenStatus.READY;
-        this.issuedAt = LocalDateTime.now();
-        this.expiredAt = LocalDateTime.now().plusMinutes(TOKEN_EXPIRE_MINUTES);
+    public static Queue newToken(Long userId) {
+        return Queue.builder()
+                .tokenValue(UUID.randomUUID().toString())
+                .tokenStatus(TokenStatus.READY)
+                .issuedAt(LocalDateTime.now())
+                .expiredAt(LocalDateTime.now().plusMinutes(TOKEN_EXPIRE_MINUTES))
+                .userId(userId)
+                .build();
     }
 
     // 유효한 토큰(대기중)이 존재하는지 확인
@@ -72,10 +71,18 @@ public class Queue {
         return this.tokenStatus == TokenStatus.READY || this.tokenStatus == TokenStatus.ACTIVE;
     }
 
-
     //유저 토큰 갱신 (다시 현재 시간부터 5분 연장)
+    //대기 또는 만료상태의 토큰 -> 활성화
     public void refreshToken() {
-        if (this.tokenStatus == TokenStatus.READY) {
+        if (this.tokenStatus == TokenStatus.READY || this.tokenStatus == TokenStatus.EXPIRED) {
+            this.tokenStatus = TokenStatus.READY;
+            this.tokenValue = UUID.randomUUID().toString();
+            this.issuedAt = LocalDateTime.now();
+            this.expiredAt = this.issuedAt.plusMinutes(TOKEN_EXPIRE_MINUTES);
+        }
+
+        //활성화 상태 토큰 -> 시간 연장
+        if (this.tokenStatus == TokenStatus.ACTIVE) {
             this.issuedAt = LocalDateTime.now();
             this.expiredAt = this.issuedAt.plusMinutes(TOKEN_EXPIRE_MINUTES);
         }
@@ -85,4 +92,13 @@ public class Queue {
     public boolean isExpired() {
         return (tokenStatus == TokenStatus.ACTIVE || tokenStatus == TokenStatus.READY) && expiredAt.isBefore(LocalDateTime.now());
     }
+
+    /**
+     * 비즈니스 정책
+     */
+    //✔️ 유저는 항상 하나의 유효한 토큰만 갖는다
+    //✔️ 신규 발급 시에도 기존 토큰 여부를 꼭 체크하고, 갱신(update) 으로 처리
+
+    private static final long TOKEN_EXPIRE_MINUTES = 5;
+
 }

@@ -2,6 +2,7 @@ package kr.hhplus.be.server.src.interfaces.concert.dto;
 
 import kr.hhplus.be.server.src.domain.concertseat.ConcertSeat;
 import kr.hhplus.be.server.src.domain.seat.Seat;
+import kr.hhplus.be.server.src.interfaces.seat.dto.SeatResponse;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,5 +21,5 @@ public class ConcertResponse {
     private String time;
     private String location;
     private ConcertSeat concertSeat;
-    private List<Seat> seatList;
+    private List<SeatResponse> seatList;
 }

@@ -94,9 +94,7 @@ public class PaymentTransactionHelper {
                 .build();
         Concert savedConcert = concertRepository.save(concert);
 
-        ConcertSeat concertSeat = new ConcertSeat();
-        concertSeat.setConcert(savedConcert);
-
+        ConcertSeat concertSeat = ConcertSeat.of(savedConcert);
         List<Seat> seatList = Arrays.asList(
                 Seat.builder().concertSeat(concertSeat).seatNum(1L).seatStatus(SeatStatus.AVAILABLE).build(),
                 Seat.builder().concertSeat(concertSeat).seatNum(2L).seatStatus(SeatStatus.BOOKED).build(),
@@ -118,9 +116,7 @@ public class PaymentTransactionHelper {
 
 
         //유저 대기 토큰 발급
-        Queue queue = new Queue();
-        queue.setUserId(savedUser.getUserId());
-        queue.newToken(); //발급
+        Queue queue = Queue.newToken(savedUser.getUserId());
 
         //활성화 토큰으로 변경
         queue.setTokenStatus(TokenStatus.ACTIVE);

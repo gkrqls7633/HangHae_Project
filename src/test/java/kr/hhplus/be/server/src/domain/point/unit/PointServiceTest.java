@@ -37,17 +37,11 @@ class PointServiceTest {
     @BeforeEach
     void setUp() {
 
-        User user = new User();
-        user.setUserName("김항해");
-        user.setPhoneNumber("010-1234-5678");
-        user.setEmail("test@naver.com");
-        user.setAddress("서울특별시 강서구 염창동");
+        User user = User.of("김항해", "12345", "010-1234-5678", "test@naver.com", "서울특별시 강서구 염창동");
 
         userId = 1L;
-        mockPoint = new Point();
-        mockPoint.setUserId(userId);
-        mockPoint.setUser(user);
-        mockPoint.setPointBalance(1000L);
+
+        mockPoint = Point.of(user.getUserId(), user, 1000L);
     }
 
     @Test

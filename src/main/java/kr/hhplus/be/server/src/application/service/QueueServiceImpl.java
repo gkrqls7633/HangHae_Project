@@ -15,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -38,13 +40,15 @@ public class QueueServiceImpl implements QueueService {
                 .orElseThrow(() -> new EntityNotFoundException("유저 정보가 없습니다."));
 
         // 2. 해당 유저가 이미 발급 받은 ACTIVE 상태의 토큰이 있는지 조회
-        Optional<Queue> existingQueue = queueRepository.findByUserIdAndTokenStatus(queueRequest.getUserId(), TokenStatus.ACTIVE);
+        Optional<Queue> existingActiveQueue = queueRepository.findByUserIdAndTokenStatus(queueRequest.getUserId(), TokenStatus.ACTIVE);
+        Optional<Queue> existingExpiredQueue = queueRepository.findByUserIdAndTokenStatus(queueRequest.getUserId(), TokenStatus.EXPIRED);
+
 
         QueueResponse queueResponse;
 
-        //토큰 존재하는 경우 갱신 / 존재하지 않는 경우 신규 발급
-        if (existingQueue.isPresent()) {
-            Queue activeQueue = existingQueue.get();
+        //활성화 중인 토큰 존재하는 경우 갱신 / 만료상태 토큰이 있거나 or 토큰 존재하지 않는 경우 신규 발급
+        if (existingActiveQueue.isPresent()) {
+            Queue activeQueue = existingActiveQueue.get();
 
             //토큰 갱신 처리
             activeQueue.refreshToken();
@@ -56,21 +60,41 @@ public class QueueServiceImpl implements QueueService {
                     .issuedAt(activeQueue.getIssuedAt())
                     .expiredAt(activeQueue.getExpiredAt())
                     .build();
+            return ResponseMessage.success("대기열 토큰을 갱신 완료했습니다.", queueResponse);
+
         } else {
-            //토큰 신규 발급 처리
-            Queue queue = new Queue();
-            queue.newToken();
-            queueRepository.save(queue);
 
-            queueResponse = QueueResponse.builder()
-                    .tokenValue(queue.getTokenValue())
-                    .tokenStatus(queue.getTokenStatus())
-                    .issuedAt(queue.getIssuedAt())
-                    .expiredAt(queue.getExpiredAt())
-                    .build();
+            // 해당 유저가 기존에 만료된 토큰을 갖고 있을 경우
+            if (existingExpiredQueue.isPresent()) {
+                Queue expiredQueue = existingExpiredQueue.get();
+
+                //토큰 갱신 처리
+                expiredQueue.refreshToken();
+                queueRepository.save(expiredQueue);
+
+                queueResponse = QueueResponse.builder()
+                        .tokenValue(expiredQueue.getTokenValue())
+                        .tokenStatus(expiredQueue.getTokenStatus())
+                        .issuedAt(expiredQueue.getIssuedAt())
+                        .expiredAt(expiredQueue.getExpiredAt())
+                        .build();
+                return ResponseMessage.success("대기열 토큰을 갱신 완료했습니다.", queueResponse);
+
+            // 최초로 신규 토큰 발급하는 경우
+            } else{
+                //토큰 신규 발급 처리
+                Queue queue = Queue.newToken(user.getUserId());
+                queueRepository.save(queue);
+
+                queueResponse = QueueResponse.builder()
+                        .tokenValue(queue.getTokenValue())
+                        .tokenStatus(queue.getTokenStatus())
+                        .issuedAt(queue.getIssuedAt())
+                        .expiredAt(queue.getExpiredAt())
+                        .build();
+                return ResponseMessage.success("대기열 토큰을 발급 완료했습니다.", queueResponse);
+            }
         }
-
-        return ResponseMessage.success("대기열 토큰을 발급 완료했습니다.", queueResponse);
     }
 
     /**
@@ -83,8 +107,10 @@ public class QueueServiceImpl implements QueueService {
     public ResponseMessage<QueueResponse> expireQueueToken(QueueExpireRequest queueExpireRequest) {
 
         //1. 만료 요청 들어온 토큰 조회
-        Queue queue = queueRepository.findById(queueExpireRequest.getQueueId())
-                .orElseThrow(() -> new EntityNotFoundException("해당 토큰이 존재하지 않습니다."));
+        Queue queue = queueRepository.findByQueueIdAndTokenStatus(
+                queueExpireRequest.getQueueId(),
+                TokenStatus.ACTIVE
+        ).orElseThrow(() -> new EntityNotFoundException("해당 토큰이 존재하지 않거나, 이미 만료된 상태입니다."));
 
         // 2. 토큰 만료 처리
         if (queue.isExpired()) {
@@ -102,4 +128,30 @@ public class QueueServiceImpl implements QueueService {
         return ResponseMessage.success("대기열 토큰이 만료되었습니다.", queueResponse);
     }
 
+    /*
+     만료된 토큰들 조회
+     */
+    @Override
+    public List<Queue> findExpiredQueues(LocalDateTime now, TokenStatus tokenStatus) {
+        List<Queue> expiredQueues = queueRepository.findByExpiredAtBeforeAndTokenStatus(now, TokenStatus.ACTIVE);
+
+        return expiredQueues;
+    }
+
+    /*
+    READY 상태 & 만료 되지 않은 토큰들 조회
+     */
+    @Override
+    public List<Queue> findReadToActivateTokens(TokenStatus tokenStatus, LocalDateTime now) {
+        List<Queue> readyQueues = queueRepository.findByTokenStatusAndExpiredAtAfter(
+                TokenStatus.READY
+                , LocalDateTime.now()
+        );
+        return readyQueues;
+    }
+
+    @Override
+    public Queue save(Queue queue) {
+        return queueRepository.save(queue);
+    }
 }

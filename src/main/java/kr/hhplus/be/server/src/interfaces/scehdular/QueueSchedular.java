@@ -16,8 +16,6 @@ import java.util.List;
 @Service
 public class QueueSchedular {
 
-    private final QueueRepository queueRepository;
-
     private final QueueService queueService;
 
     //스케줄 시간 정책 : 5분 임시 셋팅
@@ -26,7 +24,7 @@ public class QueueSchedular {
 
         // 1. 만료된 토큰들 조회
         LocalDateTime now = LocalDateTime.now();
-        List<Queue> expiredQueues = queueRepository.findByExpiredAtBeforeAndTokenStatus(now, TokenStatus.ACTIVE);
+        List<Queue> expiredQueues = queueService.findExpiredQueues(now, TokenStatus.EXPIRED);
 
         // 2. 만료된 토큰 없으면 바로 종료
         if (expiredQueues.isEmpty()) {
@@ -54,10 +52,7 @@ public class QueueSchedular {
     public void readyToActivateTokens() {
 
         // 1. READY 상태 & 만료 되지 않은 토큰들 조회
-        List<Queue> readyQueues = queueRepository.findByTokenStatusAndExpiredAtAfter(
-                  TokenStatus.READY
-                , LocalDateTime.now()
-        );
+        List<Queue> readyQueues = queueService.findReadToActivateTokens(TokenStatus.READY, LocalDateTime.now());
 
         if (readyQueues.isEmpty()) {
             System.out.println("#####활성화할 토큰이 없습니다.#####");
@@ -68,7 +63,7 @@ public class QueueSchedular {
         for (Queue queue : readyQueues) {
             queue.setTokenStatus(TokenStatus.ACTIVE);
             queue.refreshToken(); // 시간 갱신
-            queueRepository.save(queue);
+            queueService.save(queue);
         }
 
         System.out.println(readyQueues.size() + "개의 토큰이 ACTIVE 상태로 전환되었습니다.");

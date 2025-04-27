@@ -15,4 +15,6 @@ public interface PointRepository {
     void deleteAllInBatch();
 
     Optional<Point> findByUserIdForUpdate(@Param("userId") Long userId);
+
+    void flush();
 }

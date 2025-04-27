@@ -77,13 +77,9 @@ class BookingServiceTest {
                 .address("서울특별시 강서구 등촌동")
                 .build();
 
-        Queue queue = new Queue();
-        queue.setUserId(123L);
-        queue.newToken();
+        Queue queue = Queue.newToken(123L);
 
-        ConcertSeat concertSeat = new ConcertSeat();
-        concertSeat.setConcert(concert);
-
+        ConcertSeat concertSeat = ConcertSeat.of(concert);
         List<Seat> seatList = Arrays.asList(
                 Seat.builder().concertSeat(concertSeat).seatNum(1L).seatStatus(SeatStatus.AVAILABLE).build(),
                 Seat.builder().concertSeat(concertSeat).seatNum(2L).seatStatus(SeatStatus.BOOKED).build(),

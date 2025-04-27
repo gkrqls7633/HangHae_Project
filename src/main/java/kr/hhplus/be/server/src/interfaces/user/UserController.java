@@ -23,4 +23,10 @@ public class UserController {
         return userService.getUserPoint(userId);
     }
 
+
+    //todo : 유저 예약 내역 조회
+
+
+
+
 }

@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kr.hhplus.be.server.src.common.ResponseMessage;
 import kr.hhplus.be.server.src.domain.concert.ConcertService;
+import kr.hhplus.be.server.src.interfaces.concert.dto.ConcertInfoResponse;
 import kr.hhplus.be.server.src.interfaces.concert.dto.ConcertResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,9 +27,9 @@ public class ConcertController {
 
     @Operation(summary = "콘서트 목록 조회", description = "콘서트 목록 전체를 조회합니다.")
     @GetMapping("/list")
-    public ResponseMessage<List<ConcertResponse>> getConcertList() {
+    public ResponseMessage<List<ConcertInfoResponse>> getConcertList() {
 
-        List<ConcertResponse> concertList = concertService.getConcertList();
+        List<ConcertInfoResponse> concertList = concertService.getConcertList();
 
         return ResponseMessage.success(concertList);
 

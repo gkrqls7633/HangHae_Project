@@ -2,12 +2,13 @@ package kr.hhplus.be.server.src.domain.payment;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
+import kr.hhplus.be.server.src.domain.BaseTimeEntity;
 import kr.hhplus.be.server.src.domain.booking.Booking;
 import kr.hhplus.be.server.src.domain.enums.PaymentStatus;
 import lombok.*;
 
 @Entity
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
 @Getter
@@ -17,7 +18,7 @@ import lombok.*;
         @Index(name = "idx_user_id", columnList = "user_id")
 })
 @Schema(description = "결제 도메인")
-public class Payment {
+public class Payment extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,6 +37,10 @@ public class Payment {
 
     public boolean isBookingCheck(Booking booking) {
         return booking != null && booking.isBookedBy(this.userId);
+    }
+
+    public void changePaymentStatus(PaymentStatus paymentStatus) {
+        this.paymentStatus = paymentStatus;
     }
 
 }

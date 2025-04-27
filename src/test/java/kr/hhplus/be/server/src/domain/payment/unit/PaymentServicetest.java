@@ -102,6 +102,21 @@ class PaymentServicetest {
 
     }
 
+    @DisplayName("좌석 상태를 booked로 변경한다.")
+    @Test
+    void changeBookedSeat() {
+
+        //given
+        mockSeat.setSeatStatus(SeatStatus.OCCUPIED);
+
+        //when
+        mockSeat.changeBookedSeat();
+
+        //then
+        assertEquals(mockSeat.getSeatStatus(), SeatStatus.BOOKED);
+
+    }
+
     @DisplayName("예약 내역이 존재하지 않으면 에러 발생한다.")
     @Test
     void noBookingErrorTest() {
@@ -266,9 +281,7 @@ class PaymentServicetest {
         paymentRequest.setBookingId(1L);
         paymentRequest.setUserId(1L);
 
-        Point point = new Point();
-        point.setPointBalance(50000L);
-        point.setUserId(1L);
+        Point point = Point.of(1L, 50000L);
 
         when(bookingRepository.findById(1L)).thenReturn(Optional.of(mockBooking));
         when(seatRepository.findById(mockSeatId)).thenReturn(Optional.of(mockSeat));
@@ -294,10 +307,7 @@ class PaymentServicetest {
         paymentRequest.setBookingId(1L);
         paymentRequest.setUserId(1L);
 
-        Point point = new Point();
-        point.setPointBalance(50000L);
-        point.setUserId(1L);
-
+        Point point = Point.of(1L, 50000L);
 
         Payment savedPayment = Payment.builder()
                 .paymentId(999L)

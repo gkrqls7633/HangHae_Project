@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.src.domain.seat;
 
+import kr.hhplus.be.server.src.domain.concert.Concert;
 import kr.hhplus.be.server.src.domain.concertseat.ConcertSeat;
 import kr.hhplus.be.server.src.domain.enums.SeatStatus;
 import org.junit.jupiter.api.DisplayName;
@@ -14,7 +15,8 @@ class SeatTest {
     void isAvailableSeatTest() {
         //given
 
-        ConcertSeat mockConcertSeat = new ConcertSeat();
+        Concert concert = new Concert(1L, "BTS World Tour", 150000L, "2025-05-01", "19:00", "서울 올림픽 경기장");
+        ConcertSeat mockConcertSeat = ConcertSeat.of(concert);
 
         Seat availableSeat  = Seat.builder().concertSeat(mockConcertSeat).seatNum(1L).seatStatus(SeatStatus.AVAILABLE).build();
         Seat bookedSeat = Seat.builder().concertSeat(mockConcertSeat).seatNum(2L).seatStatus(SeatStatus.BOOKED).build();

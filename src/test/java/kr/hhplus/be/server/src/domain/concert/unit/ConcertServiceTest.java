@@ -7,6 +7,7 @@ import kr.hhplus.be.server.src.domain.concertseat.ConcertSeat;
 import kr.hhplus.be.server.src.domain.concertseat.ConcertSeatRepository;
 import kr.hhplus.be.server.src.domain.seat.Seat;
 import kr.hhplus.be.server.src.domain.enums.SeatStatus;
+import kr.hhplus.be.server.src.interfaces.concert.dto.ConcertInfoResponse;
 import kr.hhplus.be.server.src.interfaces.concert.dto.ConcertResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -66,7 +67,7 @@ public class ConcertServiceTest {
         when(concertRepository.findAll()).thenReturn(concertList);
 
         // then
-        List<ConcertResponse> result = concertService.getConcertList();
+        List<ConcertInfoResponse> result = concertService.getConcertList();
 
         assertThat(result).hasSize(2);
     }
@@ -78,7 +79,7 @@ public class ConcertServiceTest {
         when(concertRepository.findAll()).thenReturn(Collections.emptyList());
 
         // when
-        List<ConcertResponse> result = concertService.getConcertList();
+        List<ConcertInfoResponse> result = concertService.getConcertList();
 
         // then
         assertThat(result).isEmpty();

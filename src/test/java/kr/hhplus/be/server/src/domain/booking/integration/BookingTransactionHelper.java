@@ -48,17 +48,15 @@ public class BookingTransactionHelper {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public BookingRequest setupTestData() {
         //유저 저장
-        User user = new User();
-        user.setUserName("김항해");
-        user.setPhoneNumber("010-1234-5678");
-        user.setEmail("test@naver.com");
-        user.setAddress("서울특별시 강서구 염창동");
+        User user = User.of("김항해"
+                , "12345"
+                ,"010-1234-5678"
+                ,"test@naver.com"
+                , "서울특별시 강서구 염창동");
         User savedUser = userRepository.save(user);
 
         //포인트 저장
-        Point point = new Point();
-        point.setUser(savedUser);
-        point.setPointBalance(200000L);
+        Point point = Point.of(savedUser.getUserId(), savedUser, 200000L);
         pointRepository.save(point);
 //        pointRepository.flush();
 
@@ -72,9 +70,7 @@ public class BookingTransactionHelper {
                 .build();
         Concert savedConcert = concertRepository.save(concert);
 
-        ConcertSeat concertSeat = new ConcertSeat();
-        concertSeat.setConcert(savedConcert);
-
+        ConcertSeat concertSeat = ConcertSeat.of(savedConcert);
         List<Seat> seatList = Arrays.asList(
                 Seat.builder().concertSeat(concertSeat).seatNum(1L).seatStatus(SeatStatus.AVAILABLE).build(),
                 Seat.builder().concertSeat(concertSeat).seatNum(2L).seatStatus(SeatStatus.BOOKED).build(),
@@ -90,9 +86,7 @@ public class BookingTransactionHelper {
         seatRepository.saveAll(seatList);
 
         //유저 대기 토큰 발급
-        Queue queue = new Queue();
-        queue.setUserId(savedUser.getUserId());
-        queue.newToken();
+        Queue queue = Queue.newToken(savedUser.getUserId());
 
         //활성화 토큰으로 변경
         queue.setTokenStatus(TokenStatus.ACTIVE);
@@ -106,22 +100,20 @@ public class BookingTransactionHelper {
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public User createUser(Long num) {
-        User user = new User();
-        user.setUserName("김항해" + num);
-        user.setPhoneNumber("010-1234-5678");
-        user.setEmail("test@naver.com");
-        user.setAddress("서울특별시 강서구 염창동");
+
+        User user = User.of("김항해" + num
+                , "12345"
+                ,"010-1234-5678"
+                ,"test@naver.com"
+                , "서울특별시 강서구 염창동");
 
         return userRepository.save(user);
-
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public Queue createQueue(User user) {
         //유저 대기 토큰 발급
-        Queue queue = new Queue();
-        queue.setUserId(user.getUserId());
-        queue.newToken(); //발급
+        Queue queue = Queue.newToken(user.getUserId());
 
         //활성화 토큰으로 변경
         queue.setTokenStatus(TokenStatus.ACTIVE);

@@ -20,19 +20,13 @@ public class PointTransactionHelper {
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public Long setupTestData() {
-        User user = new User();
-        user.setUserName("김항해");
-        user.setPhoneNumber("010-1234-5678");
-        user.setEmail("test@naver.com");
-        user.setAddress("서울특별시 강서구 염창동");
+        User user = User.of("김항해", "12345", "010-1234-5678", "test@naver.com", "서울특별시 강서구 염창동");
         User savedUser = userRepository.save(user);
 
-        Point point = new Point();
-        point.setUser(savedUser);
-        point.setPointBalance(200000L);
+        Point point = Point.of(savedUser.getUserId(), savedUser, 200000L);
         pointRepository.save(point);
 
-//        pointRepository.flush();
+        pointRepository.flush();
         return savedUser.getUserId();
     }
 }

@@ -34,7 +34,7 @@ public class QueueController {
 
     //스케줄러로 구현하자.
     @Operation(
-            summary = "예약 대기열 토큰 만료", description = "n분 단위(임시)로 유저의 만료된 토큰을 만료시킨다.",
+            summary = "예약 대기열 토큰 만료", description = "단건으로 해당 유저의 토큰을 만료시킨다. || 스케줄러 : n분 단위(임시)로 유저의 만료된 토큰을 만료시킨다.",
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     required = true,
                     content = @Content(

@@ -28,8 +28,8 @@ public class QueueRepositoryImpl implements QueueRepository {
     }
 
     @Override
-    public List<Queue> findByTokenStatus(TokenStatus tokenStatus) {
-        return queueJpaRepository.findByTokenStatus(tokenStatus);
+    public List<Queue> findAllByTokenStatus(TokenStatus tokenStatus) {
+        return queueJpaRepository.findAllByTokenStatus(tokenStatus);
     }
 
     @Override
@@ -54,5 +54,15 @@ public class QueueRepositoryImpl implements QueueRepository {
         query.setParameter("now", now);
         query.setParameter("status", tokenStatus);
         return query.getResultList();
+    }
+
+    @Override
+    public Optional<Queue> findByQueueIdAndTokenStatus(Long queueId, TokenStatus tokenStatus) {
+        return queueJpaRepository.findByQueueIdAndTokenStatus(queueId, tokenStatus);
+    }
+
+    @Override
+    public Queue findByTokenStatus(TokenStatus tokenStatus) {
+        return queueJpaRepository.findByTokenStatus(tokenStatus);
     }
 }
