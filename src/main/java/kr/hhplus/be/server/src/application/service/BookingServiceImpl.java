@@ -15,6 +15,7 @@ import kr.hhplus.be.server.src.domain.seat.Seat;
 import kr.hhplus.be.server.src.domain.seat.SeatRepository;
 import kr.hhplus.be.server.src.domain.user.User;
 import kr.hhplus.be.server.src.domain.user.UserRepository;
+import kr.hhplus.be.server.src.infra.redis.DistributedLock;
 import kr.hhplus.be.server.src.interfaces.booking.dto.BookingCancelRequest;
 import kr.hhplus.be.server.src.interfaces.booking.dto.BookingCancelResponse;
 import kr.hhplus.be.server.src.interfaces.booking.dto.BookingRequest;
@@ -53,6 +54,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    @DistributedLock(key = "#bookingRequest.concertId + ':' + #bookingRequest.seatNum")  // 락 키 설정
     @Transactional
     public ResponseMessage<BookingResponse> bookingSeat(BookingRequest bookingRequest) {
 

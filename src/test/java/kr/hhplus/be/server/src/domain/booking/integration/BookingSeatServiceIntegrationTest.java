@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.src.domain.booking.integration;
 
+import kr.hhplus.be.server.src.application.service.BookingServiceImpl;
 import kr.hhplus.be.server.src.common.ResponseMessage;
 import kr.hhplus.be.server.src.domain.enums.TokenStatus;
 import kr.hhplus.be.server.src.domain.queue.Queue;
@@ -16,6 +17,8 @@ import kr.hhplus.be.server.src.interfaces.point.dto.PointResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
@@ -32,6 +35,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 @SpringBootTest
 @Transactional
@@ -48,7 +53,12 @@ class BookingSeatServiceIntegrationTest {
     @Autowired
     private SeatRepository seatRepository;
 
+    @Autowired
+    private RedissonClient redissonClient;
+
     private BookingRequest bookingRequest;
+    @Autowired
+    private BookingServiceImpl bookingServiceImpl;
 
 
     @BeforeEach
@@ -73,60 +83,6 @@ class BookingSeatServiceIntegrationTest {
         assertTrue("좌석이 존재해야 합니다.", seatOpt.isPresent());
         Seat seat = seatOpt.get();
         assertEquals(seat.getSeatStatus(), SeatStatus.OCCUPIED);
-    }
-
-
-    //동시성 이슈 -> 현재는 두 요청 모두 성공
-    @DisplayName("동일 좌석 동시 예약 요청 시 하나만 성공해야 한다.")
-    @Test
-    void testConcurrencyBookingSeatTest() throws InterruptedException {
-        int threadCount = 10;
-        ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
-        CountDownLatch latch = new CountDownLatch(threadCount);
-
-        //future로 비동기 작업 받을 수 있게 처리
-        List<Future<ResponseMessage<BookingResponse>>> results = new ArrayList<>();
-
-        for (int i = 0; i < threadCount; i++) {
-            Future<ResponseMessage<BookingResponse>> result = executorService.submit(() -> {
-                try {
-                    return bookingService.bookingSeat(bookingRequest);
-                } catch (Exception e) {
-                    return ResponseMessage.error(500, e.getMessage());
-                } finally {
-                    latch.countDown();
-                }
-            });
-            results.add(result);
-        }
-
-        latch.await(); // 모든 스레드 완료까지 대기
-
-        long successCount = results.stream()
-                .filter(future -> {
-                    try {
-                        return future.get().getStatus() == 200;
-                    } catch (Exception e) {
-                        return false;
-                    }
-                })
-                .count();
-
-        long failCount = results.stream()
-                .filter(future -> {
-                    try {
-                        return future.get().getStatus() != 200;
-                    } catch (Exception e) {
-                        return true;
-                    }
-                })
-                .count();
-
-        System.out.println("성공한 예약 요청 수: " + successCount);
-        System.out.println("실패한 예약 요청 수: " + failCount);
-
-        // 기대: 성공 1건
-        assertEquals(1, successCount);
     }
 
     @DisplayName("동시 좌석 예약 시 하나만 성공한다.(낙관적 락)")
@@ -240,4 +196,116 @@ class BookingSeatServiceIntegrationTest {
         assertEquals(1, successCount);
         assertEquals(1, failCount);
     }
+
+    @Test
+    void 좌석예약_분산락_적용_테스트() throws InterruptedException {
+
+        //given
+        Long concertId = bookingRequest.getConcertId();
+        Long seatNum = bookingRequest.getSeatNum();
+
+        int numberOfThreads = 3;
+        ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreads);
+        CountDownLatch latch = new CountDownLatch(numberOfThreads);
+
+        // 락을 대기하는 로그 및 예약 요청
+        for (int i = 0; i < numberOfThreads; i++) {
+            executorService.submit(() -> {
+                try {
+                    // 로그: 락을 기다리고 있다는 표시
+                    System.out.println(Thread.currentThread().getName() + " - 락 대기 중...");
+
+                    // 분산락 적용 메서드 호출
+                    bookingService.bookingSeat(bookingRequest);
+
+                    // 예약이 성공적으로 이루어진 후
+                    System.out.println(Thread.currentThread().getName() + " - 예약 성공");
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    latch.countDown();
+                }
+            });
+        }
+
+        latch.await(); // 모든 스레드가 완료될 때까지 대기
+
+        // then
+        // 1. 해당 좌석의 상태가 OCCUPIED로 변경되었는지 확인
+        Optional<Seat> seatOpt = seatRepository.findByConcertSeat_Concert_ConcertIdAndSeatNum(concertId, seatNum);
+        assertTrue("좌석이 존재해야 합니다.", seatOpt.isPresent());
+        Seat seat = seatOpt.get();
+        assertEquals("좌석 상태는 OCCUPIED여야 합니다.", seat.getSeatStatus(), SeatStatus.OCCUPIED);
+
+    }
+
+
+//    @DisplayName("좌석 예약 요청 시 콘서트 id, 좌석 num, userId 기반으로 해당 좌석 점유 및 예약상태가 된다.")
+//    @Test
+//    void bookingSeatIntegrationWithRedisLockTest() throws InterruptedException {
+//
+//        // given: 테스트용 데이터 준비
+//        Long concertId = bookingRequest.getConcertId();
+//        Long seatNum = bookingRequest.getSeatNum();
+//
+//        System.out.println("테스트 시작: 콘서트 ID = " + concertId + ", 좌석 번호 = " + seatNum);
+//
+//        // first thread: 첫 번째 예약을 시도
+//        Thread firstThread = new Thread(() -> {
+//            try {
+//                System.out.println("첫 번째 예약 시도 시작: 콘서트 ID = " + concertId + ", 좌석 번호 = " + seatNum);
+//
+//                // first booking request
+//                ResponseMessage<BookingResponse> response = bookingService.bookingSeat(bookingRequest);
+//                System.out.println("첫 번째 예약 시도 완료: 콘서트 ID = " + concertId + ", 좌석 번호 = " + seatNum);
+//
+//                assertEquals(200, response.getStatus());
+//            } catch (Exception e) {
+//                System.err.println("첫 번째 예약 시도 중 오류 발생: " + e.getMessage());
+//            }
+//        });
+//
+//        // second thread: 두 번째 예약을 시도
+//        Thread secondThread = new Thread(() -> {
+//            try {
+//                // second booking request (이 예약은 실패해야 합니다, 락이 이미 걸려있기 때문에)
+//                System.out.println("두 번째 예약 시도 시작: 콘서트 ID = " + concertId + ", 좌석 번호 = " + seatNum);
+//
+//                ResponseMessage<BookingResponse> response = bookingService.bookingSeat(bookingRequest);
+//                System.out.println("두 번째 예약 시도 완료: 콘서트 ID = " + concertId + ", 좌석 번호 = " + seatNum);
+//
+//                assertNotEquals(200, response.getStatus());
+//            } catch (Exception e) {
+//                System.err.println("두 번째 예약 시도 중 오류 발생: " + e.getMessage());
+//            }
+//        });
+//
+//        // when: 첫 번째 예약 스레드 실행
+//        firstThread.start();
+//        // 잠시 대기: 두 번째 스레드가 첫 번째 스레드가 락을 걸고 기다리게 함
+//        Thread.sleep(100);
+//
+//        // 두 번째 예약 스레드 실행
+//        secondThread.start();
+//
+//        // 두 스레드 모두 실행 완료될 때까지 기다립니다.
+//        firstThread.join();
+//        secondThread.join();
+//
+//        // then: 해당 좌석이 점유상태로 변경됐는지 확인
+//        Optional<Seat> seatOpt = seatRepository.findByConcertSeat_Concert_ConcertIdAndSeatNum(concertId, seatNum);
+//        assertTrue("좌석이 존재해야 합니다.", seatOpt.isPresent());
+//        Seat seat = seatOpt.get();
+//        System.out.println("예약 후 좌석 상태: " + seat.getSeatStatus());
+//
+//        assertEquals("좌석 상태는 OCCUPIED여야 합니다.", seat.getSeatStatus(), SeatStatus.OCCUPIED);
+//
+//        // 락이 풀렸는지 확인
+//        RLock rLock = redissonClient.getLock("LOCK:" + concertId + ":" + seatNum);
+//        System.out.println("락 상태 확인: " + (rLock.isLocked() ? "락이 걸려 있음" : "락이 풀림"));
+//
+//        assertFalse(rLock.isLocked(), "트랜잭션이 끝난 후 락은 해제되어야 합니다.");
+//    }
+
 }
