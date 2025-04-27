@@ -2,6 +2,7 @@ package kr.hhplus.be.server.src.domain.point.integration;
 
 import kr.hhplus.be.server.src.TestcontainersConfiguration;
 import kr.hhplus.be.server.src.common.ResponseMessage;
+import kr.hhplus.be.server.src.infra.point.PointRepositoryImpl;
 import kr.hhplus.be.server.src.interfaces.point.dto.PointChargeRequest;
 import kr.hhplus.be.server.src.interfaces.point.dto.PointResponse;
 import kr.hhplus.be.server.src.domain.point.PointService;
@@ -13,7 +14,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.transaction.BeforeTransaction;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -22,9 +22,9 @@ import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 
 @SpringBootTest
@@ -40,6 +40,8 @@ class PointServiceIntegrationTest {
     private PointTransactionHelper pointTransactionHelper;
 
     private Long savedUserId;
+    @Autowired
+    private PointRepositoryImpl pointRepositoryImpl;
 
     @BeforeEach
     void setup() {
@@ -216,6 +218,49 @@ class PointServiceIntegrationTest {
 
         //then : 성공은 1
         assertEquals(1, successCount.get());
+    }
+
+    @DisplayName("포인트 충전 레디스 분산락 적용 테스트")
+    @Test
+    void chargePointWithRedisLock() throws InterruptedException {
+
+        // given
+        AtomicInteger successCount = new AtomicInteger();
+        AtomicInteger failCount = new AtomicInteger();
+
+        PointChargeRequest request = new PointChargeRequest();
+        request.setUserId(savedUserId);
+        request.setChargePoint(50000L);
+
+        int numberOfThreads = 3;
+        ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreads);
+        CountDownLatch latch = new CountDownLatch(numberOfThreads);
+
+        // 락을 대기하는 로그 및 예약 요청
+        for (int i = 0; i < numberOfThreads; i++) {
+            executorService.submit(() -> {
+                try {
+                    System.out.println(Thread.currentThread().getName() + " -- 락 대기 중 --");
+                    pointService.chargePoint(request);
+                    successCount.addAndGet(1);
+                    System.out.println(Thread.currentThread().getName() + " -- 충전 성공 --");
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    failCount.addAndGet(1);
+                } finally {
+                    latch.countDown();
+                }
+            });
+        }
+
+        latch.await();
+
+        ResponseMessage<PointResponse> response = pointService.getPoint(savedUserId);
+        assertEquals(Optional.of(250000L).get(), response.getData().getPointBalance());
+
+        assertThat(successCount.get()).isEqualTo(1);
+        assertThat(failCount.get()).isEqualTo(2);
     }
 
 }

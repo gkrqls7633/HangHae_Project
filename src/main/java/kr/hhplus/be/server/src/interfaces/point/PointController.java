@@ -30,7 +30,7 @@ public class PointController {
     @PostMapping("/charge")
     public ResponseMessage<PointResponse> chargePoint(@RequestBody PointChargeRequest pointChagrgeRequest) {
 
-        return pointService.chargePointWithLock(pointChagrgeRequest);
+        return pointService.chargePoint(pointChagrgeRequest);
 
     }
 
