@@ -24,7 +24,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -53,8 +52,16 @@ public class BookingServiceImpl implements BookingService {
         }
     }
 
+    /*
+    1. 락 키 설정 : concertId:seatNum 조합
+    2. 락 범위 : 콘서트 내 특정 좌석으로 락 범위 지정
+    3. 중복 처리 가능 여부 : x => LockWaitime : 0초로 지정
+    */
     @Override
-    @DistributedLock(key = "#bookingRequest.concertId + ':' + #bookingRequest.seatNum")  // 락 키 설정
+    @DistributedLock(
+            key = "#bookingRequest.concertId + ':' + #bookingRequest.seatNum",
+            waitTime = 0
+    )
     @Transactional
     public ResponseMessage<BookingResponse> bookingSeat(BookingRequest bookingRequest) {
 

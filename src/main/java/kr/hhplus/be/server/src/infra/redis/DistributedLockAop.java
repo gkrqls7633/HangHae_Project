@@ -48,7 +48,8 @@ public class DistributedLockAop {
 
             log.info("Lock acquired for {} {}", kv("serviceName", method.getName()), kv("lockKey", key));
 
-            // 트랜잭션에 락 해제 작업을 동기적으로 추가
+            // 트랜잭션에 락 해제 작업 동기화로 진행(비동기로 인한 락 해제와 트랜잭션 완료 격차 발생 방지)
+            // 트랜잭션 커밋 후 락 해제
             TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
                 @Override
                 public void afterCommit() {
