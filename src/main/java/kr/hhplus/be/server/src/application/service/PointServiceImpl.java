@@ -5,7 +5,7 @@ import kr.hhplus.be.server.src.common.ResponseMessage;
 import kr.hhplus.be.server.src.domain.point.Point;
 import kr.hhplus.be.server.src.domain.point.PointRepository;
 import kr.hhplus.be.server.src.domain.point.PointService;
-import kr.hhplus.be.server.src.infra.redis.DistributedLock;
+import kr.hhplus.be.server.src.infra.lock.DistributedLock;
 import kr.hhplus.be.server.src.interfaces.point.dto.PointChargeRequest;
 import kr.hhplus.be.server.src.interfaces.point.dto.PointResponse;
 import lombok.RequiredArgsConstructor;

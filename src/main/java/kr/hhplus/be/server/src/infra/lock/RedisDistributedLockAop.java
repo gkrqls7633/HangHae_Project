@@ -1,5 +1,7 @@
-package kr.hhplus.be.server.src.infra.redis;
+package kr.hhplus.be.server.src.infra.lock;
 
+import kr.hhplus.be.server.src.common.CustomSpringELParser;
+import kr.hhplus.be.server.src.domain.lock.DistributedLockInterface;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -23,26 +25,24 @@ import java.util.Map;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class DistributedLockAop {
+public class RedisDistributedLockAop {
+
     private static final String REDISSON_LOCK_PREFIX = "LOCK:";
 
-    private final RedissonClient redissonClient;
+    private final DistributedLockInterface distributedLockInterface;
 
-    @Around("@annotation(kr.hhplus.be.server.src.infra.redis.DistributedLock)")
+    @Around("@annotation(kr.hhplus.be.server.src.infra.lock.DistributedLock)")
     public Object lock(final ProceedingJoinPoint joinPoint) throws Throwable {
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         Method method = signature.getMethod();
         DistributedLock distributedLock = method.getAnnotation(DistributedLock.class);
 
         String key = REDISSON_LOCK_PREFIX + CustomSpringELParser.getDynamicValue(signature.getParameterNames(), joinPoint.getArgs(), distributedLock.key());
-        RLock rLock = redissonClient.getLock(key);  // (1)
 
         try {
-            boolean available = rLock.tryLock(distributedLock.waitTime(), distributedLock.leaseTime(), distributedLock.timeUnit());  // (2)
-            if (!available) {
+            boolean lockAcquired = distributedLockInterface.acquireLock(key, distributedLock.waitTime(), distributedLock.leaseTime(), distributedLock.timeUnit());
+            if (!lockAcquired) {
                 log.info("Waiting for lock for {} {}", kv("serviceName", method.getName()), kv("lockKey", key));
-
-//                log.info("Failed to acquire lock for {} {}", kv("serviceName", method.getName()), kv("lockKey", key));
                 return false;
             }
 
@@ -53,24 +53,13 @@ public class DistributedLockAop {
             TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
                 @Override
                 public void afterCommit() {
-                    releaseLock(key, rLock);
+                    distributedLockInterface.releaseLock(key);
                 }
             });
 
-            return joinPoint.proceed();  // (3)
+            return joinPoint.proceed();
         } catch (InterruptedException e) {
             throw new InterruptedException();
-        }
-    }
-
-    private void releaseLock(String key, RLock rLock) {
-        try {
-            if (rLock.isLocked()) {
-                rLock.unlock();
-                log.info("Lock released for key {}", key);
-            }
-        } catch (IllegalMonitorStateException e) {
-            log.info("Redisson Lock Already Unlocked for key {}", key);
         }
     }
 

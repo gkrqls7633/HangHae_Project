@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.src.infra.redis;
+package kr.hhplus.be.server.src.common;
 
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
