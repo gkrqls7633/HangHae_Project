@@ -1,7 +1,6 @@
-package kr.hhplus.be.server.src.config;
+package kr.hhplus.be.server.src.config.cache;
 
 import kr.hhplus.be.server.src.common.enums.CacheName;
-import kr.hhplus.be.server.src.config.cache.CacheTtlRegistry;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
