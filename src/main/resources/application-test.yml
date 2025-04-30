@@ -19,6 +19,8 @@ spring:
       hibernate.timezone.default_storage: NORMALIZE_UTC
       hibernate.jdbc.time_zone: Asia/Seoul
 
+  cache:
+    type: redis
   data:
     redis:
       host: localhost

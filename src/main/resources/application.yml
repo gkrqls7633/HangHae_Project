@@ -25,7 +25,8 @@ spring:
     level:
       org.hibernate.SQL : DEBUG
       org.hibernate.type.descriptor.sql.BasicBinder: TRACE  # 파라미터 바인딩 값도 출력
-
+  cache:
+    type: redis
   data:
     redis:
       host: localhost
