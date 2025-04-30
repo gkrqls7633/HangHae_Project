@@ -26,6 +26,13 @@ spring:
       org.hibernate.SQL : DEBUG
       org.hibernate.type.descriptor.sql.BasicBinder: TRACE  # 파라미터 바인딩 값도 출력
 
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: null
+      connect-timeout: 3000
+      timeout: 3000
 
 ---
 spring.config.activate.on-profile: local, test
@@ -37,3 +44,5 @@ spring:
     password: application
   jackson:
     time-zone: Asia/Seoul
+
+

@@ -1,7 +1,7 @@
 package kr.hhplus.be.server.src.domain.booking.integration;
 
+import kr.hhplus.be.server.src.application.service.BookingServiceImpl;
 import kr.hhplus.be.server.src.common.ResponseMessage;
-import kr.hhplus.be.server.src.domain.enums.TokenStatus;
 import kr.hhplus.be.server.src.domain.queue.Queue;
 import kr.hhplus.be.server.src.domain.seat.Seat;
 import kr.hhplus.be.server.src.domain.enums.SeatStatus;
@@ -11,11 +11,10 @@ import kr.hhplus.be.server.src.interfaces.booking.dto.BookingRequest;
 import kr.hhplus.be.server.src.interfaces.booking.dto.BookingResponse;
 import kr.hhplus.be.server.src.domain.booking.BookingService;
 import kr.hhplus.be.server.src.TestcontainersConfiguration;
-import kr.hhplus.be.server.src.interfaces.point.dto.PointChargeRequest;
-import kr.hhplus.be.server.src.interfaces.point.dto.PointResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
@@ -23,13 +22,13 @@ import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -48,7 +47,12 @@ class BookingSeatServiceIntegrationTest {
     @Autowired
     private SeatRepository seatRepository;
 
+    @Autowired
+    private RedissonClient redissonClient;
+
     private BookingRequest bookingRequest;
+    @Autowired
+    private BookingServiceImpl bookingServiceImpl;
 
 
     @BeforeEach
@@ -75,62 +79,8 @@ class BookingSeatServiceIntegrationTest {
         assertEquals(seat.getSeatStatus(), SeatStatus.OCCUPIED);
     }
 
-
-    //동시성 이슈 -> 현재는 두 요청 모두 성공
-    @DisplayName("동일 좌석 동시 예약 요청 시 하나만 성공해야 한다.")
-    @Test
-    void testConcurrencyBookingSeatTest() throws InterruptedException {
-        int threadCount = 10;
-        ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
-        CountDownLatch latch = new CountDownLatch(threadCount);
-
-        //future로 비동기 작업 받을 수 있게 처리
-        List<Future<ResponseMessage<BookingResponse>>> results = new ArrayList<>();
-
-        for (int i = 0; i < threadCount; i++) {
-            Future<ResponseMessage<BookingResponse>> result = executorService.submit(() -> {
-                try {
-                    return bookingService.bookingSeat(bookingRequest);
-                } catch (Exception e) {
-                    return ResponseMessage.error(500, e.getMessage());
-                } finally {
-                    latch.countDown();
-                }
-            });
-            results.add(result);
-        }
-
-        latch.await(); // 모든 스레드 완료까지 대기
-
-        long successCount = results.stream()
-                .filter(future -> {
-                    try {
-                        return future.get().getStatus() == 200;
-                    } catch (Exception e) {
-                        return false;
-                    }
-                })
-                .count();
-
-        long failCount = results.stream()
-                .filter(future -> {
-                    try {
-                        return future.get().getStatus() != 200;
-                    } catch (Exception e) {
-                        return true;
-                    }
-                })
-                .count();
-
-        System.out.println("성공한 예약 요청 수: " + successCount);
-        System.out.println("실패한 예약 요청 수: " + failCount);
-
-        // 기대: 성공 1건
-        assertEquals(1, successCount);
-    }
-
     @DisplayName("동시 좌석 예약 시 하나만 성공한다.(낙관적 락)")
-    @Test
+//    @Test
     void bookingSeatOptimisticLockTest() throws InterruptedException {
         User user1 = bookingTransactionHelper.createUser(1L);
         User user2 = bookingTransactionHelper.createUser(2L);
@@ -186,7 +136,7 @@ class BookingSeatServiceIntegrationTest {
     }
 
     @DisplayName("동시 좌석 예약 시 하나만 성공한다.(비관적 락)")
-    @Test
+//    @Test
     void bookingSeatPessimisticLockTest() throws InterruptedException {
         User user1 = bookingTransactionHelper.createUser(1L);
         User user2 = bookingTransactionHelper.createUser(2L);
@@ -240,4 +190,51 @@ class BookingSeatServiceIntegrationTest {
         assertEquals(1, successCount);
         assertEquals(1, failCount);
     }
+
+    @DisplayName("좌석 예약 레디스 분산락 적용 테스트")
+    @Test
+    void bookingSeatWithRedisLock() throws InterruptedException {
+
+        //given
+        AtomicInteger successCount = new AtomicInteger();
+        AtomicInteger failCount = new AtomicInteger();
+
+        Long concertId = bookingRequest.getConcertId();
+        Long seatNum = bookingRequest.getSeatNum();
+
+        int numberOfThreads = 3;
+        ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreads);
+        CountDownLatch latch = new CountDownLatch(numberOfThreads);
+
+        // 락을 대기하는 로그 및 예약 요청
+        for (int i = 0; i < numberOfThreads; i++) {
+            executorService.submit(() -> {
+                try {
+                    System.out.println(Thread.currentThread().getName() + " -- 락 대기 중 --");
+                    bookingService.bookingSeat(bookingRequest);
+                    successCount.addAndGet(1);
+                    System.out.println(Thread.currentThread().getName() + " -- 예약 성공 --");
+
+                } catch (Exception e) {
+                    failCount.addAndGet(1);
+                    e.printStackTrace();
+                } finally {
+                    latch.countDown();
+                }
+            });
+        }
+
+        latch.await();
+
+        // when & then
+        Optional<Seat> seatOpt = seatRepository.findByConcertSeat_Concert_ConcertIdAndSeatNum(concertId, seatNum);
+        assertTrue("좌석이 존재해야 합니다.", seatOpt.isPresent());
+        Seat seat = seatOpt.get();
+        assertEquals("좌석 상태는 OCCUPIED여야 합니다.", seat.getSeatStatus(), SeatStatus.OCCUPIED);
+
+        assertThat(successCount.get()).isEqualTo(1);
+        assertThat(failCount.get()).isEqualTo(2);
+
+    }
+
 }

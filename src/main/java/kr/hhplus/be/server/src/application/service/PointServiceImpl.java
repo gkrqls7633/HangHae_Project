@@ -1,18 +1,17 @@
 package kr.hhplus.be.server.src.application.service;
 
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.persistence.OptimisticLockException;
 import kr.hhplus.be.server.src.common.ResponseMessage;
 import kr.hhplus.be.server.src.domain.point.Point;
 import kr.hhplus.be.server.src.domain.point.PointRepository;
 import kr.hhplus.be.server.src.domain.point.PointService;
+import kr.hhplus.be.server.src.infra.lock.DistributedLock;
 import kr.hhplus.be.server.src.interfaces.point.dto.PointChargeRequest;
 import kr.hhplus.be.server.src.interfaces.point.dto.PointResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,24 +45,21 @@ public class PointServiceImpl implements PointService {
         return ResponseMessage.success("포인트 잔액이 정상적으로 조회됐습니다.", pointResponse);
     }
 
-    //낙관적 락 반영 메서드
-    @Override
-    public ResponseMessage<PointResponse> chargePointWithLock(PointChargeRequest pointChargeRequest) {
-        try {
-            return chargePoint(pointChargeRequest);
-
-        } catch (ObjectOptimisticLockingFailureException e) {
-            log.error("충전 실패: Optimistic Lock 예외 발생", e);
-            throw e;
-        }
-    }
-
     /**
      * @description 유저의 포인트를 충전한다.
      * @param pointChargeRequest
      * @return
      */
+    /*
+    1. 락 키 설정 : userId
+    2. 락 범위 : 유저 ID로 락 범위 지정
+    3. 중복 처리 가능 여부 : x => LockWaitime : 0초로 지정
+    */
     @Override
+    @DistributedLock(
+            key = "'charge:' + #pointChargeRequest.userId",
+            waitTime = 0
+    )
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public ResponseMessage<PointResponse> chargePoint(PointChargeRequest pointChargeRequest) {
 
@@ -88,6 +84,23 @@ public class PointServiceImpl implements PointService {
                 .build();
 
         return ResponseMessage.success("포인트가 정상적으로 충전됐습니다.", pointResponse);
+    }
+
+
+
+
+
+
+    //낙관적 락 반영 메서드
+    @Override
+    public ResponseMessage<PointResponse> chargePointWithLock(PointChargeRequest pointChargeRequest) {
+        try {
+            return chargePoint(pointChargeRequest);
+
+        } catch (ObjectOptimisticLockingFailureException e) {
+            log.error("충전 실패: Optimistic Lock 예외 발생", e);
+            throw e;
+        }
     }
 
     @Transactional
@@ -118,6 +131,4 @@ public class PointServiceImpl implements PointService {
 
         return ResponseMessage.success("포인트가 정상적으로 충전됐습니다.", pointResponse);
     }
-
-
 }
