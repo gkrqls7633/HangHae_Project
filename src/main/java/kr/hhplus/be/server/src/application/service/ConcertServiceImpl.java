@@ -11,6 +11,7 @@ import kr.hhplus.be.server.src.interfaces.concert.dto.ConcertResponse;
 import kr.hhplus.be.server.src.interfaces.seat.dto.SeatResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,6 +31,7 @@ public class ConcertServiceImpl implements ConcertService {
      * @param
      * @return 콘서트 목록 전체 리스트
      */
+    @Cacheable(value = "concertList", key = "'concert:list:all'", unless = "#result == null || #result.isEmpty()")
     @Override
     public List<ConcertInfoResponse> getConcertList() {
 
