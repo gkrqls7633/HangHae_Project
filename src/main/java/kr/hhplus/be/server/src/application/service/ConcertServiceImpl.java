@@ -6,6 +6,8 @@ import kr.hhplus.be.server.src.domain.concert.ConcertService;
 import kr.hhplus.be.server.src.domain.concertseat.ConcertSeat;
 import kr.hhplus.be.server.src.domain.concertseat.ConcertSeatRepository;
 import kr.hhplus.be.server.src.domain.seat.Seat;
+import kr.hhplus.be.server.src.domain.seat.SeatRepository;
+import kr.hhplus.be.server.src.infra.seat.SeatJpaRepository;
 import kr.hhplus.be.server.src.interfaces.concert.dto.ConcertInfoResponse;
 import kr.hhplus.be.server.src.interfaces.concert.dto.ConcertRequest;
 import kr.hhplus.be.server.src.interfaces.concert.dto.ConcertResponse;
@@ -27,6 +29,8 @@ public class ConcertServiceImpl implements ConcertService {
     private final ConcertRepository concertRepository;
 
     private final ConcertSeatRepository concertSeatRepository;
+
+    private final SeatRepository seatRepository;
 
     /**
      * @description콘서트 목록 전체를 조회합니다.
@@ -97,7 +101,38 @@ public class ConcertServiceImpl implements ConcertService {
     @CacheEvict(value = "concertList", key = "'concert:list:all'")
     @Override
     public ConcertResponse createConcert(ConcertRequest concertRequest) {
-        return null;
+
+        //신규 콘서트 등록 조건이 있는지?
+        //기존 콘서트와 중복되는거 체크할 수 있는 방법?
+        Concert concert = Concert.builder()
+                .price(concertRequest.getPrice())
+                .name(concertRequest.getName())
+                .date(concertRequest.getDate())
+                .time(concertRequest.getTime())
+                .location(concertRequest.getLocation())
+                .build();
+
+        Concert createConcert = concertRepository.save(concert);
+
+        //todo : 좌석 생성 -> 리스트 채워서 저장.
+        List<Seat> createSeatList = Seat.createSeatList();
+
+        ConcertSeat createConcertSeat = ConcertSeat.builder()
+                .concert(createConcert)
+                .seats(createSeatList)
+                .build();
+
+        concertSeatRepository.save(createConcertSeat);
+        seatRepository.saveAll(createSeatList);
+
+        return ConcertResponse.builder()
+                .concertId(createConcert.getConcertId())
+                .name(createConcert.getName())
+                .price(createConcert.getPrice())
+                .date(createConcert.getDate())
+                .time(createConcert.getTime())
+                .location(createConcert.getLocation())
+                .build();
     }
 
     @CacheEvict(value = "concertList", key = "'concert:list:all'")

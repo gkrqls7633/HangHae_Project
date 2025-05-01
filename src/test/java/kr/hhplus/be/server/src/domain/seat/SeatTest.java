@@ -15,7 +15,7 @@ class SeatTest {
     void isAvailableSeatTest() {
         //given
 
-        Concert concert = new Concert(1L, "BTS World Tour", 150000L, "2025-05-01", "19:00", "서울 올림픽 경기장");
+        Concert concert = new Concert("BTS World Tour", 150000L, "2025-05-01", "19:00", "서울 올림픽 경기장");
         ConcertSeat mockConcertSeat = ConcertSeat.of(concert);
 
         Seat availableSeat  = Seat.builder().concertSeat(mockConcertSeat).seatNum(1L).seatStatus(SeatStatus.AVAILABLE).build();

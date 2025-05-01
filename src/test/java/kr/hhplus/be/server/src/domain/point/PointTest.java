@@ -22,7 +22,7 @@ class PointTest {
         point.setPointBalance(100000L); //유저의 포인트 100000원 mock 처리
 
         //콘서트 가격
-        Concert concert = new Concert(mockUserId, "BTS World Tour", 150000L, "2025-05-01", "19:00", "서울 올림픽 경기장");
+        Concert concert = new Concert("BTS World Tour", 150000L, "2025-05-01", "19:00", "서울 올림픽 경기장");
         Long concertPrice = concert.getPrice();
 
         //when
@@ -44,7 +44,7 @@ class PointTest {
         point.setPointBalance(150000L); //유저의 포인트 150000원 mock 처리
 
         //콘서트 가격
-        Concert concert = new Concert(mockUserId, "BTS World Tour", 150000L, "2025-05-01", "19:00", "서울 올림픽 경기장");
+        Concert concert = new Concert("BTS World Tour", 150000L, "2025-05-01", "19:00", "서울 올림픽 경기장");
         Long concertPrice = concert.getPrice();
 
         //when
@@ -66,7 +66,7 @@ class PointTest {
         point.setPointBalance(160000L); //유저의 포인트 160000뭔 mock 처리
 
         //콘서트 가격
-        Concert concert = new Concert(mockUserId, "BTS World Tour", 150000L, "2025-05-01", "19:00", "서울 올림픽 경기장");
+        Concert concert = new Concert("BTS World Tour", 150000L, "2025-05-01", "19:00", "서울 올림픽 경기장");
         Long concertPrice = concert.getPrice();
 
         //when
@@ -89,7 +89,7 @@ class PointTest {
         point.setPointBalance(160000L); //유저의 포인트 160000원 mock 처리
 
         //콘서트 가격
-        Concert concert = new Concert(mockUserId, "BTS World Tour", mockConcertPrice, "2025-05-01", "19:00", "서울 올림픽 경기장");
+        Concert concert = new Concert("BTS World Tour", mockConcertPrice, "2025-05-01", "19:00", "서울 올림픽 경기장");
         Long concertPrice = concert.getPrice();
 
         //when

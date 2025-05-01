@@ -42,8 +42,8 @@ public class Concert extends BaseTimeEntity {
     @Schema(description = "콘서트에 대한 좌석 목록")
     private ConcertSeat concertSeat;
 
-    public Concert(Long concertId, String name, Long price, String date, String time, String location) {
-        this.concertId = concertId;
+    public Concert(String name, Long price, String date, String time, String location) {
+//        this.concertId = concertId;
         this.name = name;
         this.price = price;
         this.date = date;

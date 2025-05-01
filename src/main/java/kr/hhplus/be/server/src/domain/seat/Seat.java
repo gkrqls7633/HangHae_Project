@@ -9,6 +9,9 @@ import kr.hhplus.be.server.src.domain.enums.SeatStatus;
 import kr.hhplus.be.server.src.interfaces.booking.dto.BookingCancelRequest;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 //@RequiredArgsConstructor
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -52,6 +55,13 @@ public class Seat extends BaseTimeEntity {
 
     public void changeBookedSeat() {
         this.setSeatStatus(SeatStatus.BOOKED);
+    }
+
+    //좌석 리스트 신규 생성
+    //todo : 좌석 정보 만들어서 저장
+    public static List<Seat> createSeatList() {
+        List<Seat> seatList = new ArrayList<>();
+        return seatList;
     }
 
 }
