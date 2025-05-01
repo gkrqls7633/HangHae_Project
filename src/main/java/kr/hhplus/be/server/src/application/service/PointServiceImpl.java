@@ -10,6 +10,8 @@ import kr.hhplus.be.server.src.interfaces.point.dto.PointChargeRequest;
 import kr.hhplus.be.server.src.interfaces.point.dto.PointResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -31,6 +33,7 @@ public class PointServiceImpl implements PointService {
      */
     @Override
     @Transactional
+    @Cacheable(value = "userPoint", key = "'userPoint:' + #userId")
     public ResponseMessage<PointResponse> getPoint(Long userId) {
 
         Point point = pointRepository.findById(userId)
@@ -61,6 +64,7 @@ public class PointServiceImpl implements PointService {
             waitTime = 0
     )
     @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @CacheEvict(value = "userPoint", key = "'userPoint:' +  #pointChargeRequest.userId")
     public ResponseMessage<PointResponse> chargePoint(PointChargeRequest pointChargeRequest) {
 
         //현재 잔액 조회

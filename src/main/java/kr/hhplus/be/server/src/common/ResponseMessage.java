@@ -14,6 +14,10 @@ public class ResponseMessage<T> {
     @Schema(description = "응답 데이터")
     private T data;
 
+    // 기본 생성자 추가
+    public ResponseMessage() {
+    }
+
     public ResponseMessage(int status, String message, T data) {
         this.status = status;
         this.message = message;
