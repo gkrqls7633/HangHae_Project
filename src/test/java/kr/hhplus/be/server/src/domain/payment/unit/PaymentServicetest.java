@@ -3,6 +3,7 @@ package kr.hhplus.be.server.src.domain.payment.unit;
 import jakarta.persistence.EntityNotFoundException;
 import kr.hhplus.be.server.src.application.service.PaymentServiceImpl;
 import kr.hhplus.be.server.src.common.ResponseMessage;
+import kr.hhplus.be.server.src.common.exception.PaymentException;
 import kr.hhplus.be.server.src.domain.booking.Booking;
 import kr.hhplus.be.server.src.domain.booking.BookingRepository;
 import kr.hhplus.be.server.src.domain.concert.Concert;
@@ -167,7 +168,7 @@ class PaymentServicetest {
         given(bookingRepository.findById(1L)).willReturn(Optional.of(mockBooking));
 
         // when & then
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+        PaymentException exception = assertThrows(PaymentException.class, () -> {
             paymentService.processPayment(paymentRequest);
         });
 
@@ -190,7 +191,7 @@ class PaymentServicetest {
         when(seatRepository.findById(mockSeatId)).thenReturn(Optional.empty());
 
         //when & then
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+        PaymentException exception = assertThrows(PaymentException.class, () -> {
             paymentService.processPayment(paymentRequest);
         });
 
@@ -217,7 +218,7 @@ class PaymentServicetest {
         when(seatRepository.findById(mockSeatId)).thenReturn(Optional.of(mockSeat));
 
         //when & then
-        IllegalStateException exception = assertThrows(IllegalStateException.class, () -> {
+        PaymentException exception = assertThrows(PaymentException.class, () -> {
             paymentService.processPayment(paymentRequest);
         });
 
@@ -239,7 +240,7 @@ class PaymentServicetest {
         when(concertRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         // when & then
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+        PaymentException exception = assertThrows(PaymentException.class, () -> {
             paymentService.processPayment(paymentRequest);
         });
 
@@ -264,7 +265,7 @@ class PaymentServicetest {
 
 
         // when & then
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+        PaymentException exception = assertThrows(PaymentException.class, () -> {
             paymentService.processPayment(paymentRequest);
         });
 
@@ -289,7 +290,7 @@ class PaymentServicetest {
         when(pointRepository.findById(anyLong())).thenReturn(Optional.of(point));
 
         // when & then
-        IllegalStateException exception = assertThrows(IllegalStateException.class, () -> {
+        PaymentException exception = assertThrows(PaymentException.class, () -> {
             paymentService.processPayment(paymentRequest);
         });
 
