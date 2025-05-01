@@ -7,12 +7,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import kr.hhplus.be.server.src.common.ResponseMessage;
 import kr.hhplus.be.server.src.domain.concert.ConcertService;
 import kr.hhplus.be.server.src.interfaces.concert.dto.ConcertInfoResponse;
+import kr.hhplus.be.server.src.interfaces.concert.dto.ConcertRequest;
 import kr.hhplus.be.server.src.interfaces.concert.dto.ConcertResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -47,4 +45,27 @@ public class ConcertController {
         return ResponseMessage.success(concertResponse);
 
     }
+
+    //todo : 신규 콘서트 기능 추가 -> 캐시 만료 필요
+    @Operation(summary = "콘서트 신규 추가", description = "신규 콘서트를 추가한다.")
+    @PostMapping("")
+    public ResponseMessage<ConcertResponse> createConcert(@RequestBody ConcertRequest concertRequest) {
+
+        ConcertResponse concertResponse  = concertService.createConcert(concertRequest);
+
+        return ResponseMessage.success(concertResponse);
+    }
+
+
+    //todo : 콘서트 일정 등등 변경 기능 추가 -> 캐시 만료 필요
+    @Operation(summary = "콘서트 정보 변경", description = "콘서트 정보를 변경한다.")
+    @PutMapping("")
+    public ResponseMessage<ConcertResponse> updateConcert(@RequestBody ConcertRequest concertRequest) {
+
+        ConcertResponse concertResponse  = concertService.updateConcert(concertRequest);
+
+        return ResponseMessage.success(concertResponse);
+    }
+
+
 }

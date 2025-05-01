@@ -7,10 +7,12 @@ import kr.hhplus.be.server.src.domain.concertseat.ConcertSeat;
 import kr.hhplus.be.server.src.domain.concertseat.ConcertSeatRepository;
 import kr.hhplus.be.server.src.domain.seat.Seat;
 import kr.hhplus.be.server.src.interfaces.concert.dto.ConcertInfoResponse;
+import kr.hhplus.be.server.src.interfaces.concert.dto.ConcertRequest;
 import kr.hhplus.be.server.src.interfaces.concert.dto.ConcertResponse;
 import kr.hhplus.be.server.src.interfaces.seat.dto.SeatResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -92,5 +94,16 @@ public class ConcertServiceImpl implements ConcertService {
         return concertResponse;
     }
 
+    @CacheEvict(value = "concertList", key = "'concert:list:all'")
+    @Override
+    public ConcertResponse createConcert(ConcertRequest concertRequest) {
+        return null;
+    }
+
+    @CacheEvict(value = "concertList", key = "'concert:list:all'")
+    @Override
+    public ConcertResponse updateConcert(ConcertRequest concertRequest) {
+        return null;
+    }
 
 }
