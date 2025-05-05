@@ -22,4 +22,7 @@ public class ConcertRequest {
 
     @Schema(description = "location", example = "잠실 종합운동장", required = true)
     private String location;
+
+    @Schema(description = "seatCnt", example = "콘서트 좌석 수", required = true)
+    private int seatCnt;
 }

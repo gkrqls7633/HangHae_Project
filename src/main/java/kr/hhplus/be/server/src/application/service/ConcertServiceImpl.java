@@ -102,8 +102,7 @@ public class ConcertServiceImpl implements ConcertService {
     @Override
     public ConcertResponse createConcert(ConcertRequest concertRequest) {
 
-        //신규 콘서트 등록 조건이 있는지?
-        //기존 콘서트와 중복되는거 체크할 수 있는 방법?
+        // todo : 기존 콘서트와 중복되는거 체크할 수 있는 방법?
         Concert concert = Concert.builder()
                 .price(concertRequest.getPrice())
                 .name(concertRequest.getName())
@@ -112,17 +111,26 @@ public class ConcertServiceImpl implements ConcertService {
                 .location(concertRequest.getLocation())
                 .build();
 
+        //콘서트 정보 저장
         Concert createConcert = concertRepository.save(concert);
-
-        //todo : 좌석 생성 -> 리스트 채워서 저장.
-        List<Seat> createSeatList = Seat.createSeatList();
 
         ConcertSeat createConcertSeat = ConcertSeat.builder()
                 .concert(createConcert)
-                .seats(createSeatList)
                 .build();
 
-        concertSeatRepository.save(createConcertSeat);
+        //콘서트-좌석 정보 저장
+        ConcertSeat saveConcertSeat = concertSeatRepository.save(createConcertSeat);
+
+        int seatCnt = concertRequest.getSeatCnt();
+        if (concertRequest.getSeatCnt() <= 0) {
+            throw new IllegalArgumentException("콘서트의 좌석 수는 1개 이상이어야 합니다.");
+        }
+        List<Seat> createSeatList = Seat.createSeatList(seatCnt);
+        createSeatList.forEach(seat -> {
+            seat.setConcertSeat(saveConcertSeat);
+        });
+
+        //좌석 정보 저장
         seatRepository.saveAll(createSeatList);
 
         return ConcertResponse.builder()

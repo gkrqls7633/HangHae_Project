@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.src.domain.seat;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
@@ -12,7 +13,6 @@ import lombok.*;
 import java.util.ArrayList;
 import java.util.List;
 
-//@RequiredArgsConstructor
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Setter
@@ -44,8 +44,13 @@ public class Seat extends BaseTimeEntity {
     @Column(name = "seat_status", length = 10)
     private SeatStatus seatStatus;
 
-    @Version
-    private Long version;
+//    @Version
+//    private Long version;
+
+    public Seat(long seatNum) {
+        this.seatNum = seatNum;
+        this.seatStatus = SeatStatus.AVAILABLE;
+    }
 
     // 좌석의 예약 가능 상태를 반환
     @JsonIgnore
@@ -53,14 +58,17 @@ public class Seat extends BaseTimeEntity {
         return this.seatStatus == SeatStatus.AVAILABLE;
     }
 
+    // 좌석 점유 상태 변경
     public void changeBookedSeat() {
         this.setSeatStatus(SeatStatus.BOOKED);
     }
 
-    //좌석 리스트 신규 생성
-    //todo : 좌석 정보 만들어서 저장
-    public static List<Seat> createSeatList() {
+    // 좌석 리스트 신규 생성
+    public static List<Seat> createSeatList(int seatCnt) {
         List<Seat> seatList = new ArrayList<>();
+        for (long i = 1; i <= seatCnt; i++) {
+            seatList.add(new Seat(i));
+        }
         return seatList;
     }
 

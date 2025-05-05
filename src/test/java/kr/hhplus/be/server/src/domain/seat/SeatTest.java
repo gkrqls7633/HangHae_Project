@@ -6,6 +6,8 @@ import kr.hhplus.be.server.src.domain.enums.SeatStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class SeatTest {
@@ -27,4 +29,22 @@ class SeatTest {
         assertFalse(bookedSeat.isAvailable(), "BOOKED 상태의 좌석은 예약 불가능하다.");
         assertFalse(occupiedSeat.isAvailable(), "OCCUPIED 상태의 좌석은 예약 불가능하다.");
     }
+
+    @Test
+    @DisplayName("요청된 좌석 수로 예약 가능한 좌석 리스트를 만든다.")
+    void creatSeatListTest() {
+
+        //given
+        int seatCnt = 10;
+
+        //when
+        List<Seat> mockSeatList = Seat.createSeatList(seatCnt);
+
+        //then
+        assertEquals(seatCnt, mockSeatList.size());
+        boolean allAvailable = mockSeatList.stream()
+                .allMatch(seat -> seat.getSeatStatus() == SeatStatus.AVAILABLE);
+        assertTrue(allAvailable, "모든 좌석은 AVAILABLE 상태여야 합니다.");
+    }
+
 }
