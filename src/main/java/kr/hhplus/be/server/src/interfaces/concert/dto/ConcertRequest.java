@@ -1,10 +1,12 @@
 package kr.hhplus.be.server.src.interfaces.concert.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
 import lombok.Getter;
 
 
 @Schema(description = "콘서트 생성/변경 Request DTO")
+@Builder
 @Getter
 public class ConcertRequest {
 

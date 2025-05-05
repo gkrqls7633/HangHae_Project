@@ -7,7 +7,9 @@ import kr.hhplus.be.server.src.domain.concertseat.ConcertSeat;
 import kr.hhplus.be.server.src.domain.concertseat.ConcertSeatRepository;
 import kr.hhplus.be.server.src.domain.seat.Seat;
 import kr.hhplus.be.server.src.domain.enums.SeatStatus;
+import kr.hhplus.be.server.src.domain.seat.SeatRepository;
 import kr.hhplus.be.server.src.interfaces.concert.dto.ConcertInfoResponse;
+import kr.hhplus.be.server.src.interfaces.concert.dto.ConcertRequest;
 import kr.hhplus.be.server.src.interfaces.concert.dto.ConcertResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,8 +25,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class ConcertServiceTest {
@@ -37,6 +40,9 @@ public class ConcertServiceTest {
 
     @Mock
     private ConcertSeatRepository concertSeatRepository;
+
+    @Mock
+    private SeatRepository seatRepository;
 
     @Test
     @DisplayName("콘서트 목록을 조회한다.")
@@ -123,6 +129,51 @@ public class ConcertServiceTest {
 
         //then
         assertThat(response.getSeatList().size()).isEqualTo(2);
+    }
+
+    @Test
+    @DisplayName("콘서트 신규 생성 시 콘서트와 좌석이 정상 저장된다.")
+    void creeateConcertTest() {
+        //given
+        ConcertRequest concertRequest = ConcertRequest.builder()
+                .name("BTS World Tour")
+                .price(150000L)
+                .date("2025-10-01")
+                .time("18:00")
+                .location("잠실 종합운동장")
+                .seatCnt(10)
+                .build();
+
+        Concert mockCreateConcert = Concert.builder()
+                .price(concertRequest.getPrice())
+                .name(concertRequest.getName())
+                .date(concertRequest.getDate())
+                .time(concertRequest.getTime())
+                .location(concertRequest.getLocation())
+                .build();
+
+        ConcertSeat savedConcertSeat = ConcertSeat.builder()
+                .concert(mockCreateConcert)
+                .build();
+
+        when(concertRepository.save(any(Concert.class))).thenReturn(mockCreateConcert);
+        when(concertSeatRepository.save(any(ConcertSeat.class))).thenReturn(savedConcertSeat);
+
+        // when
+        ConcertResponse response = concertService.createConcert(concertRequest);
+
+        // then
+        assertEquals(concertRequest.getName(), response.getName());
+        assertEquals(concertRequest.getPrice(), response.getPrice());
+        assertEquals(concertRequest.getDate(), response.getDate());
+        assertEquals(concertRequest.getTime(), response.getTime());
+        assertEquals(concertRequest.getLocation(), response.getLocation());
+
+        // verify
+        verify(concertRepository, times(1)).save(any(Concert.class));
+        verify(concertSeatRepository, times(1)).save(any(ConcertSeat.class));
+        verify(seatRepository, times(1)).saveAll(argThat(seats -> seats.size() == concertRequest.getSeatCnt()));
+
     }
 
 }
