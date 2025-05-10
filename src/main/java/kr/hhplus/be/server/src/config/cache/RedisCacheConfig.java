@@ -31,6 +31,7 @@ public class RedisCacheConfig {
         RedisSerializationContext.SerializationPair<String> stringSerializer = RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer());
         RedisSerializationContext.SerializationPair<Object> jsonSerializer = RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer());
 
+        //커스텀 캐시 전용
         Map<String, RedisCacheConfiguration> cacheConfigs = new HashMap<>();
         for (CacheName cacheName : CacheName.values()) {
             cacheConfigs.put(
@@ -42,6 +43,7 @@ public class RedisCacheConfig {
             );
         }
 
+        //default 캐시 전용 (CacheName enum에 정의되어 있지 않아도 기본 설정으로 캐시가 작동하도록 설정)
         RedisCacheConfiguration defaultConfig = RedisCacheConfiguration.defaultCacheConfig()
                 .entryTtl(Duration.ofMinutes(10))
                 .serializeKeysWith(stringSerializer)
