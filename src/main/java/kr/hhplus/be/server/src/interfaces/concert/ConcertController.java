@@ -5,7 +5,9 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kr.hhplus.be.server.src.common.ResponseMessage;
+import kr.hhplus.be.server.src.domain.concert.ConcertRankingService;
 import kr.hhplus.be.server.src.domain.concert.ConcertService;
+import kr.hhplus.be.server.src.interfaces.concert.dto.ConcertBookingRankResponse;
 import kr.hhplus.be.server.src.interfaces.concert.dto.ConcertInfoResponse;
 import kr.hhplus.be.server.src.interfaces.concert.dto.ConcertRequest;
 import kr.hhplus.be.server.src.interfaces.concert.dto.ConcertResponse;
@@ -22,6 +24,7 @@ import java.util.List;
 public class ConcertController {
 
     private final ConcertService concertService;
+    private final ConcertRankingService concertRankingService;
 
     @Operation(summary = "콘서트 목록 조회", description = "콘서트 목록 전체를 조회합니다.")
     @GetMapping("/list")
@@ -67,5 +70,12 @@ public class ConcertController {
         return ResponseMessage.success(concertResponse);
     }
 
+    @Operation(summary = "콘서트 매진 랭킹 순위 조회", description = "콘서트 매진 랭킹 순위를 조회한다.")
+    @GetMapping("ranking")
+    public ResponseMessage<ConcertBookingRankResponse> getConcertBookingRank() {
+        ConcertBookingRankResponse concertBookingRankResponse = concertRankingService.getConcertBookingRank();
+
+        return ResponseMessage.success("콘서트 매진 랭킹 순위가 정상 조회됐습니다.", concertBookingRankResponse);
+    }
 
 }
