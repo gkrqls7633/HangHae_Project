@@ -23,7 +23,6 @@ import kr.hhplus.be.server.src.interfaces.booking.dto.BookingRequest;
 import kr.hhplus.be.server.src.interfaces.booking.dto.BookingResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -102,10 +101,9 @@ public class BookingServiceImpl implements BookingService {
 
             /*
              redis에 콘서트 랭킹 저장 (sorted set 저장)
-             ex) {concert1 : 5 , concert 2 : 10 ... }
+             ex) {concert1 : 5 , concert 2 : 10, ... }
             */
-            String concertId = concert.getConcertId().toString();
-            bookingRankingRepository.incrementConcertBookingScore(concertId);
+            incrementConcertBookingScore(concert.getConcertId().toString());
         }
 
         BookingResponse bookingResponse = new BookingResponse();
@@ -114,6 +112,10 @@ public class BookingServiceImpl implements BookingService {
         bookingResponse.setSeatNum(seat.getSeatNum());
 
         return ResponseMessage.success("좌석 예약이 완료됐습니다.", bookingResponse);
+    }
+
+    private void incrementConcertBookingScore(String concertId) {
+        bookingRankingRepository.incrementConcertBookingScore(concertId);
     }
 
     @Transactional

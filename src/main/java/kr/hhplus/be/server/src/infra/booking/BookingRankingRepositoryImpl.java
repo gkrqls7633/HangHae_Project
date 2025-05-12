@@ -7,8 +7,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 @Repository
@@ -36,8 +34,26 @@ public class BookingRankingRepositoryImpl implements BookingRankingRepository {
      * @description RedisTemplate 활용하여 redis에서 콘서트 매진 랭킹을 조회한다.(상위 10개 내림차순)
      */
     @Override
-    public Set<ZSetOperations.TypedTuple<Object>> getConcertBookingRank() {
-        return redisTemplate.opsForZSet().reverseRangeWithScores(concertRankingKey, 0, 9);
+    public BookingRank getConcertBookingRank() {
+        //SortedSet -> BbookRank
+        Set<ZSetOperations.TypedTuple<Object>> zSet = redisTemplate.opsForZSet()
+                .reverseRangeWithScores(concertRankingKey, 0, -1);
 
+        return BookingRank.ZSetToBookingRank(zSet);
     }
+
+    /**
+     * @description redis에서 콘서트 매진 랭킹 sorted set의 특정 concertId를 제거한다.
+     */
+    @Override
+    public void cleanExpiredConcerts(String concertId) {
+        // Redis ZSet에서 해당 concertId의 순위를 확인
+        Long rank = redisTemplate.opsForZSet().rank("concert:ranking", concertId);
+
+        // 만약 해당 concertId가 ZSet에 존재하면
+        if (rank != null) {
+            redisTemplate.opsForZSet().remove("concert:ranking", concertId);
+        }
+    }
+
 }

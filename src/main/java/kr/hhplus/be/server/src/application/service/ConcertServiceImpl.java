@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.src.application.service;
 
+import kr.hhplus.be.server.src.domain.booking.BookingRankingRepository;
 import kr.hhplus.be.server.src.domain.concert.Concert;
 import kr.hhplus.be.server.src.domain.concert.ConcertRepository;
 import kr.hhplus.be.server.src.domain.concert.ConcertService;
@@ -18,6 +19,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,6 +33,8 @@ public class ConcertServiceImpl implements ConcertService {
     private final ConcertSeatRepository concertSeatRepository;
 
     private final SeatRepository seatRepository;
+
+    private final BookingRankingRepository bookingRankingRepository;
 
     /**
      * @description콘서트 목록 전체를 조회합니다.
@@ -149,6 +153,17 @@ public class ConcertServiceImpl implements ConcertService {
     @Override
     public ConcertResponse updateConcert(ConcertRequest concertRequest) {
         return null;
+    }
+
+    @Override
+    public void cleanExpiredConcerts(LocalDateTime now) {
+        List<Concert> expiredConcerts = concertRepository.findConcertsStartingBefore(LocalDateTime.now());
+
+        for (Concert concert : expiredConcerts) {
+
+            // Redis에서 해당 콘서트 제거
+            bookingRankingRepository.cleanExpiredConcerts(concert.getConcertId().toString());
+        }
     }
 
 }

@@ -1,6 +1,7 @@
 package kr.hhplus.be.server.src.domain.concert.unit;
 
 import kr.hhplus.be.server.src.application.service.ConcertServiceImpl;
+import kr.hhplus.be.server.src.domain.booking.BookingRankingRepository;
 import kr.hhplus.be.server.src.domain.concert.Concert;
 import kr.hhplus.be.server.src.domain.concert.ConcertRepository;
 import kr.hhplus.be.server.src.domain.concertseat.ConcertSeat;
@@ -18,6 +19,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -43,6 +45,10 @@ public class ConcertServiceTest {
 
     @Mock
     private SeatRepository seatRepository;
+
+    @Mock
+    private BookingRankingRepository bookingRankingRepository;
+
 
     @Test
     @DisplayName("콘서트 목록을 조회한다.")
@@ -173,6 +179,26 @@ public class ConcertServiceTest {
         verify(concertRepository, times(1)).save(any(Concert.class));
         verify(concertSeatRepository, times(1)).save(any(ConcertSeat.class));
         verify(seatRepository, times(1)).saveAll(argThat(seats -> seats.size() == concertRequest.getSeatCnt()));
+
+    }
+
+    @Test
+    @DisplayName("공연시간 도래된 콘서트 조회하여 레디스에서 제거할 수 있도록 호출한다.")
+    void cleanExpiredConcerts_shouldRemoveFromRedis_whenConcertIsExpired() {
+        // given
+        LocalDateTime now = LocalDateTime.now();
+        Concert expiredConcert = new Concert("BTS World Tour", 150000L, "2025-05-01 19:00", "서울 올림픽 경기장");
+        expiredConcert.setConcertId(1L);
+
+        when(concertRepository.findConcertsStartingBefore(any(LocalDateTime.class)))
+                .thenReturn(List.of(expiredConcert));
+
+        // when
+        concertService.cleanExpiredConcerts(now);
+
+        //then
+        verify(concertRepository, times(1)).findConcertsStartingBefore(any(LocalDateTime.class));
+        verify(bookingRankingRepository, times(1)).cleanExpiredConcerts(any());
 
     }
 

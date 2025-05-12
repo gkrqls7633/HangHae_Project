@@ -5,6 +5,7 @@ import kr.hhplus.be.server.src.domain.concert.ConcertRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,5 +38,10 @@ public class ConcertRepositoryImpl implements ConcertRepository {
     @Override
     public void deleteAllInBatch() {
         concertJpaRepository.deleteAllInBatch();
+    }
+
+    @Override
+    public List<Concert> findConcertsStartingBefore(LocalDateTime now) {
+        return concertJpaRepository.findByConcertStartDateBefore(now);
     }
 }

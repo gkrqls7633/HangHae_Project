@@ -19,10 +19,7 @@ public class ConcertRankingServiceImpl implements ConcertRankingService {
     @Override
     public ConcertBookingRankResponse getConcertBookingRank() {
 
-        Set<ZSetOperations.TypedTuple<Object>> sortedSet = bookingRankingRepository.getConcertBookingRank();
-
-        //SortedSet -> BbookRank
-        BookingRank bookingRank = BookingRank.ZSetToBookingRank(sortedSet);
+        BookingRank bookingRank = bookingRankingRepository.getConcertBookingRank();
 
         //BookRank -> RankDto
         return ConcertBookingRankResponse.builder()
