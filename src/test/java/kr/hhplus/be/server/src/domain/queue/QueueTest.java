@@ -58,39 +58,43 @@ class QueueTest {
     void refreshReadyTokenTest() {
 
         //given
+        String asisTokenValue = queue.getTokenValue();
         queue.setTokenStatus(TokenStatus.READY);
         queue.setIssuedAt(LocalDateTime.now().minusMinutes(10));
         queue.setExpiredAt(queue.getIssuedAt().plusMinutes(5));
 
         //when
         queue.refreshToken();
+        String tobeTokenValue = queue.getTokenValue();
 
         //then
         LocalDateTime now = LocalDateTime.now();
+        assertEquals(asisTokenValue, tobeTokenValue);
         assertThat(queue.getTokenStatus()).isEqualTo(TokenStatus.READY);
         assertThat(queue.getIssuedAt().isAfter(now.minusSeconds(2)));
         assertThat(queue.getExpiredAt().isEqual(queue.getIssuedAt()));
 
-
     }
 
     @Test
-    @DisplayName("토큰 만료상태 유저의 토큰을 갱신한다.")
+    @DisplayName("토큰 만료상태 유저의 토큰은 갱신하지 않는다.")
     void refreshExpiredTokenTest() {
 
         //given
+        String asisTokenValue = queue.getTokenValue();
         queue.setTokenStatus(TokenStatus.EXPIRED);
         queue.setIssuedAt(LocalDateTime.now().minusMinutes(10));
         queue.setExpiredAt(queue.getIssuedAt().plusMinutes(5));
 
         //when
         queue.refreshToken();
+        String tobeTokenValue = queue.getTokenValue();
 
         //then
         LocalDateTime now = LocalDateTime.now();
-        assertThat(queue.getTokenStatus()).isEqualTo(TokenStatus.READY);
-        assertThat(queue.getIssuedAt().isAfter(now.minusSeconds(2)));
-        assertThat(queue.getExpiredAt().isEqual(queue.getIssuedAt()));
+        assertEquals(asisTokenValue, tobeTokenValue);
+        assertThat(queue.getTokenStatus()).isEqualTo(TokenStatus.EXPIRED);
+        assertThat(queue.getIssuedAt().isAfter(now.minusSeconds(0)));
 
 
     }
