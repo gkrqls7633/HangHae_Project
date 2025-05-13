@@ -3,6 +3,7 @@ package kr.hhplus.be.server.src.domain.booking.unit;
 import kr.hhplus.be.server.src.application.service.BookingServiceImpl;
 import kr.hhplus.be.server.src.common.ResponseMessage;
 import kr.hhplus.be.server.src.domain.booking.Booking;
+import kr.hhplus.be.server.src.domain.booking.BookingRankingRepository;
 import kr.hhplus.be.server.src.domain.booking.BookingRepository;
 import kr.hhplus.be.server.src.domain.concert.Concert;
 import kr.hhplus.be.server.src.domain.concert.ConcertRepository;
@@ -53,9 +54,12 @@ class BookingServiceTest {
     @Mock
     private QueueRepository queueRepository;
 
+    @Mock
+    private BookingRankingRepository bookingRankingRepository;
+
 
     @Test
-    @DisplayName("유저의 포인트 조회 테스트")
+    @DisplayName("유저 콘서트 좌석 예약 시 좌석이 정상 예약되고, 콘서트 예약 점수 레디스 정상 호출한다.")
     void bookingSeatTest() {
 
         // given
@@ -98,6 +102,8 @@ class BookingServiceTest {
         when(bookingRepository.save(any(Booking.class))).thenAnswer(invocation -> invocation.getArgument(0));
         when(seatRepository.save(any(Seat.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
+        doNothing().when(bookingRankingRepository).incrementConcertBookingScore(anyString());
+
         // when
         ResponseMessage<BookingResponse> response = bookingService.bookingSeat(mockBookingRequest);
 
@@ -108,6 +114,8 @@ class BookingServiceTest {
         assertEquals(Optional.of(1L).get(), response.getData().getSeatNum());
 
         verify(bookingRepository, times(1)).save(any(Booking.class));
+        verify(bookingRankingRepository, times(1)).incrementConcertBookingScore("1");
+
     }
 
 }
