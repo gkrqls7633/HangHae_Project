@@ -6,6 +6,7 @@ import kr.hhplus.be.server.src.domain.enums.TokenStatus;
 import kr.hhplus.be.server.src.domain.queue.Queue;
 import kr.hhplus.be.server.src.domain.queue.QueueRepository;
 import kr.hhplus.be.server.src.domain.queue.QueueService;
+import kr.hhplus.be.server.src.domain.queue.RedisQueueRepository;
 import kr.hhplus.be.server.src.domain.user.User;
 import kr.hhplus.be.server.src.domain.user.UserRepository;
 import kr.hhplus.be.server.src.interfaces.queue.dto.QueueExpireRequest;
@@ -25,11 +26,12 @@ public class QueueServiceImpl implements QueueService {
 
     private final QueueRepository queueRepository;
     private final UserRepository userRepository;
+    private final RedisQueueRepository redisQueueRepository;
 
     /**
      * @param queueRequest
      * @return
-     * @description 특정 유저의 활성화 상태의 토큰이 존재하는지 확인 후 없는 경우 '신규 토큰 발급', 있는 경우 '토큰 갱신'
+     * @description 특정 유저의 활성화 상태의 토큰이 존재 하는지 확인 후 없는 경우 '신규 토큰 발급', 있는 경우 '토큰 갱신'
      */
     @Override
     @Transactional
@@ -39,10 +41,9 @@ public class QueueServiceImpl implements QueueService {
         User user = userRepository.findById(queueRequest.getUserId())
                 .orElseThrow(() -> new EntityNotFoundException("유저 정보가 없습니다."));
 
-        // 2. 해당 유저가 이미 발급 받은 ACTIVE 상태의 토큰이 있는지 조회
-        Optional<Queue> existingActiveQueue = queueRepository.findByUserIdAndTokenStatus(queueRequest.getUserId(), TokenStatus.ACTIVE);
-        Optional<Queue> existingExpiredQueue = queueRepository.findByUserIdAndTokenStatus(queueRequest.getUserId(), TokenStatus.EXPIRED);
-
+        // 2. 해당 유저가 이미 발급 받은 ACTIVE / EXPIRED 상태의 토큰이 있는지 조회
+        Optional<Queue> existingActiveQueue = redisQueueRepository.findByUserIdAndTokenStatus(queueRequest.getUserId(), TokenStatus.ACTIVE);
+        Optional<Queue> existingExpiredQueue = redisQueueRepository.findByUserIdAndTokenStatus(queueRequest.getUserId(), TokenStatus.EXPIRED);
 
         QueueResponse queueResponse;
 
@@ -52,7 +53,7 @@ public class QueueServiceImpl implements QueueService {
 
             //토큰 갱신 처리
             activeQueue.refreshToken();
-            queueRepository.save(activeQueue);
+            redisQueueRepository.save(activeQueue);
 
             queueResponse = QueueResponse.builder()
                     .tokenValue(activeQueue.getTokenValue())
@@ -68,15 +69,16 @@ public class QueueServiceImpl implements QueueService {
             if (existingExpiredQueue.isPresent()) {
                 Queue expiredQueue = existingExpiredQueue.get();
 
-                //토큰 갱신 처리
-                expiredQueue.refreshToken();
-                queueRepository.save(expiredQueue);
+                //만료된 토큰은 제거하고 신규 토큰 발행.
+                Queue queue = Queue.newToken(user.getUserId());
+                redisQueueRepository.removeExpiredQueue(expiredQueue);
+                redisQueueRepository.save(queue);
 
                 queueResponse = QueueResponse.builder()
-                        .tokenValue(expiredQueue.getTokenValue())
-                        .tokenStatus(expiredQueue.getTokenStatus())
-                        .issuedAt(expiredQueue.getIssuedAt())
-                        .expiredAt(expiredQueue.getExpiredAt())
+                        .tokenValue(queue.getTokenValue())
+                        .tokenStatus(queue.getTokenStatus())
+                        .issuedAt(queue.getIssuedAt())
+                        .expiredAt(queue.getExpiredAt())
                         .build();
                 return ResponseMessage.success("대기열 토큰을 갱신 완료했습니다.", queueResponse);
 
@@ -84,7 +86,7 @@ public class QueueServiceImpl implements QueueService {
             } else{
                 //토큰 신규 발급 처리
                 Queue queue = Queue.newToken(user.getUserId());
-                queueRepository.save(queue);
+                redisQueueRepository.save(queue);
 
                 queueResponse = QueueResponse.builder()
                         .tokenValue(queue.getTokenValue())
@@ -107,25 +109,40 @@ public class QueueServiceImpl implements QueueService {
     public ResponseMessage<QueueResponse> expireQueueToken(QueueExpireRequest queueExpireRequest) {
 
         //1. 만료 요청 들어온 토큰 조회
-        Queue queue = queueRepository.findByQueueIdAndTokenStatus(
-                queueExpireRequest.getQueueId(),
+        Queue queue = redisQueueRepository.findByTokenValueAndTokenStatus(
+                queueExpireRequest.getTokenValue(),
                 TokenStatus.ACTIVE
         ).orElseThrow(() -> new EntityNotFoundException("해당 토큰이 존재하지 않거나, 이미 만료된 상태입니다."));
 
         // 2. 토큰 만료 처리
         if (queue.isExpired()) {
             queue.setTokenStatus(TokenStatus.EXPIRED);
-            queueRepository.save(queue);
+
+            //active -> expired 상태 변경 (할 필요 있나..?)
+            //redisQueueRepository.save(queue);
+
+            // 그냥 다 지워버리자.
+            redisQueueRepository.removeExpiredQueue(queue);
+
+            QueueResponse queueResponse = QueueResponse.builder()
+                    .tokenValue(queue.getTokenValue())
+                    .tokenStatus(queue.getTokenStatus())
+                    .issuedAt(queue.getIssuedAt())
+                    .expiredAt(queue.getExpiredAt())
+                    .build();
+
+            return ResponseMessage.success("대기열 토큰이 만료되었습니다.", queueResponse);
+
+        } else {
+            QueueResponse queueResponse = QueueResponse.builder()
+                    .tokenValue(queue.getTokenValue())
+                    .tokenStatus(queue.getTokenStatus())
+                    .issuedAt(queue.getIssuedAt())
+                    .expiredAt(queue.getExpiredAt())
+                    .build();
+
+            return ResponseMessage.success("대기열 토큰은 아직 유효합니다.", queueResponse);
         }
-
-        QueueResponse queueResponse = QueueResponse.builder()
-                .tokenValue(queue.getTokenValue())
-                .tokenStatus(queue.getTokenStatus())
-                .issuedAt(queue.getIssuedAt())
-                .expiredAt(queue.getExpiredAt())
-                .build();
-
-        return ResponseMessage.success("대기열 토큰이 만료되었습니다.", queueResponse);
     }
 
     /*
@@ -133,7 +150,7 @@ public class QueueServiceImpl implements QueueService {
      */
     @Override
     public List<Queue> findExpiredQueues(LocalDateTime now, TokenStatus tokenStatus) {
-        List<Queue> expiredQueues = queueRepository.findByExpiredAtBeforeAndTokenStatus(now, TokenStatus.ACTIVE);
+        List<Queue> expiredQueues = redisQueueRepository.findByExpiredAtBeforeAndTokenStatus(now, tokenStatus);
 
         return expiredQueues;
     }
@@ -143,8 +160,8 @@ public class QueueServiceImpl implements QueueService {
      */
     @Override
     public List<Queue> findReadToActivateTokens(TokenStatus tokenStatus, LocalDateTime now) {
-        List<Queue> readyQueues = queueRepository.findByTokenStatusAndExpiredAtAfter(
-                TokenStatus.READY
+        List<Queue> readyQueues = redisQueueRepository.findByTokenStatusAndExpiredAtAfter(
+                  TokenStatus.READY
                 , LocalDateTime.now()
         );
         return readyQueues;
@@ -152,6 +169,6 @@ public class QueueServiceImpl implements QueueService {
 
     @Override
     public Queue save(Queue queue) {
-        return queueRepository.save(queue);
+        return redisQueueRepository.save(queue);
     }
 }

@@ -30,7 +30,6 @@ import java.util.UUID;
 
 public class Queue extends BaseTimeEntity {
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Schema(description = "대기열 ID", example = "1", required = true)
@@ -74,15 +73,13 @@ public class Queue extends BaseTimeEntity {
     //유저 토큰 갱신 (다시 현재 시간부터 5분 연장)
     //대기 또는 만료상태의 토큰 -> 활성화
     public void refreshToken() {
-        if (this.tokenStatus == TokenStatus.READY || this.tokenStatus == TokenStatus.EXPIRED) {
-            this.tokenStatus = TokenStatus.READY;
-            this.tokenValue = UUID.randomUUID().toString();
+        if (this.tokenStatus == TokenStatus.READY) {
             this.issuedAt = LocalDateTime.now();
             this.expiredAt = this.issuedAt.plusMinutes(TOKEN_EXPIRE_MINUTES);
         }
 
         //활성화 상태 토큰 -> 시간 연장
-        if (this.tokenStatus == TokenStatus.ACTIVE) {
+        else if (this.tokenStatus == TokenStatus.ACTIVE) {
             this.issuedAt = LocalDateTime.now();
             this.expiredAt = this.issuedAt.plusMinutes(TOKEN_EXPIRE_MINUTES);
         }

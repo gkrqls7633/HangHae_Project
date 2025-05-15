@@ -3,6 +3,7 @@ package kr.hhplus.be.server.src.domain.queue.integration;
 import kr.hhplus.be.server.src.domain.enums.TokenStatus;
 import kr.hhplus.be.server.src.domain.queue.Queue;
 import kr.hhplus.be.server.src.domain.queue.QueueRepository;
+import kr.hhplus.be.server.src.domain.queue.RedisQueueRepository;
 import kr.hhplus.be.server.src.domain.user.User;
 import kr.hhplus.be.server.src.domain.user.UserRepository;
 import kr.hhplus.be.server.src.interfaces.queue.dto.QueueRequest;
@@ -20,6 +21,9 @@ public class QueueTransactionHelper {
     @Autowired
     private QueueRepository queueRepository;
 
+    @Autowired
+    private RedisQueueRepository redisQueueRepository;
+
     private QueueRequest queueRequest;
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -35,7 +39,7 @@ public class QueueTransactionHelper {
 
         Queue queue = Queue.newToken(savedUser.getUserId());
         queue.setTokenStatus(TokenStatus.ACTIVE);  //바로 활성화 위해
-        queueRepository.save(queue);
+        redisQueueRepository.save(queue);
 
         queueRequest = new QueueRequest();
         queueRequest.setUserId(savedUser.getUserId());
@@ -73,7 +77,7 @@ public class QueueTransactionHelper {
 
         Queue queue = Queue.newToken(savedUser.getUserId());
         queue.setTokenStatus(TokenStatus.EXPIRED); //만료된 토큰 존재
-        queueRepository.save(queue);
+        redisQueueRepository.save(queue);
 
         queueRequest = new QueueRequest();
         queueRequest.setUserId(savedUser.getUserId());

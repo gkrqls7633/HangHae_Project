@@ -12,6 +12,7 @@ import kr.hhplus.be.server.src.domain.enums.SeatStatus;
 import kr.hhplus.be.server.src.domain.enums.TokenStatus;
 import kr.hhplus.be.server.src.domain.queue.Queue;
 import kr.hhplus.be.server.src.domain.queue.QueueRepository;
+import kr.hhplus.be.server.src.domain.queue.RedisQueueRepository;
 import kr.hhplus.be.server.src.domain.seat.Seat;
 import kr.hhplus.be.server.src.domain.seat.SeatRepository;
 import kr.hhplus.be.server.src.domain.user.User;
@@ -55,6 +56,9 @@ class BookingServiceTest {
     private QueueRepository queueRepository;
 
     @Mock
+    private RedisQueueRepository redisQueueRepository;
+
+    @Mock
     private BookingRankingRepository bookingRankingRepository;
 
 
@@ -94,7 +98,7 @@ class BookingServiceTest {
 
         concert.setConcertSeat(concertSeat);
 
-        when(queueRepository.findByUserIdAndTokenStatus(123L, TokenStatus.ACTIVE)).thenReturn(Optional.of(queue));
+        when(redisQueueRepository.findByUserIdAndTokenStatus(123L, TokenStatus.ACTIVE)).thenReturn(Optional.of(queue));
         when(concertRepository.findById(1L)).thenReturn(Optional.of(concert));
         when(userRepository.findById(123L)).thenReturn(Optional.of(user));
         when(seatRepository.findByConcertSeat_Concert_ConcertIdAndSeatNum(1L, 1L)).thenReturn(Optional.of(seatList.get(0)));

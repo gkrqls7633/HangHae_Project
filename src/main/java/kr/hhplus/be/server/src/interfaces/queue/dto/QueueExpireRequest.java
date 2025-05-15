@@ -15,7 +15,7 @@ public class QueueExpireRequest {
     @Schema(description = "대기열 ID", example = "1", required = false)
     private Long queueId;
 
-    @Schema(description = "토큰 값", example = "abc123token", required = false)
+    @Schema(description = "토큰 value", example = "85358a8b-3683-435f-a3e1-42e0408ce2b2", required = true)
     private String tokenValue;
 
     @Schema(description = "토큰 발급 시간", example = "2025-04-10T15:30:00", required = false)

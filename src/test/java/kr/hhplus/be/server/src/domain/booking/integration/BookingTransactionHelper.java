@@ -10,6 +10,7 @@ import kr.hhplus.be.server.src.domain.point.Point;
 import kr.hhplus.be.server.src.domain.point.PointRepository;
 import kr.hhplus.be.server.src.domain.queue.Queue;
 import kr.hhplus.be.server.src.domain.queue.QueueRepository;
+import kr.hhplus.be.server.src.domain.queue.RedisQueueRepository;
 import kr.hhplus.be.server.src.domain.seat.Seat;
 import kr.hhplus.be.server.src.domain.seat.SeatRepository;
 import kr.hhplus.be.server.src.domain.user.User;
@@ -43,6 +44,9 @@ public class BookingTransactionHelper {
 
     @Autowired
     private QueueRepository queueRepository;
+
+    @Autowired
+    private RedisQueueRepository redisQueueRepository;
 
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -90,7 +94,7 @@ public class BookingTransactionHelper {
 
         //활성화 토큰으로 변경
         queue.setTokenStatus(TokenStatus.ACTIVE);
-        queueRepository.save(queue);
+        redisQueueRepository.save(queue);
 
         BookingRequest bookingRequest = new BookingRequest(savedConcert.getConcertId(), seatList.get(0).getSeatNum(), savedUser.getUserId());
 
@@ -117,7 +121,7 @@ public class BookingTransactionHelper {
 
         //활성화 토큰으로 변경
         queue.setTokenStatus(TokenStatus.ACTIVE);
-        return queueRepository.save(queue);
+        return redisQueueRepository.save(queue);
     }
 
 }

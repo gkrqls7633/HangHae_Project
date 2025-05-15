@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import kr.hhplus.be.server.src.domain.enums.TokenStatus;
 import kr.hhplus.be.server.src.domain.queue.Queue;
 import kr.hhplus.be.server.src.domain.queue.QueueRepository;
+import kr.hhplus.be.server.src.domain.queue.RedisQueueRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -18,10 +19,13 @@ public class AuthInterceptor implements HandlerInterceptor {
 
     private final QueueRepository queueRepository;
 
+    private final RedisQueueRepository redisQueueRepository;
+
     private static final String BEARER_PREFIX = "Bearer ";
 
-    public AuthInterceptor(QueueRepository queueRepository) {
+    public AuthInterceptor(QueueRepository queueRepository, RedisQueueRepository redisQueueRepository) {
         this.queueRepository = queueRepository;
+        this.redisQueueRepository = redisQueueRepository;
     }
 
     @Override
@@ -41,7 +45,7 @@ public class AuthInterceptor implements HandlerInterceptor {
         }
 
         // 토큰 유효성 체크
-        Optional<Queue> activeToken = Optional.ofNullable(queueRepository.findByTokenStatus(TokenStatus.ACTIVE));
+        Optional<Queue> activeToken = Optional.ofNullable(redisQueueRepository.findByTokenStatus(TokenStatus.ACTIVE));
 
         if (activeToken.isEmpty() || activeToken.get().getExpiredAt().isBefore(LocalDateTime.now())) {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);

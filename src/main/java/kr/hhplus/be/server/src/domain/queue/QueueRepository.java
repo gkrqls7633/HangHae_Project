@@ -21,7 +21,7 @@ public interface QueueRepository {
 
     List<Queue> findByExpiredAtBeforeAndTokenStatus(LocalDateTime now, TokenStatus tokenStatus);
 
-    Optional<Queue> findByQueueIdAndTokenStatus(Long queueId, TokenStatus tokenStatus);
+    Optional<Queue> findByTokenValueAndTokenStatus(String tokenValue, TokenStatus tokenStatus);
 
     Queue findByTokenStatus(TokenStatus tokenStatus);
 }

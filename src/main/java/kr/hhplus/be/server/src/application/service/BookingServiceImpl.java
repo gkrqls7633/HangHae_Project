@@ -12,6 +12,7 @@ import kr.hhplus.be.server.src.domain.enums.SeatStatus;
 import kr.hhplus.be.server.src.domain.enums.TokenStatus;
 import kr.hhplus.be.server.src.domain.queue.Queue;
 import kr.hhplus.be.server.src.domain.queue.QueueRepository;
+import kr.hhplus.be.server.src.domain.queue.RedisQueueRepository;
 import kr.hhplus.be.server.src.domain.seat.Seat;
 import kr.hhplus.be.server.src.domain.seat.SeatRepository;
 import kr.hhplus.be.server.src.domain.user.User;
@@ -40,6 +41,7 @@ public class BookingServiceImpl implements BookingService {
     private final ConcertRepository concertRepository;
     private final UserRepository userRepository;
     private final QueueRepository queueRepository;
+    private final RedisQueueRepository redisQueueRepository;
     private final BookingRankingRepository bookingRankingRepository;
 
     @Override
@@ -67,7 +69,7 @@ public class BookingServiceImpl implements BookingService {
     public ResponseMessage<BookingResponse> bookingSeat(BookingRequest bookingRequest) {
 
         //활성화 상태의 토큰이 조회되지 않거나 || 해당 유효 기간(만료기간)이 현재시간보다 지난 경우 -> 서비스 불가
-        Optional<Queue> activeToken = queueRepository.findByUserIdAndTokenStatus(bookingRequest.getUserId(), TokenStatus.ACTIVE);
+        Optional<Queue> activeToken = redisQueueRepository.findByUserIdAndTokenStatus(bookingRequest.getUserId(), TokenStatus.ACTIVE);
 
         if (activeToken.isEmpty() || activeToken.get().getExpiredAt().isBefore(LocalDateTime.now())) {
             throw new IllegalStateException("유효한 대기열 토큰이 존재하지 않습니다.");
