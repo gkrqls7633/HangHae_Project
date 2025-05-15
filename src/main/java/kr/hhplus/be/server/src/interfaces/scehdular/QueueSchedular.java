@@ -32,7 +32,7 @@ public class QueueSchedular {
 
         // 2. 만료된 토큰 없으면 바로 종료
         if (expiredQueues.isEmpty()) {
-            System.out.println("#####만료된 토큰이 없습니다.#####");
+            log.info(" --- 만료된 토큰이 없습니다. ---");
             return;
         }
 
@@ -47,12 +47,12 @@ public class QueueSchedular {
                         queue.getTokenStatus()
                 );
                 queueService.expireQueueToken(expireRequest);
+                log.info("[토큰 만료 성공] tokenValue : {}, userId : {}", queue.getTokenValue(), queue.getUserId());
             } catch (EntityNotFoundException e) {
                 log.warn("[토큰 만료 실패] tokenValue: {}, 이유: {}", queue.getTokenValue(), e.getMessage());
             } catch (Exception e) {
                 log.error("[토큰 만료 중 예외 발생] tokenValue: {}", queue.getTokenValue(), e);
             }
-        System.out.println(expiredQueues.size() + "개의 토큰이 만료되었습니다.");
         }
     }
 
@@ -64,7 +64,7 @@ public class QueueSchedular {
         List<Queue> readyQueues = queueService.findReadToActivateTokens(TokenStatus.READY, LocalDateTime.now());
 
         if (readyQueues.isEmpty()) {
-            System.out.println("#####활성화할 토큰이 없습니다.#####");
+            log.info(" --- 활성화할 토큰이 없습니다. ---");
             return;
         }
 
@@ -73,9 +73,9 @@ public class QueueSchedular {
             queue.setTokenStatus(TokenStatus.ACTIVE);
             queue.refreshToken(); // 시간 갱신
             queueService.save(queue);
+            log.info("[토큰 활성화 성공] tokenValue : {}, userId : {}", queue.getTokenValue(), queue.getUserId());
         }
-
-        System.out.println(readyQueues.size() + "개의 토큰이 ACTIVE 상태로 전환되었습니다.");
+        log.info(" {}개의 토큰이 ACTIVE 상태로 전환되었습니다.", readyQueues.size());
 
     }
 }

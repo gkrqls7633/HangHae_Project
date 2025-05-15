@@ -5,6 +5,7 @@ import kr.hhplus.be.server.src.domain.enums.TokenStatus;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface RedisQueueRepository {
 
@@ -21,4 +22,8 @@ public interface RedisQueueRepository {
     Queue findByTokenStatus(TokenStatus tokenStatus);
 
     void removeExpiredQueue(Queue expiredQueue);
+
+    String getUserTokenValue(Long userId);
+
+    Set<String> getReadyTokens(String tokenValue);
 }

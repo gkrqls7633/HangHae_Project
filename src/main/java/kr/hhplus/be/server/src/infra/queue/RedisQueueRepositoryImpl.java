@@ -146,7 +146,7 @@ public class RedisQueueRepositoryImpl implements RedisQueueRepository {
         // 현재 시간을 밀리초로 변환하여 double 타입으로 변환
         double nowMillis = now.atZone(ZoneId.of("UTC")).toInstant().toEpochMilli();
 
-        int limit = 1;
+        int limit = 100; // 대기열 크기
         // ZSet에서 expiredAt이 nowMillis 이후인, READY 상태의 토큰을 조회
         Set<String> readyTokenValues = redisTemplate.opsForZSet().rangeByScore(
                 "queue:global",
@@ -212,6 +212,41 @@ public class RedisQueueRepositoryImpl implements RedisQueueRepository {
 
         // 3. 전역 대기열 ZSet 에서 제거
         redisTemplate.opsForZSet().remove("queue:global", "token:" + tokenValue);
+    }
+
+    @Override
+    public String getUserTokenValue(Long userId) {
+        String tokenValue = redisTemplate.opsForValue().get("user:" + userId + ":token");
+        if (tokenValue == null) {
+            throw new EntityNotFoundException("해당 유저의 토큰이 존재하지 않습니다.");
+        }
+        return tokenValue;
+    }
+
+    @Override
+    public Set<String> getReadyTokens(String tokenValue) {
+        long nowMillis = Instant.now().toEpochMilli();
+
+        Set<String> topTokens = redisTemplate.opsForZSet().rangeByScore("queue:global", nowMillis, Double.MAX_VALUE);
+
+        if (topTokens == null || topTokens.isEmpty()) {
+            return Collections.emptySet();
+        }
+
+        //Ready 상태인 토큰만 대기열 순번의 대상이므로 filter.
+        Set<String> topReadyTokens = new LinkedHashSet<>();
+        for (String tokenKey : topTokens) {
+            String pureToken = tokenKey.substring("token:".length());
+            Map<Object, Object> tokenMap = redisTemplate.opsForHash().entries("token:" + pureToken);
+
+            if (!tokenMap.isEmpty()) {
+                String status = (String) tokenMap.get("token_status");
+                if ("READY".equals(status)) {
+                    topReadyTokens.add(tokenKey);
+                }
+            }
+        }
+        return topReadyTokens;
     }
 
     private Queue mapToQueue(Map<Object, Object> map) {

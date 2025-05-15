@@ -45,7 +45,8 @@ public class QueueController {
                                 summary = "필수값만 포함된 요청 예시",
                                 value = """
                                     {
-                                      "userId": 123
+                                      "userId": 123,
+                                      "tokenValue": "85358a8b-3683-435f-a3e1-42e0408ce2b2"
                                     }
                                     """
                             )
