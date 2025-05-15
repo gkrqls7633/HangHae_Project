@@ -45,7 +45,7 @@ public class UserServiceImpl implements UserService {
 
         String tokenValue = redisQueueRepository.getUserTokenValue(userId);
 
-        Set<String> topTokens = redisQueueRepository.getReadyTokens(tokenValue);
+        Set<String> topTokens = redisQueueRepository.getReadyTokens(tokenValue, LocalDateTime.now());
 
         if (topTokens == null || topTokens.isEmpty()) {
             throw new EntityNotFoundException("현재 대기열에 유효한 토큰이 없습니다.");
@@ -54,7 +54,11 @@ public class UserServiceImpl implements UserService {
         //순위 계산
         String tokenKey = "token:" + tokenValue;
         List<String> tokenList = new ArrayList<>(topTokens);
+
         int index = tokenList.indexOf(tokenKey);
+        if (index == -1) {
+            throw new EntityNotFoundException("해당 유저의 토큰은 대기열 내에 존재하지 않습니다.");
+        }
 
         return UserQueueRankResponse.builder()
                 .userId(userId)

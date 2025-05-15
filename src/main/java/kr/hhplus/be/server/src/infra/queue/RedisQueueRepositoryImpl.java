@@ -5,6 +5,7 @@ import kr.hhplus.be.server.src.domain.enums.TokenStatus;
 import kr.hhplus.be.server.src.domain.queue.Queue;
 import kr.hhplus.be.server.src.domain.queue.RedisQueueRepository;
 import lombok.RequiredArgsConstructor;
+import net.bytebuddy.asm.Advice;
 import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ScanOptions;
@@ -224,8 +225,8 @@ public class RedisQueueRepositoryImpl implements RedisQueueRepository {
     }
 
     @Override
-    public Set<String> getReadyTokens(String tokenValue) {
-        long nowMillis = Instant.now().toEpochMilli();
+    public Set<String> getReadyTokens(String tokenValue, LocalDateTime now) {
+        long nowMillis = now.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
 
         Set<String> topTokens = redisTemplate.opsForZSet().rangeByScore("queue:global", nowMillis, Double.MAX_VALUE);
 

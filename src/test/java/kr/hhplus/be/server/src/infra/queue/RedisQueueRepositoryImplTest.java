@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.src.infra.queue;
 
+import jakarta.persistence.EntityNotFoundException;
 import kr.hhplus.be.server.src.domain.enums.TokenStatus;
 import kr.hhplus.be.server.src.domain.queue.Queue;
 import org.junit.jupiter.api.DisplayName;
@@ -13,6 +14,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.data.redis.core.ZSetOperations;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
@@ -312,7 +314,7 @@ class RedisQueueRepositoryImplTest {
         // given
         LocalDateTime now = LocalDateTime.now(ZoneId.of("UTC"));
         double nowMillis = now.atZone(ZoneId.of("UTC")).toInstant().toEpochMilli();
-        int limit = 1;
+        int limit = 100;
 
         String tokenValue = "abc123";
         Set<String> expiredTokenSet = Set.of("token:" + tokenValue);
@@ -386,7 +388,7 @@ class RedisQueueRepositoryImplTest {
         // given
         LocalDateTime now = LocalDateTime.now(ZoneId.of("UTC"));
         double nowMillis = now.atZone(ZoneId.of("UTC")).toInstant().toEpochMilli();
-        int limit = 1;
+        int limit = 100;
 
         String fullTokenKey = "token:abc123";
         String tokenValue = "abc123";
@@ -420,7 +422,7 @@ class RedisQueueRepositoryImplTest {
         // given
         LocalDateTime now = LocalDateTime.now(ZoneId.of("UTC"));
         double nowMillis = now.atZone(ZoneId.of("UTC")).toInstant().toEpochMilli();
-        int limit = 1;
+        int limit = 100;
 
         when(redisTemplate.opsForZSet()).thenReturn(zSetOps);
         when(zSetOps.rangeByScore("queue:global", nowMillis, Double.MAX_VALUE, 0, limit)).thenReturn(Collections.emptySet());
@@ -438,7 +440,7 @@ class RedisQueueRepositoryImplTest {
         // given
         LocalDateTime now = LocalDateTime.now(ZoneId.of("UTC"));
         double nowMillis = now.atZone(ZoneId.of("UTC")).toInstant().toEpochMilli();
-        int limit = 1;
+        int limit = 100;
 
         String tokenKey = "token:abc123";
 
@@ -544,5 +546,37 @@ class RedisQueueRepositoryImplTest {
         assertNull(result);
     }
 
+    @Test
+    @DisplayName("유저 토큰 값이 존재할 경우 정상 반환")
+    void getUserTokenValue_success() {
+        // given
+        Long userId = 1L;
+        String expectedTokenValue = "abc123";
+
+        ValueOperations<String, String> valueOperations = mock(ValueOperations.class);
+
+        when(redisTemplate.opsForValue()).thenReturn(valueOperations);
+        when(valueOperations.get("user:" + userId + ":token")).thenReturn(expectedTokenValue);
+
+        // when
+        String tokenValue = redisQueueRepositoryImpl.getUserTokenValue(userId);
+
+        // then
+        assertEquals(expectedTokenValue, tokenValue);
+    }
+
+    @DisplayName("유저 토큰 값이 존재하지 않을 경우 EntityNotFoundException 발생")
+    @Test
+    void getUserTokenValue_notFound() {
+        // given
+        Long userId = 1L;
+        ValueOperations<String, String> valueOperations = mock(ValueOperations.class);
+
+        when(redisTemplate.opsForValue()).thenReturn(valueOperations);
+        when(valueOperations.get("user:" + userId + ":token")).thenReturn(null);
+
+        // when & then
+        assertThrows(EntityNotFoundException.class, () -> redisQueueRepositoryImpl.getUserTokenValue(userId));
+    }
 
 }
