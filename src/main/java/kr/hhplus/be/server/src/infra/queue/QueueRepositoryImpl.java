@@ -57,8 +57,8 @@ public class QueueRepositoryImpl implements QueueRepository {
     }
 
     @Override
-    public Optional<Queue> findByQueueIdAndTokenStatus(Long queueId, TokenStatus tokenStatus) {
-        return queueJpaRepository.findByQueueIdAndTokenStatus(queueId, tokenStatus);
+    public Optional<Queue> findByTokenValueAndTokenStatus(String tokenValue, TokenStatus tokenStatus) {
+        return queueJpaRepository.findByTokenValueAndTokenStatus(tokenValue, tokenStatus);
     }
 
     @Override

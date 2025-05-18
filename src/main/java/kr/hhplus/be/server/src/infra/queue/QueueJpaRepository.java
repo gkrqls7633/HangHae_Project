@@ -16,7 +16,7 @@ public interface QueueJpaRepository extends JpaRepository<Queue, Long> {
 
     List<Queue> findByTokenStatusAndExpiredAtAfter(TokenStatus tokenStatus, LocalDateTime currentTime);
 
-    Optional<Queue> findByQueueIdAndTokenStatus(Long queueId, TokenStatus tokenStatus);
+    Optional<Queue> findByTokenValueAndTokenStatus(String tokenValue, TokenStatus tokenStatus);
 
     List<Queue> findAllByTokenStatus(TokenStatus tokenStatus);
 
