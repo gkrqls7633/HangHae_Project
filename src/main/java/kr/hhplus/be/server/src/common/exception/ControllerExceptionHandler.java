@@ -2,8 +2,6 @@ package kr.hhplus.be.server.src.common.exception;
 
 import io.swagger.v3.oas.annotations.Hidden;
 import kr.hhplus.be.server.src.common.ResponseMessage;
-import kr.hhplus.be.server.src.interfaces.booking.BookingController;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -39,6 +37,13 @@ public class ControllerExceptionHandler {
         log.warn("# InvalidPaymentException : {}", e.getMessage());
         return ResponseMessage.error(e.getStatus(), e.getMessage());
     }
+
+    @ExceptionHandler(SeatException.class)
+    public ResponseMessage handleInvalidPaymentException(SeatException e) {
+        log.warn("# InvalidSeatException : {}", e.getMessage());
+        return ResponseMessage.error(e.getStatus(), e.getMessage());
+    }
+
 
 
 }

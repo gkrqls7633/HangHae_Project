@@ -3,15 +3,17 @@ package kr.hhplus.be.server.src.domain.booking.unit;
 import kr.hhplus.be.server.src.application.service.BookingServiceImpl;
 import kr.hhplus.be.server.src.common.ResponseMessage;
 import kr.hhplus.be.server.src.domain.booking.Booking;
-import kr.hhplus.be.server.src.domain.booking.BookingRankingRepository;
 import kr.hhplus.be.server.src.domain.booking.BookingRepository;
+import kr.hhplus.be.server.src.domain.booking.event.BookingEventPublisher;
+import kr.hhplus.be.server.src.domain.booking.event.ConcertBookingScoreIncrementEvent;
+import kr.hhplus.be.server.src.domain.booking.event.ExternalDataSaveEvent;
+import kr.hhplus.be.server.src.domain.booking.event.SeatBookedEvent;
 import kr.hhplus.be.server.src.domain.concert.Concert;
 import kr.hhplus.be.server.src.domain.concert.ConcertRepository;
 import kr.hhplus.be.server.src.domain.concertseat.ConcertSeat;
 import kr.hhplus.be.server.src.domain.enums.SeatStatus;
 import kr.hhplus.be.server.src.domain.enums.TokenStatus;
 import kr.hhplus.be.server.src.domain.queue.Queue;
-import kr.hhplus.be.server.src.domain.queue.QueueRepository;
 import kr.hhplus.be.server.src.domain.queue.RedisQueueRepository;
 import kr.hhplus.be.server.src.domain.seat.Seat;
 import kr.hhplus.be.server.src.domain.seat.SeatRepository;
@@ -52,14 +54,17 @@ class BookingServiceTest {
     @Mock
     private UserRepository userRepository;
 
-    @Mock
-    private QueueRepository queueRepository;
+//    @Mock
+//    private QueueRepository queueRepository;
 
     @Mock
     private RedisQueueRepository redisQueueRepository;
 
+//    @Mock
+//    private BookingRankingRepository bookingRankingRepository;
+
     @Mock
-    private BookingRankingRepository bookingRankingRepository;
+    private BookingEventPublisher bookingEventPublisher;
 
 
     @Test
@@ -104,9 +109,9 @@ class BookingServiceTest {
         when(seatRepository.findByConcertSeat_Concert_ConcertIdAndSeatNum(1L, 1L)).thenReturn(Optional.of(seatList.get(0)));
 
         when(bookingRepository.save(any(Booking.class))).thenAnswer(invocation -> invocation.getArgument(0));
-        when(seatRepository.save(any(Seat.class))).thenAnswer(invocation -> invocation.getArgument(0));
-
-        doNothing().when(bookingRankingRepository).incrementConcertBookingScore(anyString());
+        doNothing().when(bookingEventPublisher).success(any(SeatBookedEvent.class));
+        doNothing().when(bookingEventPublisher).success(any(ConcertBookingScoreIncrementEvent.class));
+        doNothing().when(bookingEventPublisher).success(any(ExternalDataSaveEvent.class));
 
         // when
         ResponseMessage<BookingResponse> response = bookingService.bookingSeat(mockBookingRequest);
@@ -118,7 +123,9 @@ class BookingServiceTest {
         assertEquals(Optional.of(1L).get(), response.getData().getSeatNum());
 
         verify(bookingRepository, times(1)).save(any(Booking.class));
-        verify(bookingRankingRepository, times(1)).incrementConcertBookingScore("1");
+        verify(bookingEventPublisher, times(1)).success(any(SeatBookedEvent.class));
+        verify(bookingEventPublisher, times(1)).success(any(ConcertBookingScoreIncrementEvent.class));
+        verify(bookingEventPublisher, times(1)).success(any(ExternalDataSaveEvent.class));
 
     }
 

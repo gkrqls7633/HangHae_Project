@@ -38,7 +38,7 @@ public class SeatRepositoryImpl implements SeatRepository {
 
     @Override
     public Seat save(Seat seat) {
-        return  seatJpaRepository.save(seat);
+        return seatJpaRepository.save(seat);
     }
 
     @Override

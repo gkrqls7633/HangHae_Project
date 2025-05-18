@@ -5,10 +5,8 @@ import kr.hhplus.be.server.src.domain.booking.BookingRankingRepository;
 import kr.hhplus.be.server.src.domain.concert.ConcertRankingService;
 import kr.hhplus.be.server.src.interfaces.concert.dto.ConcertBookingRankResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
 
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor

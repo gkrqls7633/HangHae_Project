@@ -6,6 +6,10 @@ import kr.hhplus.be.server.src.domain.booking.Booking;
 import kr.hhplus.be.server.src.domain.booking.BookingRankingRepository;
 import kr.hhplus.be.server.src.domain.booking.BookingRepository;
 import kr.hhplus.be.server.src.domain.booking.BookingService;
+import kr.hhplus.be.server.src.domain.booking.event.BookingEventPublisher;
+import kr.hhplus.be.server.src.domain.booking.event.ConcertBookingScoreIncrementEvent;
+import kr.hhplus.be.server.src.domain.booking.event.ExternalDataSaveEvent;
+import kr.hhplus.be.server.src.domain.booking.event.SeatBookedEvent;
 import kr.hhplus.be.server.src.domain.concert.Concert;
 import kr.hhplus.be.server.src.domain.concert.ConcertRepository;
 import kr.hhplus.be.server.src.domain.enums.SeatStatus;
@@ -24,6 +28,7 @@ import kr.hhplus.be.server.src.interfaces.booking.dto.BookingRequest;
 import kr.hhplus.be.server.src.interfaces.booking.dto.BookingResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,6 +48,9 @@ public class BookingServiceImpl implements BookingService {
     private final QueueRepository queueRepository;
     private final RedisQueueRepository redisQueueRepository;
     private final BookingRankingRepository bookingRankingRepository;
+
+    private final BookingEventPublisher bookingEventPublisher;
+
 
     @Override
     public ResponseMessage<BookingResponse> bookingSeatWithLock(BookingRequest bookingRequest) {
@@ -94,18 +102,26 @@ public class BookingServiceImpl implements BookingService {
             return ResponseMessage.error(500, "선택 좌석은 예약 불가능한 좌석입니다.");
 
         } else {
-            //좌석 점유 처리
-            seat.setSeatStatus(SeatStatus.OCCUPIED);
-            seatRepository.save(seat);
 
             // booking 예약 처리
             bookingRepository.save(booking);
 
             /*
+             좌석 점유 처리 이벤트 발행
+            */
+            bookingEventPublisher.success(new SeatBookedEvent(seat));
+
+            /*
+             콘서트 예약 점수 증가 이벤트 발행
              redis에 콘서트 랭킹 저장 (sorted set 저장)
              ex) {concert1 : 5 , concert 2 : 10, ... }
             */
             incrementConcertBookingScore(concert.getConcertId().toString());
+
+            /*
+             외부 데이터 플랫폼 저장 이벤트 발행
+             */
+            bookingEventPublisher.success(new ExternalDataSaveEvent(booking));
         }
 
         BookingResponse bookingResponse = new BookingResponse();
@@ -117,7 +133,9 @@ public class BookingServiceImpl implements BookingService {
     }
 
     private void incrementConcertBookingScore(String concertId) {
-        bookingRankingRepository.incrementConcertBookingScore(concertId);
+
+        //to-be  콘서트 예약 점수 증가 이벤트 발행
+        bookingEventPublisher.success(new ConcertBookingScoreIncrementEvent(concertId));
     }
 
     @Transactional
