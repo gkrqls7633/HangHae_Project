@@ -31,7 +31,7 @@ public class BookingRankingRepositoryImpl implements BookingRankingRepository {
     }
 
     /**
-     * @description RedisTemplate 활용하여 redis에서 콘서트 매진 랭킹을 조회한다.(상위 10개 내림차순)
+     * @description RedisTemplate 활용하여 redis에서 콘서트 매진 랭킹을 조회한다.(상위 n개 내림차순)
      */
     @Override
     public BookingRank getConcertBookingRank() {

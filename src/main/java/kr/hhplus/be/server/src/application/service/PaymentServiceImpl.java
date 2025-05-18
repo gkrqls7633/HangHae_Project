@@ -56,7 +56,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         try {
             /*
-            2. 결제 요청 유저와 예약된 유저 동일한지 체크
+            2. 결제 요청 유저와 예약된 유저 동일한지 유효성 체크
              */
             if (!paymentDomain.isBookingCheck(booking)) {
                 paymentDomain.changePaymentStatus(PaymentStatus.FAILED);
@@ -82,7 +82,7 @@ public class PaymentServiceImpl implements PaymentService {
             }
 
             /*
-             3. 포인트 잔액 조회
+             4. 포인트 잔액 조회
              - 포인트 잔액이 결제할 가격보다 많아야 함.
              - 포인트 및 콘서트 정보 조회
             */
@@ -100,7 +100,7 @@ public class PaymentServiceImpl implements PaymentService {
                 throw new PaymentException("잔액을 확인해주세요.");
             }
 
-            //결제 요청 -> 유저 잔액 포인트 차감
+            //결제 요청 -> 결제 완료 상태 변경
             paymentDomain.changePaymentStatus(PaymentStatus.COMPLETED);
             Payment payment = paymentRepository.save(paymentDomain);
 

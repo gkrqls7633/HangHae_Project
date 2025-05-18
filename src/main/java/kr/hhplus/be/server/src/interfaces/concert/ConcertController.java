@@ -70,7 +70,7 @@ public class ConcertController {
         return ResponseMessage.success(concertResponse);
     }
 
-    @Operation(summary = "콘서트 매진 랭킹 순위 조회", description = "콘서트 매진 랭킹 순위를 조회한다.")
+    @Operation(summary = "콘서트 예약 랭킹 순위 조회", description = "콘서트 매진 랭킹 순위를 조회한다.")
     @GetMapping("ranking")
     public ResponseMessage<ConcertBookingRankResponse> getConcertBookingRank() {
         ConcertBookingRankResponse concertBookingRankResponse = concertRankingService.getConcertBookingRank();
