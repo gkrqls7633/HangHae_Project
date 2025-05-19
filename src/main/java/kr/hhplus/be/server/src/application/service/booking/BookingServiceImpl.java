@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.src.application.service;
+package kr.hhplus.be.server.src.application.service.booking;
 
 import jakarta.persistence.EntityNotFoundException;
 import kr.hhplus.be.server.src.common.ResponseMessage;
@@ -6,7 +6,7 @@ import kr.hhplus.be.server.src.domain.booking.Booking;
 import kr.hhplus.be.server.src.domain.booking.BookingRankingRepository;
 import kr.hhplus.be.server.src.domain.booking.BookingRepository;
 import kr.hhplus.be.server.src.domain.booking.BookingService;
-import kr.hhplus.be.server.src.domain.booking.event.BookingEventPublisher;
+import kr.hhplus.be.server.src.application.service.booking.event.publisher.BookingEventPublisher;
 import kr.hhplus.be.server.src.domain.booking.event.ConcertBookingScoreIncrementEvent;
 import kr.hhplus.be.server.src.domain.booking.event.ExternalDataSaveEvent;
 import kr.hhplus.be.server.src.domain.booking.event.SeatBookedEvent;
@@ -28,7 +28,6 @@ import kr.hhplus.be.server.src.interfaces.booking.dto.BookingRequest;
 import kr.hhplus.be.server.src.interfaces.booking.dto.BookingResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

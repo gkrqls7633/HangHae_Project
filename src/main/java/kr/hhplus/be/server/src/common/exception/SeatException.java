@@ -8,7 +8,7 @@ public class SeatException extends RuntimeException {
 
     public SeatException(String message) {
         super(message);
-        this.status = HttpStatus.BAD_REQUEST.value(); // 기본 400
+        this.status = HttpStatus.INTERNAL_SERVER_ERROR.value();
     }
 
     public SeatException(String message, int status) {

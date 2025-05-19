@@ -1,8 +1,6 @@
-package kr.hhplus.be.server.src.infra.booking.listener;
+package kr.hhplus.be.server.src.application.service.booking.event.listener;
 
 import kr.hhplus.be.server.src.domain.booking.Booking;
-import kr.hhplus.be.server.src.domain.booking.BookingRankingRepository;
-import kr.hhplus.be.server.src.domain.booking.event.ConcertBookingScoreIncrementEvent;
 import kr.hhplus.be.server.src.domain.booking.event.ExternalDataSaveEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,8 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Slf4j
 public class BookingExternalSaveListener {
-
-    private final BookingRankingRepository bookingRankingRepository;
 
     @EventListener
     @Transactional

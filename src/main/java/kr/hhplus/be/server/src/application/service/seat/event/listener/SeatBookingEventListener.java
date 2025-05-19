@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.src.infra.seat.listener;
+package kr.hhplus.be.server.src.application.service.seat.event.listener;
 
 import kr.hhplus.be.server.src.common.exception.SeatException;
 import kr.hhplus.be.server.src.domain.booking.event.SeatBookedEvent;
@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
@@ -28,7 +27,7 @@ public class SeatBookingEventListener {
             seat.setSeatStatus(SeatStatus.OCCUPIED);
             seatRepository.save(seat);
         } catch (SeatException e) {
-            log.error("좌석 점유 처리 중 예외 발생", e);
+            throw new SeatException("좌석 점유 처리 중 예외 발생", e.getStatus());
         }
     }
 

@@ -1,5 +1,8 @@
-package kr.hhplus.be.server.src.domain.booking.event;
+package kr.hhplus.be.server.src.application.service.booking.event.publisher;
 
+import kr.hhplus.be.server.src.domain.booking.event.ConcertBookingScoreIncrementEvent;
+import kr.hhplus.be.server.src.domain.booking.event.ExternalDataSaveEvent;
+import kr.hhplus.be.server.src.domain.booking.event.SeatBookedEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
@@ -20,6 +23,9 @@ public class BookingEventPublisher {
 
     public void success(ExternalDataSaveEvent event) {
         applicationEventPublisher.publishEvent(event);
-
     }
+
+//    public <T extends ApplicationEvent> void success(T event) {
+//        applicationEventPublisher.publishEvent(event);
+//    }
 }

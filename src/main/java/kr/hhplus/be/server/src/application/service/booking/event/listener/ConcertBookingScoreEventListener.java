@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.src.infra.booking.listener;
+package kr.hhplus.be.server.src.application.service.booking.event.listener;
 
 import kr.hhplus.be.server.src.domain.booking.BookingRankingRepository;
 import kr.hhplus.be.server.src.domain.booking.event.ConcertBookingScoreIncrementEvent;
@@ -16,9 +16,8 @@ public class ConcertBookingScoreEventListener {
 
     @EventListener
     @Transactional
-    @Async //비동기
+    @Async
     public void handle(ConcertBookingScoreIncrementEvent event) {
-
         bookingRankingRepository.incrementConcertBookingScore(event.getConcertId());
     }
 
