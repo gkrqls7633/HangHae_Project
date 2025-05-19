@@ -1,17 +1,21 @@
 package kr.hhplus.be.server.src.domain.payment.unit;
 
 import jakarta.persistence.EntityNotFoundException;
-import kr.hhplus.be.server.src.application.service.PaymentServiceImpl;
+import kr.hhplus.be.server.src.application.service.payment.PaymentServiceImpl;
+import kr.hhplus.be.server.src.application.service.payment.event.publisher.PaymentEventPublisher;
 import kr.hhplus.be.server.src.common.ResponseMessage;
 import kr.hhplus.be.server.src.common.exception.PaymentException;
 import kr.hhplus.be.server.src.domain.booking.Booking;
 import kr.hhplus.be.server.src.domain.booking.BookingRepository;
+import kr.hhplus.be.server.src.domain.external.ExternalDataSaveEvent;
 import kr.hhplus.be.server.src.domain.concert.Concert;
 import kr.hhplus.be.server.src.domain.concert.ConcertRepository;
 import kr.hhplus.be.server.src.domain.enums.PaymentStatus;
 import kr.hhplus.be.server.src.domain.enums.SeatStatus;
 import kr.hhplus.be.server.src.domain.payment.Payment;
 import kr.hhplus.be.server.src.domain.payment.PaymentRepository;
+import kr.hhplus.be.server.src.domain.payment.event.SeatBookedCompletedEvent;
+import kr.hhplus.be.server.src.domain.payment.event.UserPointUsedEvent;
 import kr.hhplus.be.server.src.domain.point.Point;
 import kr.hhplus.be.server.src.domain.point.PointRepository;
 import kr.hhplus.be.server.src.domain.seat.Seat;
@@ -56,6 +60,9 @@ class PaymentServicetest {
 
     @Mock
     private SeatRepository seatRepository;
+
+    @Mock
+    private PaymentEventPublisher paymentEventPublisher;
 
     private Concert mockConcert;
     private User mockUser;
@@ -321,6 +328,10 @@ class PaymentServicetest {
         when(concertRepository.findById(anyLong())).thenReturn(Optional.ofNullable(mockConcert));
         when(pointRepository.findById(anyLong())).thenReturn(Optional.of(mockPoint));
         when(paymentRepository.save(any(Payment.class))).thenReturn(savedPayment);
+        doNothing().when(paymentEventPublisher).success(any(UserPointUsedEvent.class));
+        doNothing().when(paymentEventPublisher).success(any(SeatBookedCompletedEvent.class));
+        doNothing().when(paymentEventPublisher).success(any(ExternalDataSaveEvent.class));
+
 
         //when
         ResponseMessage<PaymentResponse> response = paymentService.processPayment(paymentRequest);
@@ -331,6 +342,12 @@ class PaymentServicetest {
         assertEquals(PaymentStatus.COMPLETED, response.getData().getPaymentStatus());
         assertEquals(999L, response.getData().getPaymentId());
         assertEquals(1L, response.getData().getBookingId());
+
+        verify(paymentEventPublisher, times(1)).success(any(UserPointUsedEvent.class));
+        verify(paymentEventPublisher, times(1)).success(any(SeatBookedCompletedEvent.class));
+        verify(paymentEventPublisher, times(1)).success(any(ExternalDataSaveEvent.class));
+
+
     }
 
 }

@@ -8,7 +8,7 @@ import kr.hhplus.be.server.src.domain.booking.BookingRepository;
 import kr.hhplus.be.server.src.domain.booking.BookingService;
 import kr.hhplus.be.server.src.application.service.booking.event.publisher.BookingEventPublisher;
 import kr.hhplus.be.server.src.domain.booking.event.ConcertBookingScoreIncrementEvent;
-import kr.hhplus.be.server.src.domain.booking.event.ExternalDataSaveEvent;
+import kr.hhplus.be.server.src.domain.external.ExternalDataSaveEvent;
 import kr.hhplus.be.server.src.domain.booking.event.SeatBookedEvent;
 import kr.hhplus.be.server.src.domain.concert.Concert;
 import kr.hhplus.be.server.src.domain.concert.ConcertRepository;

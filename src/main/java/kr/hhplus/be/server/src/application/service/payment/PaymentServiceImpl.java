@@ -1,10 +1,12 @@
-package kr.hhplus.be.server.src.application.service;
+package kr.hhplus.be.server.src.application.service.payment;
 
 import jakarta.persistence.EntityNotFoundException;
+import kr.hhplus.be.server.src.application.service.payment.event.publisher.PaymentEventPublisher;
 import kr.hhplus.be.server.src.common.ResponseMessage;
 import kr.hhplus.be.server.src.common.exception.PaymentException;
 import kr.hhplus.be.server.src.domain.booking.Booking;
 import kr.hhplus.be.server.src.domain.booking.BookingRepository;
+import kr.hhplus.be.server.src.domain.external.ExternalDataSaveEvent;
 import kr.hhplus.be.server.src.domain.concert.Concert;
 import kr.hhplus.be.server.src.domain.concert.ConcertRepository;
 import kr.hhplus.be.server.src.domain.enums.PaymentStatus;
@@ -12,6 +14,8 @@ import kr.hhplus.be.server.src.domain.enums.SeatStatus;
 import kr.hhplus.be.server.src.domain.payment.Payment;
 import kr.hhplus.be.server.src.domain.payment.PaymentRepository;
 import kr.hhplus.be.server.src.domain.payment.PaymentService;
+import kr.hhplus.be.server.src.domain.payment.event.SeatBookedCompletedEvent;
+import kr.hhplus.be.server.src.domain.payment.event.UserPointUsedEvent;
 import kr.hhplus.be.server.src.domain.point.Point;
 import kr.hhplus.be.server.src.domain.point.PointRepository;
 import kr.hhplus.be.server.src.domain.seat.Seat;
@@ -34,6 +38,7 @@ public class PaymentServiceImpl implements PaymentService {
     private final ConcertRepository concertRepository;
     private final BookingRepository bookingRepository;
     private final SeatRepository seatRepository;
+    private final PaymentEventPublisher paymentEventPublisher;
 
     @Override
     @Transactional
@@ -104,13 +109,20 @@ public class PaymentServiceImpl implements PaymentService {
             paymentDomain.changePaymentStatus(PaymentStatus.COMPLETED);
             Payment payment = paymentRepository.save(paymentDomain);
 
-            //유저 잔액 차감
-            point.usePoint(concertInfo.getPrice());
-            pointRepository.save(point);
+            /*
+             유저 잔액 차감 이벤트 발행
+            */
+            paymentEventPublisher.success(new UserPointUsedEvent(point, concertInfo.getPrice()));
 
-            //좌석 상태 occupied -> Booked(예약 완료된 좌석)로 변경
-            seat.changeBookedSeat();
-            seatRepository.save(seat);
+            /*
+             좌석 상태 변경 이벤트 발행 (occupied -> Booked(예약 완료된 좌석))
+            */
+            paymentEventPublisher.success(new SeatBookedCompletedEvent(seat));
+
+            /*
+             외부 데이터 플랫폼 저장 이벤트 발행
+             */
+            paymentEventPublisher.success(new ExternalDataSaveEvent(payment));
 
             PaymentResponse paymentResponse = PaymentResponse.of(
                       payment.getPaymentId()

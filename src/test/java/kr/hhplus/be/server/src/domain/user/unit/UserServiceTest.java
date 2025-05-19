@@ -1,7 +1,7 @@
 package kr.hhplus.be.server.src.domain.user.unit;
 
 import jakarta.persistence.EntityNotFoundException;
-import kr.hhplus.be.server.src.application.service.UserServiceImpl;
+import kr.hhplus.be.server.src.application.service.user.UserServiceImpl;
 import kr.hhplus.be.server.src.domain.point.Point;
 import kr.hhplus.be.server.src.domain.queue.RedisQueueRepository;
 import kr.hhplus.be.server.src.domain.user.User;

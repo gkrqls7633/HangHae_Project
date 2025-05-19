@@ -44,6 +44,10 @@ public class ControllerExceptionHandler {
         return ResponseMessage.error(e.getStatus(), e.getMessage());
     }
 
-
+    @ExceptionHandler(PointException.class)
+    public ResponseMessage handleInvalidPointException(PointException e) {
+        log.warn("# InvalidPointException : {}", e.getMessage());
+        return ResponseMessage.error(e.getStatus(), e.getMessage());
+    }
 
 }
