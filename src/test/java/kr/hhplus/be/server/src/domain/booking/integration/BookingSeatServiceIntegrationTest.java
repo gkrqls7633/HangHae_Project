@@ -1,6 +1,6 @@
 package kr.hhplus.be.server.src.domain.booking.integration;
 
-import kr.hhplus.be.server.src.application.service.BookingServiceImpl;
+import kr.hhplus.be.server.src.application.service.booking.BookingServiceImpl;
 import kr.hhplus.be.server.src.common.ResponseMessage;
 import kr.hhplus.be.server.src.domain.queue.Queue;
 import kr.hhplus.be.server.src.domain.seat.Seat;
@@ -20,6 +20,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.transaction.TestTransaction;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -60,17 +61,20 @@ class BookingSeatServiceIntegrationTest {
         bookingRequest = bookingTransactionHelper.setupTestData();
     }
 
-    @DisplayName("좌석 예약 요청 시 콘서트id, 좌석num, userId 기반으로 해당 좌석 점유 및 예약상태가 된다.")
+    @DisplayName("좌석 예약 요청 시 콘서트id, 좌석num 기반으로 해당 좌석 점유 및 예약상태가 된다.")
     @Test
     void bookingSeatIntegrationTest() {
 
         //given
         Long concertId = bookingRequest.getConcertId();
-//        Long userId = bookingRequest.getUserId();
         Long seatNum = bookingRequest.getSeatNum();
 
         //when
         bookingService.bookingSeat(bookingRequest);
+
+        // 트랜잭션 커밋 후 좌석 상태 조회
+        TestTransaction.flagForCommit();
+        TestTransaction.end(); // 강제로 트랜잭션 커밋
 
         //then : 해당 좌석이 점유상태로 변경됐는지 조회
         Optional<Seat> seatOpt = seatRepository.findByConcertSeat_Concert_ConcertIdAndSeatNum(concertId, seatNum);

@@ -1,8 +1,6 @@
-package kr.hhplus.be.server.src.application.service;
+package kr.hhplus.be.server.src.application.service.user;
 
 import jakarta.persistence.EntityNotFoundException;
-import kr.hhplus.be.server.src.domain.enums.TokenStatus;
-import kr.hhplus.be.server.src.domain.queue.Queue;
 import kr.hhplus.be.server.src.domain.queue.RedisQueueRepository;
 import kr.hhplus.be.server.src.domain.user.User;
 import kr.hhplus.be.server.src.domain.user.UserRepository;

@@ -2,12 +2,11 @@ package kr.hhplus.be.server.src.domain.payment.integration;
 
 
 import kr.hhplus.be.server.src.TestcontainersConfiguration;
-import kr.hhplus.be.server.src.application.service.PaymentServiceImpl;
+import kr.hhplus.be.server.src.application.service.payment.PaymentServiceImpl;
 import kr.hhplus.be.server.src.common.ResponseMessage;
 import kr.hhplus.be.server.src.domain.booking.Booking;
 import kr.hhplus.be.server.src.domain.booking.BookingRepository;
 import kr.hhplus.be.server.src.domain.enums.SeatStatus;
-import kr.hhplus.be.server.src.domain.payment.PaymentRepository;
 import kr.hhplus.be.server.src.domain.point.Point;
 import kr.hhplus.be.server.src.domain.enums.PaymentStatus;
 import kr.hhplus.be.server.src.domain.point.PointRepository;
@@ -22,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.transaction.TestTransaction;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
@@ -68,6 +68,10 @@ class PaymentServiceIntegrationTest {
 
         //when
         ResponseMessage<PaymentResponse> response =  paymentService.processPayment(paymentRequest);
+
+        // 트랜잭션 커밋 후 좌석 상태 조회
+        TestTransaction.flagForCommit();
+        TestTransaction.end(); // 강제로 트랜잭션 커밋
 
         // 유저 포인트 차감 처리 확인
         Point updatedPoint = pointRepository.findById(userId)
