@@ -6,7 +6,7 @@ import kr.hhplus.be.server.src.domain.queue.QueueRepository;
 import kr.hhplus.be.server.src.domain.queue.RedisQueueRepository;
 import kr.hhplus.be.server.src.domain.user.User;
 import kr.hhplus.be.server.src.domain.user.UserRepository;
-import kr.hhplus.be.server.src.interfaces.queue.dto.QueueRequest;
+import kr.hhplus.be.server.src.interfaces.api.queue.dto.QueueRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;

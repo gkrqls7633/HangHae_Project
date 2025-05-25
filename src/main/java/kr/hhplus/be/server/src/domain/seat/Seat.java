@@ -1,13 +1,11 @@
 package kr.hhplus.be.server.src.domain.seat;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import kr.hhplus.be.server.src.domain.BaseTimeEntity;
 import kr.hhplus.be.server.src.domain.concertseat.ConcertSeat;
 import kr.hhplus.be.server.src.domain.enums.SeatStatus;
-import kr.hhplus.be.server.src.interfaces.booking.dto.BookingCancelRequest;
 import lombok.*;
 
 import java.util.ArrayList;

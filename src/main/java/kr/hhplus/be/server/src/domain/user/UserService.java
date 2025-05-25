@@ -1,7 +1,7 @@
 package kr.hhplus.be.server.src.domain.user;
 
-import kr.hhplus.be.server.src.interfaces.user.UserQueueRankResponse;
-import kr.hhplus.be.server.src.interfaces.user.UserResponse;
+import kr.hhplus.be.server.src.interfaces.api.user.UserQueueRankResponse;
+import kr.hhplus.be.server.src.interfaces.api.user.UserResponse;
 
 public interface UserService {
 

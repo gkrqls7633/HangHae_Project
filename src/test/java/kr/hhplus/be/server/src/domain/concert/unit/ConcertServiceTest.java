@@ -1,6 +1,6 @@
 package kr.hhplus.be.server.src.domain.concert.unit;
 
-import kr.hhplus.be.server.src.application.service.ConcertServiceImpl;
+import kr.hhplus.be.server.src.application.service.concert.ConcertServiceImpl;
 import kr.hhplus.be.server.src.domain.booking.BookingRankingRepository;
 import kr.hhplus.be.server.src.domain.concert.Concert;
 import kr.hhplus.be.server.src.domain.concert.ConcertRepository;
@@ -9,9 +9,9 @@ import kr.hhplus.be.server.src.domain.concertseat.ConcertSeatRepository;
 import kr.hhplus.be.server.src.domain.seat.Seat;
 import kr.hhplus.be.server.src.domain.enums.SeatStatus;
 import kr.hhplus.be.server.src.domain.seat.SeatRepository;
-import kr.hhplus.be.server.src.interfaces.concert.dto.ConcertInfoResponse;
-import kr.hhplus.be.server.src.interfaces.concert.dto.ConcertRequest;
-import kr.hhplus.be.server.src.interfaces.concert.dto.ConcertResponse;
+import kr.hhplus.be.server.src.interfaces.api.concert.dto.ConcertInfoResponse;
+import kr.hhplus.be.server.src.interfaces.api.concert.dto.ConcertRequest;
+import kr.hhplus.be.server.src.interfaces.api.concert.dto.ConcertResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

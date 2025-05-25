@@ -2,13 +2,13 @@ package kr.hhplus.be.server.src.domain.point.unit;
 
 
 import jakarta.persistence.EntityNotFoundException;
-import kr.hhplus.be.server.src.application.service.PointServiceImpl;
+import kr.hhplus.be.server.src.application.service.point.PointServiceImpl;
 import kr.hhplus.be.server.src.common.ResponseMessage;
 import kr.hhplus.be.server.src.domain.point.Point;
 import kr.hhplus.be.server.src.domain.point.PointRepository;
 import kr.hhplus.be.server.src.domain.user.User;
-import kr.hhplus.be.server.src.interfaces.point.dto.PointChargeRequest;
-import kr.hhplus.be.server.src.interfaces.point.dto.PointResponse;
+import kr.hhplus.be.server.src.interfaces.api.point.dto.PointChargeRequest;
+import kr.hhplus.be.server.src.interfaces.api.point.dto.PointResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

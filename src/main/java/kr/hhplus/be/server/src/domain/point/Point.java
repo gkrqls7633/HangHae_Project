@@ -5,7 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import kr.hhplus.be.server.src.domain.BaseTimeEntity;
 import kr.hhplus.be.server.src.domain.user.User;
-import kr.hhplus.be.server.src.interfaces.point.dto.PointChargeRequest;
+import kr.hhplus.be.server.src.interfaces.api.point.dto.PointChargeRequest;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 

@@ -1,7 +1,7 @@
 package kr.hhplus.be.server.src.domain.point;
 
 import kr.hhplus.be.server.src.domain.concert.Concert;
-import kr.hhplus.be.server.src.interfaces.point.dto.PointChargeRequest;
+import kr.hhplus.be.server.src.interfaces.api.point.dto.PointChargeRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

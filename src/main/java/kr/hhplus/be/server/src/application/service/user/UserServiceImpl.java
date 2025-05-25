@@ -5,8 +5,8 @@ import kr.hhplus.be.server.src.domain.queue.RedisQueueRepository;
 import kr.hhplus.be.server.src.domain.user.User;
 import kr.hhplus.be.server.src.domain.user.UserRepository;
 import kr.hhplus.be.server.src.domain.user.UserService;
-import kr.hhplus.be.server.src.interfaces.user.UserQueueRankResponse;
-import kr.hhplus.be.server.src.interfaces.user.UserResponse;
+import kr.hhplus.be.server.src.interfaces.api.user.UserQueueRankResponse;
+import kr.hhplus.be.server.src.interfaces.api.user.UserResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 

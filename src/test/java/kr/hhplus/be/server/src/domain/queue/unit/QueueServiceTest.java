@@ -1,7 +1,7 @@
 package kr.hhplus.be.server.src.domain.queue.unit;
 
 import jakarta.persistence.EntityNotFoundException;
-import kr.hhplus.be.server.src.application.service.QueueServiceImpl;
+import kr.hhplus.be.server.src.application.service.queue.QueueServiceImpl;
 import kr.hhplus.be.server.src.common.ResponseMessage;
 import kr.hhplus.be.server.src.domain.queue.Queue;
 import kr.hhplus.be.server.src.domain.queue.QueueRepository;
@@ -9,9 +9,9 @@ import kr.hhplus.be.server.src.domain.queue.RedisQueueRepository;
 import kr.hhplus.be.server.src.domain.user.User;
 import kr.hhplus.be.server.src.domain.enums.TokenStatus;
 import kr.hhplus.be.server.src.domain.user.UserRepository;
-import kr.hhplus.be.server.src.interfaces.queue.dto.QueueExpireRequest;
-import kr.hhplus.be.server.src.interfaces.queue.dto.QueueRequest;
-import kr.hhplus.be.server.src.interfaces.queue.dto.QueueResponse;
+import kr.hhplus.be.server.src.interfaces.api.queue.dto.QueueExpireRequest;
+import kr.hhplus.be.server.src.interfaces.api.queue.dto.QueueRequest;
+import kr.hhplus.be.server.src.interfaces.api.queue.dto.QueueResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

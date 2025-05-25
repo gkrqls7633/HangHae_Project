@@ -1,6 +1,6 @@
 package kr.hhplus.be.server.src.domain.booking;
 
-import kr.hhplus.be.server.src.interfaces.concert.dto.ConcertBookingRankResponse;
+import kr.hhplus.be.server.src.interfaces.api.concert.dto.ConcertBookingRankResponse;
 import lombok.*;
 import org.springframework.data.redis.core.ZSetOperations;
 

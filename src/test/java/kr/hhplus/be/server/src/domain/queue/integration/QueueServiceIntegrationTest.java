@@ -2,10 +2,9 @@ package kr.hhplus.be.server.src.domain.queue.integration;
 
 import kr.hhplus.be.server.src.common.ResponseMessage;
 import kr.hhplus.be.server.src.domain.enums.TokenStatus;
-import kr.hhplus.be.server.src.interfaces.queue.dto.QueueRequest;
-import kr.hhplus.be.server.src.interfaces.queue.dto.QueueResponse;
+import kr.hhplus.be.server.src.interfaces.api.queue.dto.QueueRequest;
+import kr.hhplus.be.server.src.interfaces.api.queue.dto.QueueResponse;
 import kr.hhplus.be.server.src.domain.queue.QueueService;
-import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

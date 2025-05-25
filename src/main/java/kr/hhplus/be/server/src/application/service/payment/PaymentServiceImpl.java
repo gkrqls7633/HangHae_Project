@@ -1,7 +1,7 @@
 package kr.hhplus.be.server.src.application.service.payment;
 
 import jakarta.persistence.EntityNotFoundException;
-import kr.hhplus.be.server.src.application.service.payment.event.publisher.PaymentEventPublisher;
+import kr.hhplus.be.server.src.domain.payment.event.PaymentEventPublisher;
 import kr.hhplus.be.server.src.common.ResponseMessage;
 import kr.hhplus.be.server.src.common.exception.PaymentException;
 import kr.hhplus.be.server.src.domain.booking.Booking;
@@ -20,8 +20,8 @@ import kr.hhplus.be.server.src.domain.point.Point;
 import kr.hhplus.be.server.src.domain.point.PointRepository;
 import kr.hhplus.be.server.src.domain.seat.Seat;
 import kr.hhplus.be.server.src.domain.seat.SeatRepository;
-import kr.hhplus.be.server.src.interfaces.payment.dto.PaymentRequest;
-import kr.hhplus.be.server.src.interfaces.payment.dto.PaymentResponse;
+import kr.hhplus.be.server.src.interfaces.api.payment.dto.PaymentRequest;
+import kr.hhplus.be.server.src.interfaces.api.payment.dto.PaymentResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
