@@ -6,10 +6,9 @@ import kr.hhplus.be.server.src.domain.booking.event.ConcertBookingScoreIncrement
 import kr.hhplus.be.server.src.domain.booking.event.ConcertBookingScoreIncrementFailedEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 @Component
 @RequiredArgsConstructor
@@ -23,8 +22,7 @@ public class ConcertBookingScoreEventListener {
      redis에 콘서트 랭킹 저장 (sorted set 저장)
      ex) {concert1 : 5 , concert 2 : 10, ... }
     */
-    @EventListener
-    @Transactional
+    @TransactionalEventListener
     @Async
     public void handle(ConcertBookingScoreIncrementEvent event) {
         try {
