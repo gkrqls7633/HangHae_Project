@@ -3,7 +3,6 @@ package kr.hhplus.be.server.src.application.service.booking;
 import jakarta.persistence.EntityNotFoundException;
 import kr.hhplus.be.server.src.common.ResponseMessage;
 import kr.hhplus.be.server.src.domain.booking.Booking;
-import kr.hhplus.be.server.src.domain.booking.BookingRankingRepository;
 import kr.hhplus.be.server.src.domain.booking.BookingRepository;
 import kr.hhplus.be.server.src.domain.booking.BookingService;
 import kr.hhplus.be.server.src.domain.booking.event.BookingEventPublisher;
@@ -46,7 +45,6 @@ public class BookingServiceImpl implements BookingService {
     private final UserRepository userRepository;
     private final QueueRepository queueRepository;
     private final RedisQueueRepository redisQueueRepository;
-    private final BookingRankingRepository bookingRankingRepository;
 
     private final BookingEventPublisher bookingEventPublisher;
 
@@ -112,9 +110,7 @@ public class BookingServiceImpl implements BookingService {
 
             /*
              콘서트 예약 점수 증가 이벤트 발행
-             redis에 콘서트 랭킹 저장 (sorted set 저장)
-             ex) {concert1 : 5 , concert 2 : 10, ... }
-            */
+             */
             incrementConcertBookingScore(concert.getConcertId().toString());
 
             /*
@@ -132,8 +128,6 @@ public class BookingServiceImpl implements BookingService {
     }
 
     private void incrementConcertBookingScore(String concertId) {
-
-        //to-be  콘서트 예약 점수 증가 이벤트 발행
         bookingEventPublisher.success(new ConcertBookingScoreIncrementEvent(concertId));
     }
 
@@ -172,7 +166,6 @@ public class BookingServiceImpl implements BookingService {
 
             // booking 예약 처리
             bookingRepository.save(booking);
-
         }
 
         BookingResponse bookingResponse = new BookingResponse();

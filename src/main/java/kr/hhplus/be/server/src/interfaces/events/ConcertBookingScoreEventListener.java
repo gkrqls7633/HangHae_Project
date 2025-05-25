@@ -19,6 +19,10 @@ public class ConcertBookingScoreEventListener {
     private final BookingRankingRepository bookingRankingRepository;
     private final BookingFailureEventPublisher bookingFailureEventPublisher;
 
+    /*
+     redis에 콘서트 랭킹 저장 (sorted set 저장)
+     ex) {concert1 : 5 , concert 2 : 10, ... }
+    */
     @EventListener
     @Transactional
     @Async
