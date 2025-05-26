@@ -106,7 +106,7 @@ public class BookingServiceImpl implements BookingService {
             /*
              좌석 점유 처리 이벤트 발행
             */
-            bookingEventPublisher.success(new SeatBookedEvent(seat));
+            bookingEventPublisher.success(new SeatBookedEvent(seat, seat.getConcertSeat()));
 
             /*
              콘서트 예약 점수 증가 이벤트 발행
