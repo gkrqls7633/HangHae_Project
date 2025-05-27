@@ -1,7 +1,5 @@
 package kr.hhplus.be.server.src.domain.seat;
 
-import org.springframework.data.repository.query.Param;
-
 import java.util.List;
 import java.util.Optional;
 
