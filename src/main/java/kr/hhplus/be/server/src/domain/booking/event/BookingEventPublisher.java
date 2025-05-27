@@ -1,6 +1,6 @@
 package kr.hhplus.be.server.src.domain.booking.event;
 
-import kr.hhplus.be.server.src.domain.external.ExternalDataSaveEvent;
+import kr.hhplus.be.server.src.domain.external.ExternalBookingDataSaveEvent;
 
 public interface BookingEventPublisher {
 
@@ -8,6 +8,6 @@ public interface BookingEventPublisher {
 
     void success(ConcertBookingScoreIncrementEvent event);
 
-    void success(ExternalDataSaveEvent event);
+    void success(ExternalBookingDataSaveEvent event);
 
 }

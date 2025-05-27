@@ -14,6 +14,7 @@ import org.springframework.kafka.config.TopicBuilder;
 @Configuration
 public class KafkaTopicConfig {
 
+    //좌석 점유 topic
     @Bean
     public NewTopic seatBookedTopic() {
         return TopicBuilder.name("seat-booked-topic")
@@ -22,7 +23,16 @@ public class KafkaTopicConfig {
                 .build();
     }
 
-    //todo : 토픽 추가
+    // 외부 데이터 플랫폼 예약 정보 전송 topic
+    @Bean
+    public NewTopic externalDataSaveTopic() {
+        return TopicBuilder.name("external-data-save-topic")
+                .partitions(3)
+                .replicas(1)
+                .build();
+    }
+
+//    //todo : 토픽 추가
 //    @Bean
 //    public NewTopic otherTopic() {
 //        return TopicBuilder.name("other-topic")

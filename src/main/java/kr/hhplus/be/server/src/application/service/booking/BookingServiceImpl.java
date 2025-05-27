@@ -7,7 +7,7 @@ import kr.hhplus.be.server.src.domain.booking.BookingRepository;
 import kr.hhplus.be.server.src.domain.booking.BookingService;
 import kr.hhplus.be.server.src.domain.booking.event.BookingEventPublisher;
 import kr.hhplus.be.server.src.domain.booking.event.ConcertBookingScoreIncrementEvent;
-import kr.hhplus.be.server.src.domain.external.ExternalDataSaveEvent;
+import kr.hhplus.be.server.src.domain.external.ExternalBookingDataSaveEvent;
 import kr.hhplus.be.server.src.domain.booking.event.SeatBookedEvent;
 import kr.hhplus.be.server.src.domain.concert.Concert;
 import kr.hhplus.be.server.src.domain.concert.ConcertRepository;
@@ -116,7 +116,12 @@ public class BookingServiceImpl implements BookingService {
             /*
              외부 데이터 플랫폼 저장 이벤트 발행
              */
-            bookingEventPublisher.success(new ExternalDataSaveEvent(booking));
+            bookingEventPublisher.success(new ExternalBookingDataSaveEvent(
+                    booking.getBookingId()
+                    , booking.getSeatId()
+                    , booking.getSeatNum()
+                    , booking.getConcert().getConcertId()
+            ));
         }
 
         BookingResponse bookingResponse = new BookingResponse();

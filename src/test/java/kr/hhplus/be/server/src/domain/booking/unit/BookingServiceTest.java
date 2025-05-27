@@ -6,6 +6,7 @@ import kr.hhplus.be.server.src.domain.booking.Booking;
 import kr.hhplus.be.server.src.domain.booking.BookingRepository;
 import kr.hhplus.be.server.src.domain.booking.event.BookingEventPublisher;
 import kr.hhplus.be.server.src.domain.booking.event.ConcertBookingScoreIncrementEvent;
+import kr.hhplus.be.server.src.domain.external.ExternalBookingDataSaveEvent;
 import kr.hhplus.be.server.src.domain.external.ExternalDataSaveEvent;
 import kr.hhplus.be.server.src.domain.booking.event.SeatBookedEvent;
 import kr.hhplus.be.server.src.domain.concert.Concert;
@@ -27,6 +28,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -108,10 +110,22 @@ class BookingServiceTest {
         when(userRepository.findById(123L)).thenReturn(Optional.of(user));
         when(seatRepository.findByConcertSeat_Concert_ConcertIdAndSeatNum(1L, 1L)).thenReturn(Optional.of(seatList.get(0)));
 
-        when(bookingRepository.save(any(Booking.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(bookingRepository.save(any(Booking.class))).thenAnswer(invocation -> {
+            Booking booking = invocation.getArgument(0);
+            ReflectionTestUtils.setField(booking, "bookingId", 1L); // bookingId 필드 직접 세팅
+            ReflectionTestUtils.setField(booking, "seatId", 10L);     // 예시 값 세팅
+            ReflectionTestUtils.setField(booking, "seatNum", 5L);     // 예시 값 세팅
+
+            // concert 필드는 객체이므로 직접 세팅하거나 Mock 객체로 만들어야 함
+            ReflectionTestUtils.setField(concert, "concertId", 1L);
+            ReflectionTestUtils.setField(booking, "concert", concert);
+
+            return booking;
+        });
+
         doNothing().when(bookingEventPublisher).success(any(SeatBookedEvent.class));
         doNothing().when(bookingEventPublisher).success(any(ConcertBookingScoreIncrementEvent.class));
-        doNothing().when(bookingEventPublisher).success(any(ExternalDataSaveEvent.class));
+        doNothing().when(bookingEventPublisher).success(any(ExternalBookingDataSaveEvent.class));
 
         // when
         ResponseMessage<BookingResponse> response = bookingService.bookingSeat(mockBookingRequest);
@@ -125,7 +139,7 @@ class BookingServiceTest {
         verify(bookingRepository, times(1)).save(any(Booking.class));
         verify(bookingEventPublisher, times(1)).success(any(SeatBookedEvent.class));
         verify(bookingEventPublisher, times(1)).success(any(ConcertBookingScoreIncrementEvent.class));
-        verify(bookingEventPublisher, times(1)).success(any(ExternalDataSaveEvent.class));
+        verify(bookingEventPublisher, times(1)).success(any(ExternalBookingDataSaveEvent.class));
 
     }
 

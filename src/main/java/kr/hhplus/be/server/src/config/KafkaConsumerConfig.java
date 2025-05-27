@@ -1,6 +1,7 @@
 package kr.hhplus.be.server.src.config;
 
 import kr.hhplus.be.server.src.domain.booking.event.SeatBookedEvent;
+import kr.hhplus.be.server.src.domain.external.ExternalDataSaveEvent;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.context.annotation.Bean;
@@ -40,6 +41,9 @@ public class KafkaConsumerConfig {
 
         JsonDeserializer<T> jsonDeserializer = new JsonDeserializer<>(clazz);
         jsonDeserializer.addTrustedPackages("*");
+        //jsonDeserializer.addTrustedPackages("kr.hhplus.be.server.src.domain.booking", "kr.hhplus.be.server.src.domain.payment");
+        jsonDeserializer.setRemoveTypeHeaders(false); // 타입 정보 유지
+        jsonDeserializer.setUseTypeMapperForKey(false); // value 기준으로 타입 매핑
 
         return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), jsonDeserializer);
     }
@@ -49,13 +53,16 @@ public class KafkaConsumerConfig {
         return consumerFactory(SeatBookedEvent.class, "concert-consumer-group");
     }
 
+    @Bean
+    public ConsumerFactory<String, ExternalDataSaveEvent> externalDataSaveConsumerFactory() {
+        return consumerFactory(ExternalDataSaveEvent.class, "external-data-save-consumer-group");
+    }
+
     //todo : 컨슈머 추가 팩토리
 //    @Bean
 //    public ConsumerFactory<String, OtherEvent> otherConsumerFactory() {
 //        return consumerFactory(OtherEvent.class, "other-consumer-group");
 //    }
-
-
 
 
 
@@ -74,6 +81,11 @@ public class KafkaConsumerConfig {
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, SeatBookedEvent> seatBookedListenerContainerFactory() {
         return kafkaListenerContainerFactory(seatBookedConsumerFactory());
+    }
+
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, ExternalDataSaveEvent> externalDataSaveListenerContainerFactory() {
+        return kafkaListenerContainerFactory(externalDataSaveConsumerFactory());
     }
 
     //todo : 컨슈머 추가 리스너
