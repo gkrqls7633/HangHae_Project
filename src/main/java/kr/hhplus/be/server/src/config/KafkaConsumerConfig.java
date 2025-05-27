@@ -18,14 +18,23 @@ import java.util.Map;
 @EnableKafka
 public class KafkaConsumerConfig {
 
+    //Kafka Consumer를 생성하는 데 필요한 설정 정보를 담은 팩토리
     public <T> ConsumerFactory<String, T> consumerFactory(Class<T> clazz, String groupId) {
         Map<String, Object> props = new HashMap<>();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
         props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
-        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
+        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class); //key 역직렬화
+        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class); //value 역직렬화
+
+        // true : Kafka가 주기적으로 자동으로 커밋(최신 메시지만 처리하려는 경우에는 유리)
         props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, true);
+
+        //Kafka에 현재 consumer group에 해당하는 offset이 없을 때 어디서부터 메시지를 읽을지를 결정
+        //earliest : 가장 오래된 메시지부터 다시 읽기 시작 / latest : 가장 최근 메시지부터 읽기 시작
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+
+        //한번에 최대 10개만 consume
+        props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, 10);
 
         JsonDeserializer<T> jsonDeserializer = new JsonDeserializer<>(clazz);
         jsonDeserializer.addTrustedPackages("*");
@@ -44,13 +53,17 @@ public class KafkaConsumerConfig {
 //        return consumerFactory(OtherEvent.class, "other-consumer-group");
 //    }
 
-    //메시지 리스너의 동시성을 지원한다.
-    //멀티스레드 환경에서 메시지를 효율적으로 처리할 수 있게 해준다.
-    //각 리스너 컨테이너에 대한 세부적인 설정이 가능하다.
 
+
+
+
+    //@KafkaListener 사용할 수 있도록 셋팅 -> 리스너 메서드에서 사용
+    //스프링이 @KafkaListener 어노테이션을 기반으로 메시지를 받을 수 있도록 리스너 컨테이너를 구성
+    //위에서 만든 ConsumerFactory를 주입받아서 사용
     public <T> ConcurrentKafkaListenerContainerFactory<String, T> kafkaListenerContainerFactory(ConsumerFactory<String, T> consumerFactory) {
         ConcurrentKafkaListenerContainerFactory<String, T> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory);
+        factory.setConcurrency(3);
         return factory;
     }
 
