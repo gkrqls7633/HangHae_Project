@@ -2,10 +2,7 @@ package kr.hhplus.be.server.src.application.service.queue;
 
 import jakarta.persistence.EntityNotFoundException;
 import kr.hhplus.be.server.src.domain.enums.TokenStatus;
-import kr.hhplus.be.server.src.domain.queue.Queue;
-import kr.hhplus.be.server.src.domain.queue.QueueRepository;
-import kr.hhplus.be.server.src.domain.queue.QueueTokenService;
-import kr.hhplus.be.server.src.domain.queue.RedisQueueRepository;
+import kr.hhplus.be.server.src.domain.queue.*;
 import kr.hhplus.be.server.src.domain.user.User;
 import kr.hhplus.be.server.src.domain.user.UserRepository;
 import kr.hhplus.be.server.src.interfaces.api.queue.dto.QueueResponse;
@@ -21,9 +18,10 @@ import java.util.Optional;
 @Slf4j
 public class QueueTokenServiceImpl implements QueueTokenService {
 
-    private final QueueRepository queueRepository;
     private final UserRepository userRepository;
     private final RedisQueueRepository redisQueueRepository;
+    private final QueueService queueService;
+
 
     @Override
     @Transactional
@@ -59,16 +57,34 @@ public class QueueTokenServiceImpl implements QueueTokenService {
                 log.info("[만료 토큰 제거 및 신규 토큰 발급] userId={}, token={}", userId, queue.getTokenValue());
 
                 // 최초로 신규 토큰 발급하는 경우
-            } else{
+            } else {
                 //토큰 신규 발급 처리
                 Queue queue = Queue.newToken(user.getUserId());
                 redisQueueRepository.save(queue);
                 log.info("[토큰 신규 발급] userId={}, token={}", userId, queue.getTokenValue());
             }
-
-            //todo : 토큰 활성화 'queue-promote' 토픽 발행
-
         }
     }
 
+    @Override
+    @Transactional
+    public void processQueuePromote(Long userId, Long concertId) {
+
+        // 1. USER의 READY 상태 & 만료 되지 않은 토큰 조회
+        Optional<Queue> userReadyQueue = redisQueueRepository.findByUserIdAndTokenStatus(userId, TokenStatus.READY);
+        if (userReadyQueue.isEmpty()) {
+            log.info(" --- 활성화할 토큰이 없습니다. ---");
+            return;
+        }
+
+        // 2. READY → ACTIVE 상태로 변경
+        Queue queue = userReadyQueue.get();
+        queue.setTokenStatus(TokenStatus.ACTIVE);
+        queue.refreshToken(); // 시간 갱신
+        queueService.save(queue);
+
+        log.info("[토큰 활성화 성공] tokenValue : {}, userId : {}", queue.getTokenValue(), queue.getUserId());
+    }
+
 }
+

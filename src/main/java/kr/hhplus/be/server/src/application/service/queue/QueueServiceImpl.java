@@ -41,7 +41,9 @@ public class QueueServiceImpl implements QueueService {
     @Transactional
     public ResponseMessage<QueueResponse> issueQueueToken(QueueRequest queueRequest) {
 
-        //kafa 'user-token-issued' 토픽 이벤트 발행
+        /*
+        kafka 'user-token-issued' 토픽 이벤트 발행
+        */
         queueEventPublisher.success(new QueueTokenIssuedEvent(queueRequest.getUserId(), queueRequest.getConcertId()));
 
         QueueResponse response = QueueResponse.builder()

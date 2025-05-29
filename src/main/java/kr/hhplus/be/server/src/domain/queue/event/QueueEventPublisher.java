@@ -5,4 +5,6 @@ public interface QueueEventPublisher {
 
     void success(QueueTokenIssuedEvent event);
 
+    void processTokenIssueSuccess(QueuePromoteEvent event);
+
 }

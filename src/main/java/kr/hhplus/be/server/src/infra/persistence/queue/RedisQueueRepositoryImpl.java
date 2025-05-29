@@ -255,6 +255,22 @@ public class RedisQueueRepositoryImpl implements RedisQueueRepository {
         return topReadyTokens;
     }
 
+    //토큰 상태 조회
+    @Override
+    public String getTokenStatus(Long userId, String tokenValue) {
+        String tokenStatusStr = (String) redisTemplate.opsForHash().get(TOKEN_HASH_PREFIX, "token_status");
+        if (tokenStatusStr == null) {
+            log.warn("토큰 상태 조회 실패 - 존재하지 않는 토큰입니다. userId: {}, tokenValue: {}", userId, tokenValue);
+            return null;
+        }
+
+        if (!"READY".equals(tokenStatusStr)) {
+            log.warn("토큰 상태가 READY가 아님 - userId: {}, tokenValue: {}, status: {}", userId, tokenValue, tokenStatusStr);
+        }
+
+        return tokenStatusStr;
+    }
+
     private Queue mapToQueue(Map<Object, Object> map) {
         return Queue.builder()
                 .userId(Long.valueOf((String) map.get("user_id")))
