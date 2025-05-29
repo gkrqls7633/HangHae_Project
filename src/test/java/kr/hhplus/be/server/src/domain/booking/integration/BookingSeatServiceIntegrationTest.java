@@ -22,6 +22,7 @@ import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.transaction.TestTransaction;
 import org.springframework.transaction.annotation.Transactional;
+import org.testcontainers.shaded.org.awaitility.Awaitility;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,12 +49,7 @@ class BookingSeatServiceIntegrationTest {
     @Autowired
     private SeatRepository seatRepository;
 
-    @Autowired
-    private RedissonClient redissonClient;
-
     private BookingRequest bookingRequest;
-    @Autowired
-    private BookingServiceImpl bookingServiceImpl;
 
 
     @BeforeEach
@@ -78,11 +74,15 @@ class BookingSeatServiceIntegrationTest {
 
         Thread.sleep(1000);
 
-        //then : 해당 좌석이 점유상태로 변경됐는지 조회
-        Optional<Seat> seatOpt = seatRepository.findByConcertSeat_Concert_ConcertIdAndSeatNum(concertId, seatNum);
-        assertTrue("좌석이 존재해야 합니다.", seatOpt.isPresent());
-        Seat seat = seatOpt.get();
-        assertEquals(seat.getSeatStatus(), SeatStatus.OCCUPIED);
+        // then: Kafka consumer가 좌석 점유 처리를 마칠 때까지 polling
+        Awaitility.await()
+                .atMost(10, TimeUnit.SECONDS)
+                .pollInterval(500, TimeUnit.MILLISECONDS)
+                .untilAsserted(() -> {
+                    Optional<Seat> seatOpt = seatRepository.findByConcertSeat_Concert_ConcertIdAndSeatNum(concertId, seatNum);
+                    assertTrue("좌석이 존재해야 합니다.", seatOpt.isPresent());
+                    assertEquals("좌석 상태가 OCCUPIED여야 합니다.", SeatStatus.OCCUPIED, seatOpt.get().getSeatStatus());
+                });
     }
 
     @DisplayName("동시 좌석 예약 시 하나만 성공한다.(낙관적 락)")

@@ -8,6 +8,7 @@ import kr.hhplus.be.server.src.interfaces.api.queue.dto.QueueResponse;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 
 public interface QueueService {

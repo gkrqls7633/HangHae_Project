@@ -43,6 +43,7 @@ public class QueueTransactionHelper {
 
         queueRequest = new QueueRequest();
         queueRequest.setUserId(savedUser.getUserId());
+        queueRequest.setConcertId(1L);
 
         return queueRequest;
     }
@@ -60,6 +61,7 @@ public class QueueTransactionHelper {
 
         queueRequest = new QueueRequest();
         queueRequest.setUserId(savedUser.getUserId());
+        queueRequest.setConcertId(1L);
 
         return queueRequest;
     }
@@ -81,6 +83,7 @@ public class QueueTransactionHelper {
 
         queueRequest = new QueueRequest();
         queueRequest.setUserId(savedUser.getUserId());
+        queueRequest.setConcertId(1L);
 
         return queueRequest;
     }
