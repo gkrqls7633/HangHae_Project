@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.src.infra.kafka;
+package kr.hhplus.be.server.src.infra.events;
 
 import kr.hhplus.be.server.src.domain.queue.event.QueueEventPublisher;
 import kr.hhplus.be.server.src.domain.queue.event.QueuePromoteEvent;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class KafkaQueueEventPublisher implements QueueEventPublisher {
+public class QueueEventPublisherImpl implements QueueEventPublisher {
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
