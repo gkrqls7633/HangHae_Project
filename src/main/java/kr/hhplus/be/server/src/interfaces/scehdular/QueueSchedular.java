@@ -74,6 +74,12 @@ public class QueueSchedular {
             queueService.save(queue);
             log.info("[토큰 활성화 성공] tokenValue : {}, userId : {}", queue.getTokenValue(), queue.getUserId());
         }
+
+        //todo : 토큰 활성화 카프카 이벤트 발행
+
+
+
+
         log.info(" {}개의 토큰이 ACTIVE 상태로 전환되었습니다.", readyQueues.size());
 
     }
