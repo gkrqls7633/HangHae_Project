@@ -15,8 +15,8 @@ public class QueueRequest {
     private Long userId;
 
 
-    //todo : 콘서트 정보로 구분 필요
-//    @Schema(description = "concertId", example = "1001")
-//    private Long concertId; // 추가된 필드
+    // todo : 콘서트 정보로 구분 필요
+    @Schema(description = "concertId", example = "1")
+    private Long concertId;
 
 }

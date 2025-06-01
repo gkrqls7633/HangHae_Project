@@ -2,6 +2,8 @@ package kr.hhplus.be.server.src.config;
 
 import kr.hhplus.be.server.src.domain.booking.event.SeatBookedEvent;
 import kr.hhplus.be.server.src.domain.external.ExternalDataSaveEvent;
+import kr.hhplus.be.server.src.domain.queue.event.QueuePromoteEvent;
+import kr.hhplus.be.server.src.domain.queue.event.QueueTokenIssuedEvent;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.context.annotation.Bean;
@@ -58,6 +60,16 @@ public class KafkaConsumerConfig {
         return consumerFactory(ExternalDataSaveEvent.class, "external-data-save-consumer-group");
     }
 
+    @Bean
+    public ConsumerFactory<String, QueueTokenIssuedEvent> userTokenIssuedConsumerFactory() {
+        return consumerFactory(QueueTokenIssuedEvent.class, "token-issued-consumer-group");
+    }
+
+    @Bean
+    public ConsumerFactory<String, QueuePromoteEvent> queuePromoteConsumerFactory() {
+        return consumerFactory(QueuePromoteEvent.class, "queue-promote-consumer-group");
+    }
+
     //todo : 컨슈머 추가 팩토리
 //    @Bean
 //    public ConsumerFactory<String, OtherEvent> otherConsumerFactory() {
@@ -86,6 +98,16 @@ public class KafkaConsumerConfig {
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, ExternalDataSaveEvent> externalDataSaveListenerContainerFactory() {
         return kafkaListenerContainerFactory(externalDataSaveConsumerFactory());
+    }
+
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, QueueTokenIssuedEvent> userTokenIssuedListenerContainerFactory() {
+        return kafkaListenerContainerFactory(userTokenIssuedConsumerFactory());
+    }
+
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, QueuePromoteEvent> queuePromoteListenerContainerFactory() {
+        return kafkaListenerContainerFactory(queuePromoteConsumerFactory());
     }
 
     //todo : 컨슈머 추가 리스너

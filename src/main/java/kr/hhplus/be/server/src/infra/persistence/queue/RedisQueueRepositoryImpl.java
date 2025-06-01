@@ -5,6 +5,7 @@ import kr.hhplus.be.server.src.domain.enums.TokenStatus;
 import kr.hhplus.be.server.src.domain.queue.Queue;
 import kr.hhplus.be.server.src.domain.queue.RedisQueueRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.bytebuddy.asm.Advice;
 import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -18,6 +19,7 @@ import java.util.*;
 
 @RequiredArgsConstructor
 @Repository
+@Slf4j
 public class RedisQueueRepositoryImpl implements RedisQueueRepository {
 
     private final RedisTemplate<String, String> redisTemplate;
@@ -53,6 +55,7 @@ public class RedisQueueRepositoryImpl implements RedisQueueRepository {
                 "user:" + queue.getUserId() + ":token"
                 , queue.getTokenValue()
         );
+        log.info("Save queue user-token {}", queue);
 
         // 2. 토큰 상세 정보 저장
         Map<String, String> tokenDetails = Map.of(
@@ -62,6 +65,7 @@ public class RedisQueueRepositoryImpl implements RedisQueueRepository {
                 "expired_at", String.valueOf(queue.getExpiredAt().atZone(ZoneId.of("UTC")).toInstant().toEpochMilli())
         );
         redisTemplate.opsForHash().putAll("token:" + queue.getTokenValue(), tokenDetails);
+        log.info("Save queue tokendetails : {}", queue);
 
         // 3. 글로벌 대기열 추가 (단, ACTIVE 상태일 경우 순위 변경 X)
         if (queue.getTokenStatus() == TokenStatus.READY) {
@@ -70,6 +74,7 @@ public class RedisQueueRepositoryImpl implements RedisQueueRepository {
                     "token:" + queue.getTokenValue(),
                     queue.getExpiredAt().atZone(ZoneId.of("UTC")).toInstant().toEpochMilli()
             );
+            log.info("Save global queue : {}", queue);
         }
 
         return queue;
@@ -248,6 +253,22 @@ public class RedisQueueRepositoryImpl implements RedisQueueRepository {
             }
         }
         return topReadyTokens;
+    }
+
+    //토큰 상태 조회
+    @Override
+    public String getTokenStatus(Long userId, String tokenValue) {
+        String tokenStatusStr = (String) redisTemplate.opsForHash().get(TOKEN_HASH_PREFIX, "token_status");
+        if (tokenStatusStr == null) {
+            log.warn("토큰 상태 조회 실패 - 존재하지 않는 토큰입니다. userId: {}, tokenValue: {}", userId, tokenValue);
+            return null;
+        }
+
+        if (!"READY".equals(tokenStatusStr)) {
+            log.warn("토큰 상태가 READY가 아님 - userId: {}, tokenValue: {}, status: {}", userId, tokenValue, tokenStatusStr);
+        }
+
+        return tokenStatusStr;
     }
 
     private Queue mapToQueue(Map<Object, Object> map) {

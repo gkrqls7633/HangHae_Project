@@ -26,4 +26,7 @@ public interface RedisQueueRepository {
     String getUserTokenValue(Long userId);
 
     Set<String> getReadyTokens(String tokenValue, LocalDateTime now);
+
+    String getTokenStatus(Long userId, String tokenValue);
+
 }

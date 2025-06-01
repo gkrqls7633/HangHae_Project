@@ -56,7 +56,7 @@ public class QueueSchedular {
     }
 
     // 토큰 활성 시간 정책 : 10초 임시 셋팅
-    @Scheduled(cron = "*/10 * * * * *")//
+//    @Scheduled(cron = "*/10 * * * * *")//
     public void readyToActivateTokens() {
 
         // 1. READY 상태 & 만료 되지 않은 토큰들 조회
@@ -74,6 +74,7 @@ public class QueueSchedular {
             queueService.save(queue);
             log.info("[토큰 활성화 성공] tokenValue : {}, userId : {}", queue.getTokenValue(), queue.getUserId());
         }
+
         log.info(" {}개의 토큰이 ACTIVE 상태로 전환되었습니다.", readyQueues.size());
 
     }
