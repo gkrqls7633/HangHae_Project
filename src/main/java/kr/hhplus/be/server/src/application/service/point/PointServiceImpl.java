@@ -2,6 +2,7 @@ package kr.hhplus.be.server.src.application.service.point;
 
 import jakarta.persistence.EntityNotFoundException;
 import kr.hhplus.be.server.src.common.ResponseMessage;
+import kr.hhplus.be.server.src.common.exception.PointException;
 import kr.hhplus.be.server.src.domain.point.Point;
 import kr.hhplus.be.server.src.domain.point.PointRepository;
 import kr.hhplus.be.server.src.domain.point.PointService;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.HttpStatus;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -69,10 +71,11 @@ public class PointServiceImpl implements PointService {
 
         //현재 잔액 조회
         Point point = pointRepository.findById(pointChargeRequest.getUserId())
-                .orElseThrow(() -> new EntityNotFoundException("포인트 정보가 없습니다."));
+                .orElseThrow(() -> new PointException("포인트 정보가 없습니다.", HttpStatus.NOT_FOUND.value()));
+
 
         if (point.isCharged()) {
-            throw new IllegalStateException("이미 충전된 요청입니다.");
+            throw new PointException("이미 충전된 요청입니다.", HttpStatus.CONFLICT.value()); // 409 상태코드
         }
 
         //충전 호출
