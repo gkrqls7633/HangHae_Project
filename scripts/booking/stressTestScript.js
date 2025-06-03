@@ -5,6 +5,8 @@ import { htmlReport } from "https://raw.githubusercontent.com/benc-uk/k6-reporte
 const BASE_URL = 'http://host.docker.internal:8080/bookings/seats';
 const TOKEN = 'ff16156b-1563-4620-93a3-bcf51f435b5b';
 
+// 느린 응답 시간 기록용 커스텀 메트릭 (200ms 초과)
+export const slowResponses = new Trend('slow_responses');
 
 // stress Test(점진적 과부하)
 export const options = {
@@ -34,6 +36,12 @@ function makeRequest() {
 
     if (res.status !== 200) {
         console.error(`❌ Failed with status ${res.status}: ${res.body}`);
+    }
+
+    // 느린 응답 시간 로깅 및 커스텀 메트릭 기록
+    if (res.timings.duration > 200) {
+        console.warn(`⚠️ Slow response: ${res.timings.duration.toFixed(2)}ms (status: ${res.status})`);
+        slowResponses.add(res.timings.duration);
     }
 
     check(res, {
