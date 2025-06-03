@@ -1,7 +1,6 @@
 package kr.hhplus.be.server.src.interfaces.api.user;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import kr.hhplus.be.server.src.domain.enums.TokenStatus;
 import lombok.*;
 
 @RequiredArgsConstructor
@@ -9,10 +8,9 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
-@Schema(description = "유저 대기열 순위 응답")
-public class UserQueueRankResponse {
+@Schema(description = "유저 대기열 토큰 응답")
+public class UserQueueTokenResponse {
 
     private long userId;
-    private int rank;
     private String tokenValue;
 }

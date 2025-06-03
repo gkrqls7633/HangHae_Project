@@ -32,6 +32,12 @@ public class UserController {
 
         return ResponseMessage.success("유저 대기열 순번이 정상적으로 조회됐습니다.", userQueueRankResponse);
     }
-    //todo : 유저 예약 내역 조회
 
+    @Operation(summary = "유저 토큰 값 조회.", description = "유저의 토큰 값을 조회한다.")
+    @GetMapping("/token")
+    public ResponseMessage<UserQueueTokenResponse> getUserToken(@RequestParam Long userId) {
+        UserQueueTokenResponse userQueueTokenResponse =  userService.getUserToken(userId);
+
+        return ResponseMessage.success("유저 대기열 토큰 값이 정상적으로 조회됐습니다.", userQueueTokenResponse);
+    }
 }
