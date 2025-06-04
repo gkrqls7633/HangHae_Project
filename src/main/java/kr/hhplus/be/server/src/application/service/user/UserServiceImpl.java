@@ -6,6 +6,7 @@ import kr.hhplus.be.server.src.domain.user.User;
 import kr.hhplus.be.server.src.domain.user.UserRepository;
 import kr.hhplus.be.server.src.domain.user.UserService;
 import kr.hhplus.be.server.src.interfaces.api.user.UserQueueRankResponse;
+import kr.hhplus.be.server.src.interfaces.api.user.UserQueueTokenResponse;
 import kr.hhplus.be.server.src.interfaces.api.user.UserResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -61,6 +62,17 @@ public class UserServiceImpl implements UserService {
         return UserQueueRankResponse.builder()
                 .userId(userId)
                 .rank(index + 1)
+                .tokenValue(tokenValue)
+                .build();
+    }
+
+    @Override
+    public UserQueueTokenResponse getUserToken(Long userId) {
+        String tokenValue = redisQueueRepository.getUserTokenValue(userId);
+
+        return UserQueueTokenResponse.builder()
+                .userId(userId)
+                .tokenValue(tokenValue)
                 .build();
     }
 }
