@@ -139,8 +139,8 @@ export function testFlow() {
         console.error('토큰을 받지 못했습니다!');
         return;
     }
-    bookSeat(token);  // 토큰으로 좌석 예약
-    // makePayment();    // 결제 진행
+    bookSeat(token, userId, concertId);
+    // makePayment();
 }
 
 export function handleSummary(data) {
