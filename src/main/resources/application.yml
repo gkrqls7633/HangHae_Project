@@ -1,4 +1,9 @@
 spring:
+  server:
+    tomcat:
+      threads:
+        max: 500       # 최대 500개 쓰레드까지 처리
+        min-spare: 100 # 여유 쓰레드 확보
   application:
     name: hhplus
   profiles:
@@ -7,7 +12,7 @@ spring:
     name: HangHaePlusDataSource
     type: com.zaxxer.hikari.HikariDataSource
     hikari:
-      maximum-pool-size: 3
+      maximum-pool-size: 30
       connection-timeout: 10000
       max-lifetime: 60000
     driver-class-name: com.mysql.cj.jdbc.Driver
