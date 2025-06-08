@@ -7,45 +7,16 @@ export const options = {
         get_concert_list: {
             executor: 'constant-vus',
             exec: 'getConcertList',
-            vus: 1000,
-            duration: '5m',
+            vus: 3000,
+            duration: '1m',
             startTime: '0s',
         },
-        // issue_token: {
-        //     executor: 'constant-vus',
-        //     exec: 'issueToken',
-        //     vus: 1,
-        //     duration: '5m',
-        //     startTime: '10s',
-        // },
-        // get_user_queue_rank: {
-        //     executor: 'constant-vus',
-        //     exec: 'getUserQueueRank',
-        //     vus: 1,
-        //     duration: '5m',
-        //     startTime: '20s',
-        // },
-        // book_seat: {
-        //     executor: 'constant-vus',
-        //     exec: 'bookSeat',
-        //     vus: 1,
-        //     duration: '5m',
-        //     startTime: '30s',
-        // },
-        // payment: {
-        //     executor: 'constant-vus',
-        //     exec: 'makePayment',
-        //     vus: 1,
-        //     duration: '5m',
-        //     startTime: '40s',
-        // },
-
         test_flow: {
             executor: 'constant-vus',
             exec: 'testFlow',
-            vus: 100,
-            duration: '5m',
-            startTime: '20s',
+            vus: 1500,
+            duration: '1m',
+            startTime: '10s',
         },
     },
 };
@@ -115,7 +86,6 @@ export function bookSeat(token, userId, concertId) {
     check(res, { '✅ POST /bookings/seats 성공': (r) => r.status === 200 });
 }
 
-// makePayment 함수는 변경 없음
 // export function makePayment() {
 //     const payload = JSON.stringify({
 //         bookingId: 1,
